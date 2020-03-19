@@ -17,7 +17,7 @@ pushd ${SOURCE_DIR}
 # Clone down and build Web frontend
 web_build_dir="$( mktemp -d )"
 web_target="${SOURCE_DIR}/MediaBrowser.WebDashboard/veso-web"
-git clone https://github.com/veso/veso-web.git ${web_build_dir}/
+git clone https://github.com/vesotv/veso-web.git ${web_build_dir}/
 pushd ${web_build_dir}
 if [[ -n ${web_branch} ]]; then
     checkout -b origin/${web_branch}

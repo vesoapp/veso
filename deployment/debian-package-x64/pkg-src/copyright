@@ -1,6 +1,6 @@
 Format: http://dep.debian.net/deps/dep5
 Upstream-Name: veso
-Source: https://github.com/veso/veso
+Source: https://github.com/vesotv/veso
 
 Files: *
 Copyright: 2018 Jellyfin Team

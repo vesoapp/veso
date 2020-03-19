@@ -3,9 +3,9 @@ VERSION := $(shell sed -ne '/^Version:/s/.*  *//p'                      \
 
 deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz:
 	curl -f -L -o deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz \
-         https://github.com/veso/veso-web/archive/v$(VERSION).tar.gz \
+         https://github.com/vesotv/veso-web/archive/v$(VERSION).tar.gz \
 	|| curl -f -L -o deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz \
-         https://github.com/veso/veso-web/archive/master.tar.gz \
+         https://github.com/vesotv/veso-web/archive/master.tar.gz \
 
 srpm: deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz
 	cd deployment/fedora-package-x64;                                             \

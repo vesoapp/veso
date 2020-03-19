@@ -4,7 +4,7 @@
     <Authors>Jellyfin Contributors</Authors>
     <PackageId>Jellyfin.Model</PackageId>
     <PackageLicenseUrl>https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/veso/veso</RepositoryUrl>
+    <RepositoryUrl>https://github.com/vesotv/veso</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -11,11 +11,11 @@
     </Headers>
   </Identification>
   <Manufacturer>Microsoft Corporation</Manufacturer>
-  <ManufacturerUrl>https://github.com/veso/veso</ManufacturerUrl>
+  <ManufacturerUrl>https://github.com/vesotv/veso</ManufacturerUrl>
   <ModelName>Windows Media Player Sharing</ModelName>
   <ModelDescription>UPnP/AV 1.0 Compliant Media Server</ModelDescription>
   <ModelNumber>3.0</ModelNumber>
-  <ModelUrl>https://github.com/veso/veso</ModelUrl>
+  <ModelUrl>https://github.com/vesotv/veso</ModelUrl>
   <EnableAlbumArtInDidl>false</EnableAlbumArtInDidl>
   <EnableSingleAlbumArtLimit>false</EnableSingleAlbumArtLimit>
   <EnableSingleSubtitleLimit>false</EnableSingleSubtitleLimit>

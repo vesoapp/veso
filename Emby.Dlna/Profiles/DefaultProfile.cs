@@ -18,8 +18,8 @@ namespace Emby.Dlna.Profiles
             ModelDescription = "UPnP/AV 1.0 Compliant Media Server";
             ModelName = "Jellyfin Server";
             ModelNumber = "01";
-            ModelUrl = "https://github.com/veso/veso";
-            ManufacturerUrl = "https://github.com/veso/veso";
+            ModelUrl = "https://github.com/vesotv/veso";
+            ManufacturerUrl = "https://github.com/vesotv/veso";
 
             AlbumArtPn = "JPEG_SM";
 

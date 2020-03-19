@@ -44,7 +44,7 @@ override_dh_auto_build:
 	echo $(WEB_VERSION)
 	# Clone down and build Web frontend
 	mkdir -p $(WEB_TARGET)
-	wget -O web-src.tgz https://github.com/veso/veso-web/archive/v$(WEB_VERSION).tar.gz || wget -O web-src.tgz https://github.com/veso/veso-web/archive/master.tar.gz
+	wget -O web-src.tgz https://github.com/vesotv/veso-web/archive/v$(WEB_VERSION).tar.gz || wget -O web-src.tgz https://github.com/vesotv/veso-web/archive/master.tar.gz
 	mkdir -p $(CURDIR)/web
 	tar -xzf web-src.tgz -C $(CURDIR)/web/ --strip 1
 	cd $(CURDIR)/web/ && npm install yarn

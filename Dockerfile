@@ -4,7 +4,7 @@ ARG FFMPEG_VERSION=latest
 FROM node:alpine as web-builder
 ARG JELLYFIN_WEB_VERSION=master
 RUN apk add curl git \
- && curl -L https://github.com/veso/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
+ && curl -L https://github.com/vesotv/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
  && cd veso-web-* \
  && yarn install \
  && yarn build \

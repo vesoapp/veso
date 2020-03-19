@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # restart.sh - Jellyfin server restart script
-# Part of the Jellyfin project (https://github.com/veso)
+# Part of the Jellyfin project (https://github.com/vesotv)
 #
 # This script restarts the Jellyfin daemon on Linux when using
 # the Restart button on the admin dashboard. It supports the

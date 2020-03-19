@@ -71,7 +71,7 @@ debian_changelog_temp="$( mktemp )"
 echo -e "### DEBIAN PACKAGE CHANGELOG: Verify this file looks correct or edit accordingly, then delete this line, write, and exit.
 veso (${new_version_deb}) unstable; urgency=medium
 
-  * New upstream version ${new_version}; release changelog at https://github.com/veso/veso/releases/tag/v${new_version}
+  * New upstream version ${new_version}; release changelog at https://github.com/vesotv/veso/releases/tag/v${new_version}
 
  -- Jellyfin Packaging Team <packaging@veso.org>  $( date --rfc-2822 )
 " >> ${debian_changelog_temp}
@@ -101,7 +101,7 @@ sed -i '/^%changelog/d' xx01
 echo -e "### YUM SPEC CHANGELOG: Verify this file looks correct or edit accordingly, then delete this line, write, and exit.
 %changelog
 * $( LANG=C date '+%a %b %d %Y' ) Jellyfin Packaging Team <packaging@veso.org>
-- New upstream version ${new_version}; release changelog at https://github.com/veso/veso/releases/tag/v${new_version}" >> ${fedora_changelog_temp}
+- New upstream version ${new_version}; release changelog at https://github.com/vesotv/veso/releases/tag/v${new_version}" >> ${fedora_changelog_temp}
 cat xx01 >> ${fedora_changelog_temp}
 # Edit the file to verify
 $EDITOR ${fedora_changelog_temp}

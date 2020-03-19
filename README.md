@@ -7,10 +7,10 @@
 <img alt="Logo Banner" src="https://raw.githubusercontent.com/veso/veso-ux/master/branding/SVG/banner-logo-solid.svg?sanitize=true"/>
 <br/>
 <br/>
-<a href="https://github.com/veso/veso">
+<a href="https://github.com/vesotv/veso">
 <img alt="GPL 2.0 License" src="https://img.shields.io/github/license/veso/veso.svg"/>
 </a>
-<a href="https://github.com/veso/veso/releases">
+<a href="https://github.com/vesotv/veso/releases">
 <img alt="Current Release" src="https://img.shields.io/github/release/veso/veso.svg"/>
 </a>
 <a href="https://translate.veso.org/projects/veso/veso-core/?utm_source=widget">

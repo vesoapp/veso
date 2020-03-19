@@ -8,7 +8,7 @@ Click on the Docker tab
 
 Add the following line under "Template Repositories" 
 
-https://github.com/veso/veso/blob/master/deployment/unraid/docker-templates
+https://github.com/vesotv/veso/blob/master/deployment/unraid/docker-templates
 
 Click save than click on Add Container and select veso.
 

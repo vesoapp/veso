@@ -25,13 +25,13 @@ jobs:
         displayName: "Clone Web Client (Master, Release, or Tag)"
         condition: and(succeeded(), or(contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')), eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
         inputs:
-          script: "git clone --single-branch --branch $(Build.SourceBranchName) --depth=1 https://github.com/veso/veso-web.git $(Agent.TempDirectory)/veso-web"
+          script: "git clone --single-branch --branch $(Build.SourceBranchName) --depth=1 https://github.com/vesotv/veso-web.git $(Agent.TempDirectory)/veso-web"
 
       - task: CmdLine@2
         displayName: "Clone Web Client (PR)"
         condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master')), eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest'))
         inputs:
-          script: "git clone --single-branch --branch $(System.PullRequest.TargetBranch) --depth 1 https://github.com/veso/veso-web.git $(Agent.TempDirectory)/veso-web"
+          script: "git clone --single-branch --branch $(System.PullRequest.TargetBranch) --depth 1 https://github.com/vesotv/veso-web.git $(Agent.TempDirectory)/veso-web"
 
       - task: NodeTool@0
         displayName: "Install Node"

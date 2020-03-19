@@ -3,11 +3,11 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>Generic Device</Name>
   <Manufacturer>Jellyfin</Manufacturer>
-  <ManufacturerUrl>https://github.com/veso/veso</ManufacturerUrl>
+  <ManufacturerUrl>https://github.com/vesotv/veso</ManufacturerUrl>
   <ModelName>Jellyfin Server</ModelName>
   <ModelDescription>UPnP/AV 1.0 Compliant Media Server</ModelDescription>
   <ModelNumber>01</ModelNumber>
-  <ModelUrl>https://github.com/veso/veso</ModelUrl>
+  <ModelUrl>https://github.com/vesotv/veso</ModelUrl>
   <EnableAlbumArtInDidl>false</EnableAlbumArtInDidl>
   <EnableSingleAlbumArtLimit>false</EnableSingleAlbumArtLimit>
   <EnableSingleSubtitleLimit>false</EnableSingleSubtitleLimit>
