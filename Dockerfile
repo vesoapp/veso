@@ -18,7 +18,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 # see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
 RUN dotnet publish Jellyfin.Server --disable-parallel --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
-FROM veso/ffmpeg:${FFMPEG_VERSION} as ffmpeg
+FROM vesotv/ffmpeg:${FFMPEG_VERSION} as ffmpeg
 FROM debian:buster-slim
 
 # https://askubuntu.com/questions/972516/debian-frontend-environment-variable
