@@ -15,7 +15,7 @@ namespace Jellyfin.Api.Auth.FirstTimeSetupOrElevatedPolicy
         /// <summary>
         /// Initializes a new instance of the <see cref="FirstTimeSetupOrElevatedHandler" /> class.
         /// </summary>
-        /// <param name="configurationManager">The jellyfin configuration manager.</param>
+        /// <param name="configurationManager">The veso configuration manager.</param>
         public FirstTimeSetupOrElevatedHandler(IConfigurationManager configurationManager)
         {
             _configurationManager = configurationManager;

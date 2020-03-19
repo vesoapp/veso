@@ -58,12 +58,12 @@ function Elevate-Window {
 
 if($Quiet.IsPresent -or $Quiet -eq $true){
     if([string]::IsNullOrEmpty($JellyfinLibraryLocation)){
-        $Script:JellyfinDataDir = "$env:LOCALAPPDATA\jellyfin\"
+        $Script:JellyfinDataDir = "$env:LOCALAPPDATA\veso\"
     }else{
         $Script:JellyfinDataDir = $JellyfinLibraryLocation
     }
     if([string]::IsNullOrEmpty($InstallLocation)){
-        $Script:DefaultJellyfinInstallDirectory = "$env:Appdata\jellyfin\"
+        $Script:DefaultJellyfinInstallDirectory = "$env:Appdata\veso\"
     }else{
         $Script:DefaultJellyfinInstallDirectory = $InstallLocation
     }
@@ -82,7 +82,7 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
     }else{
         $Script:InstallServiceAsUser = $true
         $Script:UserCredentials = $ServiceUser
-        $Script:JellyfinDataDir = "$env:HOMEDRIVE\Users\$($Script:UserCredentials.UserName)\Appdata\Local\jellyfin\"}
+        $Script:JellyfinDataDir = "$env:HOMEDRIVE\Users\$($Script:UserCredentials.UserName)\Appdata\Local\veso\"}
     if($CreateDesktopShorcut.IsPresent -or $CreateDesktopShorcut -eq $true) {$Script:CreateShortcut = $true}else{$Script:CreateShortcut = $false}
     if($MigrateEmbyLibrary.IsPresent -or $MigrateEmbyLibrary -eq $true){$Script:MigrateLibrary = $true}else{$Script:MigrateLibrary = $false}
     if($LaunchJellyfin.IsPresent -or $LaunchJellyfin -eq $true){$Script:StartJellyfin = $true}else{$Script:StartJellyfin = $false}
@@ -93,12 +93,12 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
     Copy-Item -Path $PSScriptRoot/* -DestinationPath "$Script:DefaultJellyfinInstallDirectory/" -Force -Recurse
     if($Script:InstallAsService){
         if($Script:InstallServiceAsUser){
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\veso.exe`" --datadir `"$Script:JellyfinDataDir`"
             Start-Sleep -Milliseconds 500
             &sc.exe config Jellyfin obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
             &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
         }else{
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\veso.exe`" --datadir `"$Script:JellyfinDataDir`"
             Start-Sleep -Milliseconds 500
             #&"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin ObjectName $Script:UserCredentials.UserName $Script:UserCredentials.GetNetworkCredential().Password
             #Set-Service -Name Jellyfin -Credential $Script:UserCredentials
@@ -115,14 +115,14 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
     if($Script:CreateShortcut){
         $WshShell = New-Object -comObject WScript.Shell
         $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Jellyfin.lnk")
-        $Shortcut.TargetPath = "$Script:DefaultJellyfinInstallDirectory\jellyfin.exe"
+        $Shortcut.TargetPath = "$Script:DefaultJellyfinInstallDirectory\veso.exe"
         $Shortcut.Save()
     }
     if($Script:StartJellyfin){
         if($Script:InstallAsService){
             Get-Service Jellyfin | Start-Service
         }else{
-            Start-Process -FilePath $Script:DefaultJellyfinInstallDirectory\jellyfin.exe -PassThru
+            Start-Process -FilePath $Script:DefaultJellyfinInstallDirectory\veso.exe -PassThru
         }
     }
 }else{
@@ -131,8 +131,8 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-$Script:JellyFinDataDir = "$env:LOCALAPPDATA\jellyfin\"
-$Script:DefaultJellyfinInstallDirectory = "$env:Appdata\jellyfin\"
+$Script:JellyFinDataDir = "$env:LOCALAPPDATA\veso\"
+$Script:DefaultJellyfinInstallDirectory = "$env:Appdata\veso\"
 $Script:defaultEmbyDataDir = "$env:Appdata\Emby-Server\"
 $Script:InstallAsService = $False
 $Script:InstallServiceAsUser = $false
@@ -171,13 +171,13 @@ function InstallJellyfin {
     if($Script:InstallAsService){
         if($Script:InstallServiceAsUser){
             Write-Host "Installing Service as user $($Script:UserCredentials.UserName)"
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\veso.exe`" --datadir `"$Script:JellyfinDataDir`"
             Start-Sleep -Milliseconds 2000
             &sc.exe config Jellyfin obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
             &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
         }else{
             Write-Host "Installing Service as LocalSystem"
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\veso.exe`" --datadir `"$Script:JellyfinDataDir`"
             Start-Sleep -Milliseconds 2000
             &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
         }
@@ -206,7 +206,7 @@ function InstallJellyfin {
         Write-Host "Creating Shortcut"
         $WshShell = New-Object -comObject WScript.Shell
         $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Jellyfin.lnk")
-        $Shortcut.TargetPath = "$Script:DefaultJellyfinInstallDirectory\jellyfin.exe"
+        $Shortcut.TargetPath = "$Script:DefaultJellyfinInstallDirectory\veso.exe"
         $Shortcut.Save()
     }
     $ProgressBar.Value = 90
@@ -216,7 +216,7 @@ function InstallJellyfin {
             Get-Service Jellyfin | Start-Service
         }else{
             Write-Host "Starting Jellyfin"
-            Start-Process -FilePath $Script:DefaultJellyfinInstallDirectory\jellyfin.exe -PassThru
+            Start-Process -FilePath $Script:DefaultJellyfinInstallDirectory\veso.exe -PassThru
         }
     }
     $progressbar.Value = 100

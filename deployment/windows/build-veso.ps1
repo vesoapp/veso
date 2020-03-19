@@ -6,8 +6,8 @@ param(
     [switch]$InstallNSSM,
     [switch]$SkipJellyfinBuild,
     [switch]$GenerateZip,
-    [string]$InstallLocation = "./dist/jellyfin-win-nsis",
-    [string]$UXLocation = "../jellyfin-ux",
+    [string]$InstallLocation = "./dist/veso-win-nsis",
+    [string]$UXLocation = "../veso-ux",
     [switch]$InstallTrayApp,
     [ValidateSet('Debug','Release')][string]$BuildType = 'Release',
     [ValidateSet('Quiet','Minimal', 'Normal')][string]$DotNetVerbosity = 'Minimal',
@@ -55,7 +55,7 @@ function Install-FFMPEG {
         Write-Warning "FFMPEG will not be installed"
     }elseif($Architecture -eq 'x64'){
          Write-Verbose "Downloading 64 bit FFMPEG"
-         Invoke-WebRequest -Uri https://repo.jellyfin.org/releases/server/windows/ffmpeg/jellyfin-ffmpeg.zip -UseBasicParsing -OutFile "$tempdir/ffmpeg.zip" | Write-Verbose
+         Invoke-WebRequest -Uri https://repo.veso.org/releases/server/windows/ffmpeg/veso-ffmpeg.zip -UseBasicParsing -OutFile "$tempdir/ffmpeg.zip" | Write-Verbose
     }else{
          Write-Verbose "Downloading 32 bit FFMPEG"
          Invoke-WebRequest -Uri https://ffmpeg.zeranoe.com/builds/win32/shared/$FFMPEGVersionX86.zip -UseBasicParsing -OutFile "$tempdir/ffmpeg.zip" | Write-Verbose
@@ -116,11 +116,11 @@ function Make-NSIS {
 
     $env:InstallLocation = $ResolvedInstallLocation
     if($InstallNSIS.IsPresent -or ($InstallNSIS -eq $true)){
-        & "$tempdir/nsis/nsis-3.04/makensis.exe" /D$Architecture /DUXPATH=$ResolvedUXLocation ".\deployment\windows\jellyfin.nsi"
+        & "$tempdir/nsis/nsis-3.04/makensis.exe" /D$Architecture /DUXPATH=$ResolvedUXLocation ".\deployment\windows\veso.nsi"
     } else {
-        & "makensis" /D$Architecture /DUXPATH=$ResolvedUXLocation ".\deployment\windows\jellyfin.nsi"
+        & "makensis" /D$Architecture /DUXPATH=$ResolvedUXLocation ".\deployment\windows\veso.nsi"
     }
-    Copy-Item .\deployment\windows\jellyfin_*.exe $ResolvedInstallLocation\..\
+    Copy-Item .\deployment\windows\veso_*.exe $ResolvedInstallLocation\..\
 }
 
 
@@ -149,7 +149,7 @@ function Install-TrayApp {
     }else{
         Write-Verbose "Downloading Tray App and copying to Jellyfin location"
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri https://github.com/jellyfin/jellyfin-windows-tray/releases/latest/download/JellyfinTray.exe -UseBasicParsing -OutFile "$installLocation/JellyfinTray.exe" | Write-Verbose
+        Invoke-WebRequest -Uri https://github.com/veso/veso-windows-tray/releases/latest/download/JellyfinTray.exe -UseBasicParsing -OutFile "$installLocation/JellyfinTray.exe" | Write-Verbose
     }
 }
 
@@ -169,7 +169,7 @@ if($InstallTrayApp.IsPresent -or ($InstallTrayApp -eq $true)){
     Write-Verbose "Downloading Windows Tray App"
     Install-TrayApp $ResolvedInstallLocation $Architecture
 }
-#Copy-Item .\deployment\windows\install-jellyfin.ps1 $ResolvedInstallLocation\install-jellyfin.ps1
+#Copy-Item .\deployment\windows\install-veso.ps1 $ResolvedInstallLocation\install-veso.ps1
 #Copy-Item .\deployment\windows\install.bat $ResolvedInstallLocation\install.bat
 Copy-Item .\LICENSE $ResolvedInstallLocation\LICENSE
 if($InstallNSIS.IsPresent -or ($InstallNSIS -eq $true)){
@@ -185,6 +185,6 @@ if($InstallNSIS.IsPresent -or ($InstallNSIS -eq $true)){
     Cleanup-NSIS
 }
 if($GenerateZip.IsPresent -or ($GenerateZip -eq $true)){
-    Compress-Archive -Path $ResolvedInstallLocation -DestinationPath "$ResolvedInstallLocation/jellyfin.zip" -Force
+    Compress-Archive -Path $ResolvedInstallLocation -DestinationPath "$ResolvedInstallLocation/veso.zip" -Force
 }
 Write-Verbose "Finished"

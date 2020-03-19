@@ -17,7 +17,7 @@ namespace Jellyfin.Server.Extensions
     public static class ApiServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds jellyfin API authorization policies to the DI container.
+        /// Adds veso API authorization policies to the DI container.
         /// </summary>
         /// <param name="serviceCollection">The service collection.</param>
         /// <returns>The updated service collection.</returns>
@@ -56,7 +56,7 @@ namespace Jellyfin.Server.Extensions
         }
 
         /// <summary>
-        /// Extension method for adding the jellyfin API to the service collection.
+        /// Extension method for adding the veso API to the service collection.
         /// </summary>
         /// <param name="serviceCollection">The service collection.</param>
         /// <param name="baseUrl">The base url for the API.</param>

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # restart.sh - Jellyfin server restart script
-# Part of the Jellyfin project (https://github.com/jellyfin)
+# Part of the Jellyfin project (https://github.com/veso)
 #
 # This script restarts the Jellyfin daemon on Linux when using
 # the Restart button on the admin dashboard. It supports the
@@ -24,13 +24,13 @@ cmd="$( get_service_command )"
 echo "Detected service control platform '$cmd'; using it to restart Jellyfin..."
 case $cmd in
     'systemctl')
-        echo "sleep 2; /usr/bin/sudo $( which systemctl ) restart jellyfin" | at now 
+        echo "sleep 2; /usr/bin/sudo $( which systemctl ) restart veso" | at now 
         ;;
     'service')
-        echo "sleep 2; /usr/bin/sudo $( which service ) jellyfin restart" | at now 
+        echo "sleep 2; /usr/bin/sudo $( which service ) veso restart" | at now 
         ;;
     'sysv')
-        echo "sleep 2; /usr/bin/sudo /etc/init.d/jellyfin restart" | at now 
+        echo "sleep 2; /usr/bin/sudo /etc/init.d/veso restart" | at now 
         ;;
 esac
 exit 0

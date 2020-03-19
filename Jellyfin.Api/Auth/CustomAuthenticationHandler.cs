@@ -19,7 +19,7 @@ namespace Jellyfin.Api.Auth
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomAuthenticationHandler" /> class.
         /// </summary>
-        /// <param name="authService">The jellyfin authentication service.</param>
+        /// <param name="authService">The veso authentication service.</param>
         /// <param name="options">Options monitor.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="encoder">The url encoder.</param>

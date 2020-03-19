@@ -248,8 +248,8 @@ deployment/debian-package-x64/pkg-src/.debhelper/
 deployment/debian-package-x64/pkg-src/*.debhelper
 deployment/debian-package-x64/pkg-src/debhelper-build-stamp
 deployment/debian-package-x64/pkg-src/files
-deployment/debian-package-x64/pkg-src/jellyfin.substvars
-deployment/debian-package-x64/pkg-src/jellyfin/
+deployment/debian-package-x64/pkg-src/veso.substvars
+deployment/debian-package-x64/pkg-src/veso/
 # Don't ignore the debian/bin folder
 !deployment/debian-package-x64/pkg-src/bin/
 
@@ -258,7 +258,7 @@ deployment/**/pkg-dist/
 deployment/**/pkg-dist-tmp/
 deployment/collect-dist/
 
-jellyfin_version.ini
+veso_version.ini
 
 ci/
 

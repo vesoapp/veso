@@ -4,8 +4,8 @@ ARG FFMPEG_VERSION=latest
 FROM node:alpine as web-builder
 ARG JELLYFIN_WEB_VERSION=master
 RUN apk add curl git \
- && curl -L https://github.com/jellyfin/jellyfin-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
- && cd jellyfin-web-* \
+ && curl -L https://github.com/veso/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
+ && cd veso-web-* \
  && yarn install \
  && yarn build \
  && mv dist /dist
@@ -16,9 +16,9 @@ COPY . .
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 # because of changes in docker and systemd we need to not build in parallel at the moment
 # see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
-RUN dotnet publish Jellyfin.Server --disable-parallel --configuration Release --output="/jellyfin" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+RUN dotnet publish Jellyfin.Server --disable-parallel --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
-FROM jellyfin/ffmpeg:${FFMPEG_VERSION} as ffmpeg
+FROM veso/ffmpeg:${FFMPEG_VERSION} as ffmpeg
 FROM debian:buster-slim
 
 # https://askubuntu.com/questions/972516/debian-frontend-environment-variable
@@ -29,8 +29,8 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
-COPY --from=builder /jellyfin /jellyfin
-COPY --from=web-builder /dist /jellyfin/jellyfin-web
+COPY --from=builder /veso /veso
+COPY --from=web-builder /dist /veso/veso-web
 # Install dependencies:
 #   libfontconfig1: needed for Skia
 #   libgomp1: needed for ffmpeg
@@ -58,7 +58,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 EXPOSE 8096
 VOLUME /cache /config /media
-ENTRYPOINT ["./jellyfin/jellyfin", \
+ENTRYPOINT ["./veso/veso", \
     "--datadir", "/config", \
     "--cachedir", "/cache", \
     "--ffmpeg", "/usr/local/bin/ffmpeg"]

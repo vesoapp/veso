@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-NAME=jellyfin
+NAME=veso
 DEFAULT_FILE=/etc/default/${NAME}
 
 # Source Jellyfin default configuration
@@ -29,13 +29,13 @@ case "$1" in
     elif [ -x "/etc/init.d/${NAME}" ] || [ -e "/etc/init/${NAME}.conf" ]; then
       invoke-rc.d ${NAME} stop > /dev/null 2>&1 || true
     fi
-    # try and figure out if jellyfin is running
-    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1  -name "jellyfin*.pid" -print -quit)
+    # try and figure out if veso is running
+    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1  -name "veso*.pid" -print -quit)
     [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && JELLYFIN_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
     if [[ -n "$JELLYFIN_PID" ]]; then
       echo "Stopping Jellyfin!"
-      # if jellyfin is still running, kill it
+      # if veso is still running, kill it
       if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
         CPIDS=$(pgrep -P $JELLYFIN_PID)
         sleep 2 && kill -KILL $CPIDS
@@ -54,7 +54,7 @@ case "$1" in
     # Clean up old Emby cruft that can break the user's system
     [[ -f /etc/sudoers.d/emby ]] && rm -f /etc/sudoers.d/emby
 
-    # If we have existing config, log, or cache dirs in /var/lib/jellyfin, move them into the right place
+    # If we have existing config, log, or cache dirs in /var/lib/veso, move them into the right place
     if [[ -d $PROGRAMDATA/config ]]; then
         mv $PROGRAMDATA/config $CONFIGDATA
     fi

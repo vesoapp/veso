@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-NAME=jellyfin
+NAME=veso
 DEFAULT_FILE=/etc/default/${NAME}
 
 # Source Jellyfin default configuration
@@ -25,11 +25,11 @@ case "$1" in
       invoke-rc.d ${NAME} stop > /dev/null 2>&1 || true
     fi
     # Ensure that it is shutdown
-    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1 -name "jellyfin*.pid" -print -quit)
+    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1 -name "veso*.pid" -print -quit)
     [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && JELLYFIN_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
     if [[ -n "$JELLYFIN_PID" ]]; then
-      # if jellyfin is still running, kill it
+      # if veso is still running, kill it
       if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
         CPIDS=$(pgrep -P $JELLYFIN_PID)
         sleep 2 && kill -KILL $CPIDS
@@ -44,8 +44,8 @@ case "$1" in
         [[ -f $PIDFILE ]] && rm $PIDFILE
       fi
     fi
-    if [[ -f /usr/lib/jellyfin/bin/MediaBrowser.Server.Mono.exe.so ]]; then
-      rm /usr/lib/jellyfin/bin/MediaBrowser.Server.Mono.exe.so
+    if [[ -f /usr/lib/veso/bin/MediaBrowser.Server.Mono.exe.so ]]; then
+      rm /usr/lib/veso/bin/MediaBrowser.Server.Mono.exe.so
     fi
     ;;
   failed-upgrade)

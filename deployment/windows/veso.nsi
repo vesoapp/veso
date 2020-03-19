@@ -46,10 +46,10 @@ Unicode True
     !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\JellyfinServer" ;Registry to show up in Add/Remove Programs
     !define REG_CONFIG_KEY "Software\Jellyfin\Server" ;Registry to store all configuration
 
-    !getdllversion "$%InstallLocation%\jellyfin.dll" ver_ ;Align installer version with jellyfin.dll version
+    !getdllversion "$%InstallLocation%\veso.dll" ver_ ;Align installer version with veso.dll version
 
     Name "Jellyfin Server ${ver_1}.${ver_2}.${ver_3} ${NAMESUFFIX}" ; This is referred in various header text labels
-    OutFile "jellyfin_${ver_1}.${ver_2}.${ver_3}_windows-${ARCH}.exe" ; Naming convention jellyfin_{version}_windows-{arch].exe
+    OutFile "veso_${ver_1}.${ver_2}.${ver_3}_windows-${ARCH}.exe" ; Naming convention veso_{version}_windows-{arch].exe
     BrandingText "Jellyfin Server ${ver_1}.${ver_2}.${ver_3} Installer" ; This shows in just over the buttons
 
 ; installer attributes, these show up in details tab on installer properties
@@ -173,7 +173,7 @@ Section "!Jellyfin Server (required)" InstallJellyfinServer
     WriteRegExpandStr HKLM "${REG_CONFIG_KEY}" "DataFolder" "$_JELLYFINDATADIR_"
     WriteRegStr HKLM "${REG_CONFIG_KEY}" "ServiceAccountType" "$_SERVICEACCOUNTTYPE_"
 
-    !getdllversion "$%InstallLocation%\jellyfin.dll" ver_
+    !getdllversion "$%InstallLocation%\veso.dll" ver_
     StrCpy $_JELLYFINVERSION_ "${ver_1}.${ver_2}.${ver_3}" ;
 
 ; Write the uninstall keys for Windows
@@ -181,7 +181,7 @@ Section "!Jellyfin Server (required)" InstallJellyfinServer
     WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" '"$INSTDIR\Uninstall.exe",0'
     WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "The Jellyfin Project"
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://jellyfin.org/"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://veso.org/"
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "$_JELLYFINVERSION_"
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" 1
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" 1
@@ -196,7 +196,7 @@ ${If} $_INSTALLSERVICE_ == "Yes" ; Only run this if we're going to install the s
     DetailPrint "Jellyfin Server service statuscode, $0"
     ${If} $0 == 0
         InstallRetry:
-        ExecWait '"$INSTDIR\nssm.exe" install JellyfinServer "$INSTDIR\jellyfin.exe" --service --datadir \"$_JELLYFINDATADIR_\"' $0
+        ExecWait '"$INSTDIR\nssm.exe" install JellyfinServer "$INSTDIR\veso.exe" --service --datadir \"$_JELLYFINDATADIR_\"' $0
         ${If} $0 <> 0
             !insertmacro ShowError "Could not install the Jellyfin Server service." InstallRetry
         ${EndIf}
@@ -205,7 +205,7 @@ ${If} $_INSTALLSERVICE_ == "Yes" ; Only run this if we're going to install the s
         DetailPrint "Jellyfin Server Service exists, updating..."
 
         ConfigureApplicationRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer Application "$INSTDIR\jellyfin.exe"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer Application "$INSTDIR\veso.exe"' $0
         ${If} $0 <> 0
             !insertmacro ShowError "Could not configure the Jellyfin Server service." ConfigureApplicationRetry
         ${EndIf}
@@ -278,10 +278,10 @@ SectionEnd
 Section "Create Shortcuts" CreateWinShortcuts
     ${If} $_MAKESHORTCUTS_ == "Yes"
         CreateDirectory "$SMPROGRAMS\Jellyfin Server"
-        CreateShortCut "$SMPROGRAMS\Jellyfin Server\Jellyfin (View Console).lnk" "$INSTDIR\jellyfin.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMAXIMIZED
-        CreateShortCut "$SMPROGRAMS\Jellyfin Server\Jellyfin Tray App.lnk" "$INSTDIR\jellyfintray.exe" "" "$INSTDIR\icon.ico" 0
-        ;CreateShortCut "$DESKTOP\Jellyfin Server.lnk" "$INSTDIR\jellyfin.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMINIMIZED
-        CreateShortCut "$DESKTOP\Jellyfin Server\Jellyfin Server.lnk" "$INSTDIR\jellyfintray.exe" "" "$INSTDIR\icon.ico" 0
+        CreateShortCut "$SMPROGRAMS\Jellyfin Server\Jellyfin (View Console).lnk" "$INSTDIR\veso.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMAXIMIZED
+        CreateShortCut "$SMPROGRAMS\Jellyfin Server\Jellyfin Tray App.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
+        ;CreateShortCut "$DESKTOP\Jellyfin Server.lnk" "$INSTDIR\veso.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMINIMIZED
+        CreateShortCut "$DESKTOP\Jellyfin Server\Jellyfin Server.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
     ${EndIf}
 SectionEnd
 
@@ -346,7 +346,7 @@ Section "Uninstall"
         ${EndIf}
 
     Delete "$INSTDIR\*.*"
-    RMDir /r /REBOOTOK "$INSTDIR\jellyfin-web"
+    RMDir /r /REBOOTOK "$INSTDIR\veso-web"
     Delete "$INSTDIR\Uninstall.exe"
     RMDir /r /REBOOTOK "$INSTDIR"
     

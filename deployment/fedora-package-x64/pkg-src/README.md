@@ -4,7 +4,7 @@
 
 Change into this directory `cd rpm-package`
 Run the build script `./build-fedora-rpm.sh`.
-Resulting RPM and src.rpm will be in `../../jellyfin-*.rpm`
+Resulting RPM and src.rpm will be in `../../veso-*.rpm`
 
 ## ffmpeg
 
@@ -20,10 +20,10 @@ $ sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpm
 
 ## ISO mounting
 
-To allow Jellyfin to mount/umount ISO files uncomment these two lines in `/etc/sudoers.d/jellyfin-sudoers`
+To allow Jellyfin to mount/umount ISO files uncomment these two lines in `/etc/sudoers.d/veso-sudoers`
 ```
-# %jellyfin ALL=(ALL) NOPASSWD: /bin/mount
-# %jellyfin ALL=(ALL) NOPASSWD: /bin/umount
+# %veso ALL=(ALL) NOPASSWD: /bin/mount
+# %veso ALL=(ALL) NOPASSWD: /bin/umount
 ```
 
 ## Building with dotnet

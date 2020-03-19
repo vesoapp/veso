@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Containers>
-  <TemplateURL>https://raw.githubusercontent.com/jellyfin/jellyfin/deployment/unraid/docker-templates/jellyfin.xml</TemplateURL>
+  <TemplateURL>https://raw.githubusercontent.com/veso/veso/deployment/unraid/docker-templates/veso.xml</TemplateURL>
   <Beta>False</Beta>
   <Category>MediaApp:Video MediaApp:Music MediaApp:Photos MediaServer:Video MediaServer:Music MediaServer:Photos</Category>
   <Name>Jellyfin</Name>
@@ -17,11 +17,11 @@
   <Overview>
     Jellyfin Server is a home media server built on top of other popular open source technologies such as Service Stack, jQuery, jQuery mobile, and Mono and will remain completely free!
   </Overview>
-  <Support>https://www.reddit.com/r/jellyfin/</Support>
-  <Registry>https://hub.docker.com/r/jellyfin/jellyfin/</Registry>
-  <GitHub>https://github.com/jellyfin/jellyfin/></GitHub>
-  <Repository>jellyfin/jellyfin</Repository>
-  <Project>https://jellyfin.media/</Project>
+  <Support>https://www.reddit.com/r/veso/</Support>
+  <Registry>https://hub.docker.com/r/veso/veso/</Registry>
+  <GitHub>https://github.com/veso/veso/></GitHub>
+  <Repository>veso/veso</Repository>
+  <Project>https://veso.media/</Project>
   <BindTime>true</BindTime>
   <Privileged>false</Privileged>
   <Networking>
@@ -52,6 +52,6 @@
     </Volume>
   </Data>
   <WebUI>http://[IP]:[PORT:8096]/</WebUI>
-  <Icon>https://raw.githubusercontent.com/binhex/docker-templates/master/binhex/images/jellyfin-icon.png</Icon>
+  <Icon>https://raw.githubusercontent.com/binhex/docker-templates/master/binhex/images/veso-icon.png</Icon>
   <ExtraParams></ExtraParams>
 </Containers>

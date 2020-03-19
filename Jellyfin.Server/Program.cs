@@ -298,9 +298,9 @@ namespace Jellyfin.Server
             // dataDir
             // IF      --datadir
             // ELSE IF $JELLYFIN_DATA_DIR
-            // ELSE IF windows, use <%APPDATA%>/jellyfin
-            // ELSE IF $XDG_DATA_HOME then use $XDG_DATA_HOME/jellyfin
-            // ELSE    use $HOME/.local/share/jellyfin
+            // ELSE IF windows, use <%APPDATA%>/veso
+            // ELSE IF $XDG_DATA_HOME then use $XDG_DATA_HOME/veso
+            // ELSE    use $HOME/.local/share/veso
             var dataDir = options.DataDir;
             if (string.IsNullOrEmpty(dataDir))
             {
@@ -311,7 +311,7 @@ namespace Jellyfin.Server
                     // LocalApplicationData follows the XDG spec on unix machines
                     dataDir = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "jellyfin");
+                        "veso");
                 }
             }
 
@@ -321,8 +321,8 @@ namespace Jellyfin.Server
             // ELSE IF --datadir, use <datadir>/config (assume portable run)
             // ELSE IF <datadir>/config exists, use that
             // ELSE IF windows, use <datadir>/config
-            // ELSE IF $XDG_CONFIG_HOME use $XDG_CONFIG_HOME/jellyfin
-            // ELSE    $HOME/.config/jellyfin
+            // ELSE IF $XDG_CONFIG_HOME use $XDG_CONFIG_HOME/veso
+            // ELSE    $HOME/.config/veso
             var configDir = options.ConfigDir;
             if (string.IsNullOrEmpty(configDir))
             {
@@ -352,7 +352,7 @@ namespace Jellyfin.Server
                                 ".config");
                         }
 
-                        configDir = Path.Combine(configDir, "jellyfin");
+                        configDir = Path.Combine(configDir, "veso");
                     }
                 }
             }
@@ -361,8 +361,8 @@ namespace Jellyfin.Server
             // IF      --cachedir
             // ELSE IF $JELLYFIN_CACHE_DIR
             // ELSE IF windows, use <datadir>/cache
-            // ELSE IF XDG_CACHE_HOME, use $XDG_CACHE_HOME/jellyfin
-            // ELSE    HOME/.cache/jellyfin
+            // ELSE IF XDG_CACHE_HOME, use $XDG_CACHE_HOME/veso
+            // ELSE    HOME/.cache/veso
             var cacheDir = options.CacheDir;
             if (string.IsNullOrEmpty(cacheDir))
             {
@@ -390,7 +390,7 @@ namespace Jellyfin.Server
                                 ".cache");
                         }
 
-                        cacheDir = Path.Combine(cacheDir, "jellyfin");
+                        cacheDir = Path.Combine(cacheDir, "veso");
                     }
                 }
             }
@@ -398,7 +398,7 @@ namespace Jellyfin.Server
             // webDir
             // IF      --webdir
             // ELSE IF $JELLYFIN_WEB_DIR
-            // ELSE    use <bindir>/jellyfin-web
+            // ELSE    use <bindir>/veso-web
             var webDir = options.WebDir;
 
             if (string.IsNullOrEmpty(webDir))
@@ -408,7 +408,7 @@ namespace Jellyfin.Server
                 if (string.IsNullOrEmpty(webDir))
                 {
                     // Use default location under ResourcesPath
-                    webDir = Path.Combine(AppContext.BaseDirectory, "jellyfin-web");
+                    webDir = Path.Combine(AppContext.BaseDirectory, "veso-web");
                 }
             }
 
