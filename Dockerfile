@@ -3,7 +3,7 @@ ARG FFMPEG_VERSION=latest
 
 FROM node:alpine as web-builder
 ARG JELLYFIN_WEB_VERSION=10.5.2
-RUN apk add curl git \
+RUN apk add curl git zlib zlib-dev autoconf g++ make libpng-dev gifsicle alpine-sdk automake libtool make gcc musl-dev nasm \
  && git clone --branch master --single-branch https://github.com/vesotv/veso-web.git \
  && cd veso-web \
  && yarn install \
