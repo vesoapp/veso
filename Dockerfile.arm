@@ -7,7 +7,7 @@ ARG DOTNET_VERSION=3.1
 
 FROM node:alpine as web-builder
 RUN apk add curl git \
- && git clone --branch release-10.5.z --single-branch https://github.com/vesotv/veso-web.git \
+ && git clone --branch master --single-branch https://github.com/vesotv/veso-web.git \
  && cd veso-web \
  && yarn install \
  && yarn build \
