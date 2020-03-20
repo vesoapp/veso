@@ -1,6 +1,6 @@
 ---
 # We just wrap `build` so this is really it
-name: "jellyfin"
+name: "veso"
 version: "10.5.2"
 packages:
   - debian-package-x64
