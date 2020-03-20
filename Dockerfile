@@ -2,9 +2,9 @@ ARG DOTNET_VERSION=3.1
 ARG FFMPEG_VERSION=latest
 
 FROM node:alpine as web-builder
-ARG JELLYFIN_WEB_VERSION=master
+ARG VESO_WEB_VERSION=master
 RUN apk add curl git \
- && curl -L https://github.com/vesotv/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
+ && curl -L https://github.com/vesotv/veso-web/archive/${VESO_WEB_VERSION}.tar.gz | tar zxf - \
  && cd veso-web-* \
  && yarn install \
  && yarn build \
@@ -16,9 +16,8 @@ COPY . .
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 # because of changes in docker and systemd we need to not build in parallel at the moment
 # see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
-RUN dotnet publish Jellyfin.Server --disable-parallel --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+RUN dotnet publish Veso.Server --disable-parallel --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
-FROM jellyfin/ffmpeg:${FFMPEG_VERSION} as ffmpeg
 FROM debian:buster-slim
 
 # https://askubuntu.com/questions/972516/debian-frontend-environment-variable
@@ -28,7 +27,6 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 # https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
-COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
 COPY --from=builder /veso /veso
 COPY --from=web-builder /dist /veso/veso-web
 # Install dependencies:
@@ -39,20 +37,14 @@ COPY --from=web-builder /dist /veso/veso-web
 RUN apt-get update \
  && apt-get install --no-install-recommends --no-install-suggests -y \
    libfontconfig1 \
-   libgomp1 \
-   libva-drm2 \
-   mesa-va-drivers \
-   openssl \
-   ca-certificates \
    vainfo \
    i965-va-driver \
+   ffmpeg \
  && apt-get clean autoclean -y\
  && apt-get autoremove -y\
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /cache /config /media \
- && chmod 777 /cache /config /media \
- && ln -s /opt/ffmpeg/bin/ffmpeg /usr/local/bin \
- && ln -s /opt/ffmpeg/bin/ffprobe /usr/local/bin
+ && chmod 777 /cache /config /media
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
@@ -61,4 +53,4 @@ VOLUME /cache /config /media
 ENTRYPOINT ["./veso/veso", \
     "--datadir", "/config", \
     "--cachedir", "/cache", \
-    "--ffmpeg", "/usr/local/bin/ffmpeg"]
+    "--ffmpeg", "/usr/bin/ffmpeg"]

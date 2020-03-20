@@ -1,0 +1,10 @@
+version: "3"
+services:
+  veso:
+    image: deanwake/veso:latest
+    user: 1000:1000
+    volumes:
+      - /Users/deanwake/media:/media
+    ports:
+      - 8096:8096
+      - 8920:8920
