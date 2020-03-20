@@ -3,7 +3,7 @@ Upstream-Name: veso
 Source: https://github.com/vesotv/veso
 
 Files: *
-Copyright: 2018 Jellyfin Team
+Copyright: 2018 Veso Team
 License: GPL-2.0+
 
 Files: debian/*

@@ -20,14 +20,14 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../templates:1001
-msgid "Jellyfin permission info:"
+msgid "Veso permission info:"
 msgstr ""
 
 #. Type: note
 #. Description
 #: ../templates:1001
 msgid ""
-"Jellyfin by default runs under a user named \"veso\".  Please ensure that the "
+"Veso by default runs under a user named \"veso\".  Please ensure that the "
 "user veso has read and write access to any folders you wish to add to your "
 "library. Otherwise please run veso under a different user."
 msgstr ""
@@ -35,7 +35,7 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Username to run Jellyfin as:"
+msgid "Username to run Veso as:"
 msgstr ""
 
 #. Type: string
@@ -47,11 +47,11 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../templates:3001
-msgid "Jellyfin still running"
+msgid "Veso still running"
 msgstr ""
 
 #. Type: note
 #. Description
 #: ../templates:3001
-msgid "Jellyfin is currently running. Please close it and try again."
+msgid "Veso is currently running. Please close it and try again."
 msgstr ""

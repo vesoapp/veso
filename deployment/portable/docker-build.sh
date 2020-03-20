@@ -26,7 +26,7 @@ rm -rf ${web_build_dir}
 version="$( grep "version:" ./build.yaml | sed -E 's/version: "([0-9\.]+.*)"/\1/' )"
 
 # Build archives
-dotnet publish Jellyfin.Server --configuration Release --output /dist/veso_${version}/ "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+dotnet publish Veso.Server --configuration Release --output /dist/veso_${version}/ "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 tar -cvzf /veso_${version}.portable.tar.gz -C /dist veso_${version}
 rm -rf /dist/veso_${version}
 

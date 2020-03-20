@@ -4,20 +4,20 @@ set -e
 NAME=veso
 DEFAULT_FILE=/etc/default/${NAME}
 
-# Source Jellyfin default configuration
+# Source Veso default configuration
 if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
 
 # Data directories for program data (cache, db), configs, and logs
-PROGRAMDATA=${JELLYFIN_DATA_DIRECTORY-/var/lib/$NAME}
-CONFIGDATA=${JELLYFIN_CONFIG_DIRECTORY-/etc/$NAME}
-LOGDATA=${JELLYFIN_LOG_DIRECTORY-/var/log/$NAME}
-CACHEDATA=${JELLYFIN_CACHE_DIRECTORY-/var/cache/$NAME}
+PROGRAMDATA=${Veso_DATA_DIRECTORY-/var/lib/$NAME}
+CONFIGDATA=${Veso_CONFIG_DIRECTORY-/etc/$NAME}
+LOGDATA=${Veso_LOG_DIRECTORY-/var/log/$NAME}
+CACHEDATA=${Veso_CACHE_DIRECTORY-/var/cache/$NAME}
 
 case "$1" in
   remove|upgrade|deconfigure)
-    echo "Stopping Jellyfin!"
+    echo "Stopping Veso!"
     # try graceful termination;
     if [[ -d /run/systemd/system ]]; then
       deb-systemd-invoke stop ${NAME}.service > /dev/null 2>&1 || true
@@ -26,19 +26,19 @@ case "$1" in
     fi
     # Ensure that it is shutdown
     PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1 -name "veso*.pid" -print -quit)
-    [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && JELLYFIN_PID=$(cat ${PIDFILE})
+    [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && Veso_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
-    if [[ -n "$JELLYFIN_PID" ]]; then
+    if [[ -n "$Veso_PID" ]]; then
       # if veso is still running, kill it
-      if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
-        CPIDS=$(pgrep -P $JELLYFIN_PID)
+      if [[ -n "$(ps -p $Veso_PID -o pid=)" ]]; then
+        CPIDS=$(pgrep -P $Veso_PID)
         sleep 2 && kill -KILL $CPIDS
         kill -TERM $CPIDS > /dev/null 2>&1
       fi
       sleep 1
       # if it's still running, show error
-      if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
-        echo "Could not successfully stop Jellyfin, please do so before uninstalling."
+      if [[ -n "$(ps -p $Veso_PID -o pid=)" ]]; then
+        echo "Could not successfully stop Veso, please do so before uninstalling."
         exit 1
       else
         [[ -f $PIDFILE ]] && rm $PIDFILE

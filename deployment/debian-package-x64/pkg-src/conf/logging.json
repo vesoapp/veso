@@ -15,7 +15,7 @@
                         {
                             "Name": "File",
                             "Args": {
-                                "path": "%JELLYFIN_LOG_DIR%//veso.log",
+                                "path": "%Veso_LOG_DIR%//veso.log",
                                 "fileSizeLimitBytes": 10485700,
                                 "rollOnFileSizeLimit": true,
                                 "retainedFileCountLimit": 10,

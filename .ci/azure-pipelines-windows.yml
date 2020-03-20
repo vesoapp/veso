@@ -79,4 +79,4 @@ jobs:
         condition: succeeded()
         inputs:
           targetPath: "$(build.artifactstagingdirectory)/setup"
-          artifactName: "Jellyfin Server Setup"
+          artifactName: "Veso Server Setup"

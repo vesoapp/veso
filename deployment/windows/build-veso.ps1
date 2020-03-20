@@ -4,7 +4,7 @@ param(
     [switch]$InstallNSIS,
     [switch]$InstallFFMPEG,
     [switch]$InstallNSSM,
-    [switch]$SkipJellyfinBuild,
+    [switch]$SkipVesoBuild,
     [switch]$GenerateZip,
     [string]$InstallLocation = "./dist/veso-win-nsis",
     [string]$UXLocation = "../veso-ux",
@@ -28,7 +28,7 @@ New-Item -ItemType Directory -Force -Path $InstallLocation
 $ResolvedInstallLocation = Resolve-Path $InstallLocation
 $ResolvedUXLocation = Resolve-Path $UXLocation
 
-function Build-JellyFin {
+function Build-Veso {
     if(($Architecture -eq 'arm64') -and ($WindowsVersion -ne 'win10')){
             Write-Error "arm64 only supported with Windows10 Version"
             exit
@@ -40,7 +40,7 @@ function Build-JellyFin {
     Write-Verbose "windowsversion-Architecture: $windowsversion-$Architecture"
     Write-Verbose "InstallLocation: $ResolvedInstallLocation"
     Write-Verbose "DotNetVerbosity: $DotNetVerbosity"
-    dotnet publish --self-contained -c $BuildType --output $ResolvedInstallLocation -v $DotNetVerbosity -p:GenerateDocumentationFile=false -p:DebugSymbols=false -p:DebugType=none --runtime `"$windowsversion-$Architecture`" Jellyfin.Server
+    dotnet publish --self-contained -c $BuildType --output $ResolvedInstallLocation -v $DotNetVerbosity -p:GenerateDocumentationFile=false -p:DebugSymbols=false -p:DebugType=none --runtime `"$windowsversion-$Architecture`" Veso.Server
 }
 
 function Install-FFMPEG {
@@ -63,12 +63,12 @@ function Install-FFMPEG {
 
     Expand-Archive "$tempdir/ffmpeg.zip" -DestinationPath "$tempdir/ffmpeg/" -Force | Write-Verbose
     if($Architecture -eq 'x64'){
-        Write-Verbose "Copying Binaries to Jellyfin location"
+        Write-Verbose "Copying Binaries to Veso location"
         Get-ChildItem "$tempdir/ffmpeg" | ForEach-Object {
             Copy-Item $_.FullName -Destination $installLocation | Write-Verbose
         }
     }else{
-        Write-Verbose "Copying Binaries to Jellyfin location"
+        Write-Verbose "Copying Binaries to Veso location"
         Get-ChildItem "$tempdir/ffmpeg/$FFMPEGVersionX86/bin" | ForEach-Object {
             Copy-Item $_.FullName -Destination $installLocation | Write-Verbose
         }
@@ -95,12 +95,12 @@ function Install-NSSM {
 
     Expand-Archive "$tempdir/nssm.zip" -DestinationPath "$tempdir/nssm/" -Force | Write-Verbose
     if($Architecture -eq 'x64'){
-        Write-Verbose "Copying Binaries to Jellyfin location"
+        Write-Verbose "Copying Binaries to Veso location"
         Get-ChildItem "$tempdir/nssm/nssm-2.24-101-g897c7ad/win64" | ForEach-Object {
             Copy-Item $_.FullName -Destination $installLocation | Write-Verbose
         }
     }else{
-        Write-Verbose "Copying Binaries to Jellyfin location"
+        Write-Verbose "Copying Binaries to Veso location"
         Get-ChildItem "$tempdir/nssm/nssm-2.24-101-g897c7ad/win32" | ForEach-Object {
             Copy-Item $_.FullName -Destination $installLocation | Write-Verbose
         }
@@ -147,15 +147,15 @@ function Install-TrayApp {
         Write-Warning "No builds available for your selected architecture of $Architecture"
         Write-Warning "The tray app will not be available."
     }else{
-        Write-Verbose "Downloading Tray App and copying to Jellyfin location"
+        Write-Verbose "Downloading Tray App and copying to Veso location"
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri https://github.com/vesotv/veso-windows-tray/releases/latest/download/JellyfinTray.exe -UseBasicParsing -OutFile "$installLocation/JellyfinTray.exe" | Write-Verbose
+        Invoke-WebRequest -Uri https://github.com/vesotv/veso-windows-tray/releases/latest/download/VesoTray.exe -UseBasicParsing -OutFile "$installLocation/VesoTray.exe" | Write-Verbose
     }
 }
 
-if(-not $SkipJellyfinBuild.IsPresent -and -not ($InstallNSIS -eq $true)){
+if(-not $SkipVesoBuild.IsPresent -and -not ($InstallNSIS -eq $true)){
     Write-Verbose "Starting Build Process: Selected Environment is $WindowsVersion-$Architecture"
-    Build-JellyFin
+    Build-Veso
 }
 if($InstallFFMPEG.IsPresent -or ($InstallFFMPEG -eq $true)){
     Write-Verbose "Starting FFMPEG Install"

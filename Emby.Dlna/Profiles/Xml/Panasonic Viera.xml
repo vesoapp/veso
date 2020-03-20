@@ -9,9 +9,9 @@
       <HttpHeaderInfo name="User-Agent" value="Panasonic MIL DLNA" match="Substring" />
     </Headers>
   </Identification>
-  <Manufacturer>Jellyfin</Manufacturer>
+  <Manufacturer>Veso</Manufacturer>
   <ManufacturerUrl>https://github.com/vesotv/veso</ManufacturerUrl>
-  <ModelName>Jellyfin Server</ModelName>
+  <ModelName>Veso Server</ModelName>
   <ModelDescription>UPnP/AV 1.0 Compliant Media Server</ModelDescription>
   <ModelNumber>01</ModelNumber>
   <ModelUrl>https://github.com/vesotv/veso</ModelUrl>

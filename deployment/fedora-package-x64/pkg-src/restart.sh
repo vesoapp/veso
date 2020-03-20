@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# restart.sh - Jellyfin server restart script
-# Part of the Jellyfin project (https://github.com/vesotv)
+# restart.sh - Veso server restart script
+# Part of the Veso project (https://github.com/vesotv)
 #
-# This script restarts the Jellyfin daemon on Linux when using
+# This script restarts the Veso daemon on Linux when using
 # the Restart button on the admin dashboard. It supports the
 # systemctl, service, and traditional /etc/init.d (sysv) restart
 # methods, chosen automatically by which one is found first (in
@@ -21,7 +21,7 @@ get_service_command() {
 }
 
 cmd="$( get_service_command )"
-echo "Detected service control platform '$cmd'; using it to restart Jellyfin..."
+echo "Detected service control platform '$cmd'; using it to restart Veso..."
 case $cmd in
     'systemctl')
         echo "sleep 2; /usr/bin/sudo $( which systemctl ) restart veso" | at now 

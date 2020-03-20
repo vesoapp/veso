@@ -1,15 +1,15 @@
-using Jellyfin.Api;
-using Jellyfin.Api.Auth;
-using Jellyfin.Api.Auth.FirstTimeSetupOrElevatedPolicy;
-using Jellyfin.Api.Auth.RequiresElevationPolicy;
-using Jellyfin.Api.Constants;
-using Jellyfin.Api.Controllers;
+using Veso.Api;
+using Veso.Api.Auth;
+using Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy;
+using Veso.Api.Auth.RequiresElevationPolicy;
+using Veso.Api.Constants;
+using Veso.Api.Controllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Jellyfin.Server.Extensions
+namespace Veso.Server.Extensions
 {
     /// <summary>
     /// API specific extensions for the service collection.
@@ -21,7 +21,7 @@ namespace Jellyfin.Server.Extensions
         /// </summary>
         /// <param name="serviceCollection">The service collection.</param>
         /// <returns>The updated service collection.</returns>
-        public static IServiceCollection AddJellyfinApiAuthorization(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddVesoApiAuthorization(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IAuthorizationHandler, FirstTimeSetupOrElevatedHandler>();
             serviceCollection.AddSingleton<IAuthorizationHandler, RequiresElevationHandler>();
@@ -61,7 +61,7 @@ namespace Jellyfin.Server.Extensions
         /// <param name="serviceCollection">The service collection.</param>
         /// <param name="baseUrl">The base url for the API.</param>
         /// <returns>The MVC builder.</returns>
-        public static IMvcBuilder AddJellyfinApi(this IServiceCollection serviceCollection, string baseUrl)
+        public static IMvcBuilder AddVesoApi(this IServiceCollection serviceCollection, string baseUrl)
         {
             return serviceCollection.AddMvc(opts =>
                 {
@@ -79,11 +79,11 @@ namespace Jellyfin.Server.Extensions
         /// </summary>
         /// <param name="serviceCollection">The service collection.</param>
         /// <returns>The updated service collection.</returns>
-        public static IServiceCollection AddJellyfinApiSwagger(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddVesoApiSwagger(this IServiceCollection serviceCollection)
         {
             return serviceCollection.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Jellyfin API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Veso API", Version = "v1" });
             });
         }
     }

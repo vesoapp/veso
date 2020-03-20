@@ -21,7 +21,7 @@
                         {
                             "Name": "File",
                             "Args": {
-                                "path": "%JELLYFIN_LOG_DIR%//log_.log",
+                                "path": "%Veso_LOG_DIR%//log_.log",
                                 "rollingInterval": "Day",
                                 "retainedFileCountLimit": 3,
                                 "rollOnFileSizeLimit": true,

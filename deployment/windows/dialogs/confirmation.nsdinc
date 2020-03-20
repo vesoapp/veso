@@ -24,7 +24,7 @@ Function fnc_confirmation_Create
   ${If} $hCtl_confirmation == error
     Abort
   ${EndIf}
-  !insertmacro MUI_HEADER_TEXT "Confirmation Page" "Please confirm your choices for Jellyfin Server installation"
+  !insertmacro MUI_HEADER_TEXT "Confirmation Page" "Please confirm your choices for Veso Server installation"
 
   ; === ConfirmRichText (type: RichText) ===
   nsDialogs::CreateControl /NOUNLOAD "RichEdit20A" ${ES_READONLY}|${WS_VISIBLE}|${WS_CHILD}|${WS_TABSTOP}|${WS_VSCROLL}|${ES_MULTILINE}|${ES_WANTRETURN} ${WS_EX_STATICEDGE} 8u 7u 280u 126u ""
@@ -34,7 +34,7 @@ Function fnc_confirmation_Create
   ; CreateFunctionCustomScript
   ${StrSlash} '$0' $INSTDIR
 
-  ${StrSlash} '$1' $_JELLYFINDATADIR_
+  ${StrSlash} '$1' $_VesoDATADIR_
 
   ${If} $_INSTALLSERVICE_ == "Yes"
   ${NSD_SetText} $hCtl_confirmation_ConfirmRichText "{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1043\viewkind4\uc1 \
@@ -43,7 +43,7 @@ Function fnc_confirmation_Create
     Service install:\b0  $_INSTALLSERVICE_\line\b \
     Service start:\b0  $_SERVICESTART_\line\b \
     Service account:\b0  $_SERVICEACCOUNTTYPE_\line\b \
-    Jellyfin Data Folder:\b0  $1\par \
+    Veso Data Folder:\b0  $1\par \
     \
     \pard\sa200\sl276\slmult1\f1\lang1043\par \
     }"
@@ -52,7 +52,7 @@ Function fnc_confirmation_Create
     \pard\widctlpar\sa160\sl252\slmult1\b The installer will proceed based on the following inputs gathered on earlier screens.\par \
     Installation Folder:\b0  $0\line\b \
     Service install:\b0  $_INSTALLSERVICE_\line\b \
-    Jellyfin Data Folder:\b0  $1\par \
+    Veso Data Folder:\b0  $1\par \
     \
     \pard\sa200\sl276\slmult1\f1\lang1043\par \
     }"

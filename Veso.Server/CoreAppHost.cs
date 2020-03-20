@@ -7,7 +7,7 @@ using MediaBrowser.Model.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Server
+namespace Veso.Server
 {
     /// <summary>
     /// Implementation of the abstract <see cref="ApplicationHost" /> class.

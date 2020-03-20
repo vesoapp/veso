@@ -1,11 +1,11 @@
 ### BEGIN INIT INFO
-# Provides:          Jellyfin Media Server
+# Provides:          Veso Media Server
 # Required-Start:    $local_fs $network
 # Required-Stop:     $local_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Jellyfin Media Server
-# Description:       Runs Jellyfin Server
+# Short-Description: Veso Media Server
+# Description:       Runs Veso Server
 ### END INIT INFO
 
 set -e
@@ -22,9 +22,9 @@ PIDFILE="/run/veso.pid"
 
 case "$1" in
   start)
-	log_daemon_msg "Starting Jellyfin Media Server" "veso" || true
+	log_daemon_msg "Starting Veso Media Server" "veso" || true
 
-	if start-stop-daemon --start --quiet --oknodo --background --pidfile $PIDFILE --make-pidfile --user $JELLYFIN_USER --chuid $JELLYFIN_USER --exec /usr/bin/veso -- $JELLYFIN_ARGS; then
+	if start-stop-daemon --start --quiet --oknodo --background --pidfile $PIDFILE --make-pidfile --user $Veso_USER --chuid $Veso_USER --exec /usr/bin/veso -- $Veso_ARGS; then
 	    log_end_msg 0 || true
 	else
 	    log_end_msg 1 || true
@@ -32,7 +32,7 @@ case "$1" in
     ;;
 
   stop)
-	log_daemon_msg "Stopping Jellyfin Media Server" "veso" || true
+	log_daemon_msg "Stopping Veso Media Server" "veso" || true
 	if start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE --remove-pidfile; then
 	    log_end_msg 0 || true
 	else
@@ -41,9 +41,9 @@ case "$1" in
     ;;
 
   restart)
-	log_daemon_msg "Restarting Jellyfin Media Server" "veso" || true
+	log_daemon_msg "Restarting Veso Media Server" "veso" || true
 	start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE --remove-pidfile
-	if start-stop-daemon --start --quiet --oknodo --background --pidfile $PIDFILE --make-pidfile --user $JELLYFIN_USER --chuid $JELLYFIN_USER --exec /usr/bin/veso -- $JELLYFIN_ARGS; then
+	if start-stop-daemon --start --quiet --oknodo --background --pidfile $PIDFILE --make-pidfile --user $Veso_USER --chuid $Veso_USER --exec /usr/bin/veso -- $Veso_ARGS; then
 	    log_end_msg 0 || true
 	else
 	    log_end_msg 1 || true

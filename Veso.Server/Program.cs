@@ -15,7 +15,7 @@ using Emby.Drawing;
 using Emby.Server.Implementations;
 using Emby.Server.Implementations.IO;
 using Emby.Server.Implementations.Networking;
-using Jellyfin.Drawing.Skia;
+using Veso.Drawing.Skia;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Drawing;
 using MediaBrowser.Model.Globalization;
@@ -31,7 +31,7 @@ using Serilog.Extensions.Logging;
 using SQLitePCL;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Jellyfin.Server
+namespace Veso.Server
 {
     /// <summary>
     /// Class containing the entry point of the application.
@@ -109,8 +109,8 @@ namespace Jellyfin.Server
 
             ServerApplicationPaths appPaths = CreateApplicationPaths(options);
 
-            // $JELLYFIN_LOG_DIR needs to be set for the logger configuration manager
-            Environment.SetEnvironmentVariable("JELLYFIN_LOG_DIR", appPaths.LogDirectoryPath);
+            // $Veso_LOG_DIR needs to be set for the logger configuration manager
+            Environment.SetEnvironmentVariable("Veso_LOG_DIR", appPaths.LogDirectoryPath);
 
             // Create an instance of the application configuration to use for application startup
             await InitLoggingConfigFile(appPaths).ConfigureAwait(false);
@@ -153,7 +153,7 @@ namespace Jellyfin.Server
             };
 
             _logger.LogInformation(
-                "Jellyfin version: {Version}",
+                "Veso version: {Version}",
                 Assembly.GetEntryAssembly()!.GetName().Version!.ToString(3));
 
             ApplicationHost.LogEnvironmentInfo(_logger, appPaths);
@@ -297,14 +297,14 @@ namespace Jellyfin.Server
         {
             // dataDir
             // IF      --datadir
-            // ELSE IF $JELLYFIN_DATA_DIR
+            // ELSE IF $Veso_DATA_DIR
             // ELSE IF windows, use <%APPDATA%>/veso
             // ELSE IF $XDG_DATA_HOME then use $XDG_DATA_HOME/veso
             // ELSE    use $HOME/.local/share/veso
             var dataDir = options.DataDir;
             if (string.IsNullOrEmpty(dataDir))
             {
-                dataDir = Environment.GetEnvironmentVariable("JELLYFIN_DATA_DIR");
+                dataDir = Environment.GetEnvironmentVariable("Veso_DATA_DIR");
 
                 if (string.IsNullOrEmpty(dataDir))
                 {
@@ -317,7 +317,7 @@ namespace Jellyfin.Server
 
             // configDir
             // IF      --configdir
-            // ELSE IF $JELLYFIN_CONFIG_DIR
+            // ELSE IF $Veso_CONFIG_DIR
             // ELSE IF --datadir, use <datadir>/config (assume portable run)
             // ELSE IF <datadir>/config exists, use that
             // ELSE IF windows, use <datadir>/config
@@ -326,7 +326,7 @@ namespace Jellyfin.Server
             var configDir = options.ConfigDir;
             if (string.IsNullOrEmpty(configDir))
             {
-                configDir = Environment.GetEnvironmentVariable("JELLYFIN_CONFIG_DIR");
+                configDir = Environment.GetEnvironmentVariable("Veso_CONFIG_DIR");
 
                 if (string.IsNullOrEmpty(configDir))
                 {
@@ -359,14 +359,14 @@ namespace Jellyfin.Server
 
             // cacheDir
             // IF      --cachedir
-            // ELSE IF $JELLYFIN_CACHE_DIR
+            // ELSE IF $Veso_CACHE_DIR
             // ELSE IF windows, use <datadir>/cache
             // ELSE IF XDG_CACHE_HOME, use $XDG_CACHE_HOME/veso
             // ELSE    HOME/.cache/veso
             var cacheDir = options.CacheDir;
             if (string.IsNullOrEmpty(cacheDir))
             {
-                cacheDir = Environment.GetEnvironmentVariable("JELLYFIN_CACHE_DIR");
+                cacheDir = Environment.GetEnvironmentVariable("Veso_CACHE_DIR");
 
                 if (string.IsNullOrEmpty(cacheDir))
                 {
@@ -397,13 +397,13 @@ namespace Jellyfin.Server
 
             // webDir
             // IF      --webdir
-            // ELSE IF $JELLYFIN_WEB_DIR
+            // ELSE IF $Veso_WEB_DIR
             // ELSE    use <bindir>/veso-web
             var webDir = options.WebDir;
 
             if (string.IsNullOrEmpty(webDir))
             {
-                webDir = Environment.GetEnvironmentVariable("JELLYFIN_WEB_DIR");
+                webDir = Environment.GetEnvironmentVariable("Veso_WEB_DIR");
 
                 if (string.IsNullOrEmpty(webDir))
                 {
@@ -414,13 +414,13 @@ namespace Jellyfin.Server
 
             // logDir
             // IF      --logdir
-            // ELSE IF $JELLYFIN_LOG_DIR
+            // ELSE IF $Veso_LOG_DIR
             // ELSE IF --datadir, use <datadir>/log (assume portable run)
             // ELSE    <datadir>/log
             var logDir = options.LogDir;
             if (string.IsNullOrEmpty(logDir))
             {
-                logDir = Environment.GetEnvironmentVariable("JELLYFIN_LOG_DIR");
+                logDir = Environment.GetEnvironmentVariable("Veso_LOG_DIR");
 
                 if (string.IsNullOrEmpty(logDir))
                 {
@@ -462,7 +462,7 @@ namespace Jellyfin.Server
 
             // Get a stream of the resource contents
             // NOTE: The .csproj name is used instead of the assembly name in the resource path
-            const string ResourcePath = "Jellyfin.Server.Resources.Configuration.logging.json";
+            const string ResourcePath = "Veso.Server.Resources.Configuration.logging.json";
             await using Stream? resource = typeof(Program).Assembly.GetManifestResourceStream(ResourcePath)
                 ?? throw new InvalidOperationException($"Invalid resource path: '{ResourcePath}'");
 
@@ -485,7 +485,7 @@ namespace Jellyfin.Server
                 .AddInMemoryCollection(ConfigurationOptions.Configuration)
                 .AddJsonFile(LoggingConfigFileDefault, optional: false, reloadOnChange: true)
                 .AddJsonFile(LoggingConfigFileSystem, optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables("JELLYFIN_");
+                .AddEnvironmentVariables("Veso_");
         }
 
         /// <summary>

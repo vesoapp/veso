@@ -4,16 +4,16 @@ set -e
 NAME=veso
 DEFAULT_FILE=/etc/default/${NAME}
 
-# Source Jellyfin default configuration
+# Source Veso default configuration
 if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
 
 # Data directories for program data (cache, db), configs, and logs
-PROGRAMDATA=${JELLYFIN_DATA_DIRECTORY-/var/lib/$NAME}
-CONFIGDATA=${JELLYFIN_CONFIG_DIRECTORY-/etc/$NAME}
-LOGDATA=${JELLYFIN_LOG_DIRECTORY-/var/log/$NAME}
-CACHEDATA=${JELLYFIN_CACHE_DIRECTORY-/var/cache/$NAME}
+PROGRAMDATA=${Veso_DATA_DIRECTORY-/var/lib/$NAME}
+CONFIGDATA=${Veso_CONFIG_DIRECTORY-/etc/$NAME}
+LOGDATA=${Veso_LOG_DIRECTORY-/var/log/$NAME}
+CACHEDATA=${Veso_CACHE_DIRECTORY-/var/cache/$NAME}
 
 # In case this system is running systemd, we make systemd reload the unit files
 # to pick up changes.

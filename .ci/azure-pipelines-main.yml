@@ -1,6 +1,6 @@
 parameters:
   LinuxImage: "ubuntu-latest"
-  RestoreBuildProjects: "Jellyfin.Server/Jellyfin.Server.csproj"
+  RestoreBuildProjects: "Veso.Server/Veso.Server.csproj"
   DotNetSdkVersion: 3.1.100
 
 jobs:
@@ -76,26 +76,26 @@ jobs:
         displayName: "Publish Artifact Naming"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Jellyfin.Server/Emby.Naming.dll"
-          artifactName: "Jellyfin.Naming"
+          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/Emby.Naming.dll"
+          artifactName: "Veso.Naming"
 
       - task: PublishPipelineArtifact@0
         displayName: "Publish Artifact Controller"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Jellyfin.Server/MediaBrowser.Controller.dll"
-          artifactName: "Jellyfin.Controller"
+          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Controller.dll"
+          artifactName: "Veso.Controller"
 
       - task: PublishPipelineArtifact@0
         displayName: "Publish Artifact Model"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Jellyfin.Server/MediaBrowser.Model.dll"
-          artifactName: "Jellyfin.Model"
+          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Model.dll"
+          artifactName: "Veso.Model"
 
       - task: PublishPipelineArtifact@0
         displayName: "Publish Artifact Common"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Jellyfin.Server/MediaBrowser.Common.dll"
-          artifactName: "Jellyfin.Common"
+          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Common.dll"
+          artifactName: "Veso.Common"

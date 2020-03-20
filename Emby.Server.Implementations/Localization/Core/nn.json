@@ -1,8 +1,8 @@
 {
     "MessageServerConfigurationUpdated": "Tenar konfigurasjonen har blitt oppdatert",
     "MessageNamedServerConfigurationUpdatedWithValue": "Tenar konfigurasjon seksjon {0} har blitt oppdatert",
-    "MessageApplicationUpdatedTo": "Jellyfin Tenaren har blitt oppdatert til {0}",
-    "MessageApplicationUpdated": "Jellyfin Tenaren har blitt oppdatert",
+    "MessageApplicationUpdatedTo": "Veso Tenaren har blitt oppdatert til {0}",
+    "MessageApplicationUpdated": "Veso Tenaren har blitt oppdatert",
     "Latest": "Nyaste",
     "LabelRunningTimeValue": "Speletid: {0}",
     "LabelIpAddressValue": "IP adresse: {0}",
