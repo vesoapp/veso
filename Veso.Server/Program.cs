@@ -15,7 +15,7 @@ using Emby.Drawing;
 using Emby.Server.Implementations;
 using Emby.Server.Implementations.IO;
 using Emby.Server.Implementations.Networking;
-using veso.Drawing.Skia;
+using Veso.Drawing.Skia;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Drawing;
 using MediaBrowser.Model.Globalization;
@@ -31,7 +31,7 @@ using Serilog.Extensions.Logging;
 using SQLitePCL;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace veso.Server
+namespace Veso.Server
 {
     /// <summary>
     /// Class containing the entry point of the application.
@@ -462,7 +462,7 @@ namespace veso.Server
 
             // Get a stream of the resource contents
             // NOTE: The .csproj name is used instead of the assembly name in the resource path
-            const string ResourcePath = "veso.Server.Resources.Configuration.logging.json";
+            const string ResourcePath = "Veso.Server.Resources.Configuration.logging.json";
             await using Stream? resource = typeof(Program).Assembly.GetManifestResourceStream(ResourcePath)
                 ?? throw new InvalidOperationException($"Invalid resource path: '{ResourcePath}'");
 

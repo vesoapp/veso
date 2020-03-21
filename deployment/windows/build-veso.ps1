@@ -40,7 +40,7 @@ function Build-veso {
     Write-Verbose "windowsversion-Architecture: $windowsversion-$Architecture"
     Write-Verbose "InstallLocation: $ResolvedInstallLocation"
     Write-Verbose "DotNetVerbosity: $DotNetVerbosity"
-    dotnet publish --self-contained -c $BuildType --output $ResolvedInstallLocation -v $DotNetVerbosity -p:GenerateDocumentationFile=false -p:DebugSymbols=false -p:DebugType=none --runtime `"$windowsversion-$Architecture`" veso.Server
+    dotnet publish --self-contained -c $BuildType --output $ResolvedInstallLocation -v $DotNetVerbosity -p:GenerateDocumentationFile=false -p:DebugSymbols=false -p:DebugType=none --runtime `"$windowsversion-$Architecture`" Veso.Server
 }
 
 function Install-FFMPEG {

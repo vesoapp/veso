@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../MediaBrowser.Api/MediaBrowser.Api.csproj" />
-    <ProjectReference Include="../../veso.Api/veso.Api.csproj" />
+    <ProjectReference Include="../../Veso.Api/Veso.Api.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using veso.Api.Auth.RequiresElevationPolicy;
-using veso.Api.Constants;
+using Veso.Api.Auth.RequiresElevationPolicy;
+using Veso.Api.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
 
-namespace veso.Api.Tests.Auth.RequiresElevationPolicy
+namespace Veso.Api.Tests.Auth.RequiresElevationPolicy
 {
     public class RequiresElevationHandlerTests
     {

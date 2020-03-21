@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace veso.Api
+namespace Veso.Api
 {
     /// <summary>
     /// Base api controller for the API setting a default route.

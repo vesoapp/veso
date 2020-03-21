@@ -8,9 +8,9 @@ using MediaBrowser.Controller.Extensions;
 using MediaBrowser.Model.Drawing;
 using Microsoft.Extensions.Logging;
 using SkiaSharp;
-using static veso.Drawing.Skia.SkiaHelper;
+using static Veso.Drawing.Skia.SkiaHelper;
 
-namespace veso.Drawing.Skia
+namespace Veso.Drawing.Skia
 {
     /// <summary>
     /// Image encoder that uses <see cref="SkiaSharp"/> to manipulate images.

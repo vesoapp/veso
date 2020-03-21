@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace veso.Server.Extensions
+namespace Veso.Server.Extensions
 {
     /// <summary>
     /// Extensions for adding API specific functionality to the application pipeline.

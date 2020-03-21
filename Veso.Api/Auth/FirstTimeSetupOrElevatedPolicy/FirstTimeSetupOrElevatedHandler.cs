@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using veso.Api.Constants;
+using Veso.Api.Constants;
 using MediaBrowser.Common.Configuration;
 using Microsoft.AspNetCore.Authorization;
 
-namespace veso.Api.Auth.FirstTimeSetupOrElevatedPolicy
+namespace Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy
 {
     /// <summary>
     /// Authorization handler for requiring first time setup or elevated privileges.

@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
-using veso.Api.Constants;
-using veso.Api.Models.StartupDtos;
+using Veso.Api.Constants;
+using Veso.Api.Models.StartupDtos;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace veso.Api.Controllers
+namespace Veso.Api.Controllers
 {
     /// <summary>
     /// The startup wizard controller.

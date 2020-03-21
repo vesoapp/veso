@@ -1,6 +1,6 @@
 using SkiaSharp;
 
-namespace veso.Drawing.Skia
+namespace Veso.Drawing.Skia
 {
     /// <summary>
     /// Class containing helper methods for working with SkiaSharp.

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
-namespace veso.Api.Tests
+namespace Veso.Api.Tests
 {
     public class GetPathValueTests
     {

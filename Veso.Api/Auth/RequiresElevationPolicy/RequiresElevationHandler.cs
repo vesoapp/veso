@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using veso.Api.Constants;
+using Veso.Api.Constants;
 using Microsoft.AspNetCore.Authorization;
 
-namespace veso.Api.Auth.RequiresElevationPolicy
+namespace Veso.Api.Auth.RequiresElevationPolicy
 {
     /// <summary>
     /// Authorization handler for requiring elevated privileges.

@@ -1,4 +1,4 @@
-namespace veso.Api.Constants
+namespace Veso.Api.Constants
 {
     /// <summary>
     /// Policies for the API authorization.

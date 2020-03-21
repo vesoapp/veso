@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace veso.Server.Migrations
+namespace Veso.Server.Migrations
 {
     /// <summary>
     /// Configuration part that holds all migrations that were applied.

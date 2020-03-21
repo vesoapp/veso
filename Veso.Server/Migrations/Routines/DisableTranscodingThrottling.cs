@@ -5,7 +5,7 @@ using MediaBrowser.Model.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace veso.Server.Migrations.Routines
+namespace Veso.Server.Migrations.Routines
 {
     /// <summary>
     /// Disable transcode throttling for all installations since it is currently broken for certain video formats.

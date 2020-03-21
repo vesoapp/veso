@@ -5,8 +5,8 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using veso.Api.Auth;
-using veso.Api.Constants;
+using Veso.Api.Auth;
+using Veso.Api.Constants;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Net;
 using Microsoft.AspNetCore.Authentication;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace veso.Api.Tests.Auth
+namespace Veso.Api.Tests.Auth
 {
     public class CustomAuthenticationHandlerTests
     {

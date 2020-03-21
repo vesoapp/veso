@@ -1,4 +1,4 @@
-namespace veso.Api.Models.StartupDtos
+namespace Veso.Api.Models.StartupDtos
 {
     /// <summary>
     /// The startup user DTO.

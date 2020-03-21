@@ -1,4 +1,4 @@
-using veso.Server.Extensions;
+using Veso.Server.Extensions;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace veso.Server
+namespace Veso.Server
 {
     /// <summary>
     /// Startup configuration for the Kestrel webhost.

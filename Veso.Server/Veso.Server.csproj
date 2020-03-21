@@ -52,7 +52,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Emby.Drawing\Emby.Drawing.csproj" />
     <ProjectReference Include="..\Emby.Server.Implementations\Emby.Server.Implementations.csproj" />
-    <ProjectReference Include="..\veso.Drawing.Skia\veso.Drawing.Skia.csproj" />
+    <ProjectReference Include="..\Veso.Drawing.Skia\Veso.Drawing.Skia.csproj" />
   </ItemGroup>
 
 </Project>

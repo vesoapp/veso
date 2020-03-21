@@ -1,7 +1,7 @@
 using CommandLine;
 using Emby.Server.Implementations;
 
-namespace veso.Server
+namespace Veso.Server
 {
     /// <summary>
     /// Class used by CommandLine package when parsing the command line arguments.

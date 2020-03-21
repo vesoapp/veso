@@ -1,13 +1,13 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using veso.Api.Constants;
+using Veso.Api.Constants;
 using MediaBrowser.Controller.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace veso.Api.Auth
+namespace Veso.Api.Auth
 {
     /// <summary>
     /// Custom authentication handler wrapping the legacy authentication.

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace veso.Api.Auth.FirstTimeSetupOrElevatedPolicy
+namespace Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy
 {
     /// <summary>
     /// The authorization requirement, requiring incomplete first time setup or elevated privileges, for the authorization handler.

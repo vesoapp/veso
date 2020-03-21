@@ -69,10 +69,10 @@ popd
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 dotnet publish --configuration Release --output='%{buildroot}%{_libdir}/veso' --self-contained --runtime %{dotnet_runtime} \
-    "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none" veso.Server
+    "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none" Veso.Server
 %{__install} -D -m 0644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 %{__install} -D -m 0644 %{SOURCE15} %{buildroot}%{_sysconfdir}/systemd/system/%{name}.service.d/override.conf
-%{__install} -D -m 0644 veso.Server/Resources/Configuration/logging.json %{buildroot}%{_sysconfdir}/%{name}/logging.json
+%{__install} -D -m 0644 Veso.Server/Resources/Configuration/logging.json %{buildroot}%{_sysconfdir}/%{name}/logging.json
 %{__mkdir} -p %{buildroot}%{_bindir}
 tee %{buildroot}%{_bindir}/veso << EOF
 #!/bin/sh

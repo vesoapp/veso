@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using SkiaSharp;
 
-namespace veso.Drawing.Skia
+namespace Veso.Drawing.Skia
 {
     /// <summary>
     /// Used to build collages of multiple images arranged in vertical strips.

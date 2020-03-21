@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emby.Naming", "Emby.Naming\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaBrowser.MediaEncoding", "MediaBrowser.MediaEncoding\MediaBrowser.MediaEncoding.csproj", "{960295EE-4AF4-4440-A525-B4C295B01A61}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "veso.Server", "veso.Server\veso.Server.csproj", "{07E39F42-A2C6-4B32-AF8C-725F957A73FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veso.Server", "Veso.Server\Veso.Server.csproj", "{07E39F42-A2C6-4B32-AF8C-725F957A73FF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41093F42-C7CC-4D07-956B-6182CBEDE2EC}"
 	ProjectSection(SolutionItems) = preProject
@@ -44,9 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedVersion.cs = SharedVersion.cs
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "veso.Drawing.Skia", "veso.Drawing.Skia\veso.Drawing.Skia.csproj", "{154872D9-6C12-4007-96E3-8F70A58386CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veso.Drawing.Skia", "Veso.Drawing.Skia\Veso.Drawing.Skia.csproj", "{154872D9-6C12-4007-96E3-8F70A58386CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "veso.Api", "veso.Api\veso.Api.csproj", "{DFBEFB4C-DA19-4143-98B7-27320C7F7163}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veso.Api", "Veso.Api\Veso.Api.csproj", "{DFBEFB4C-DA19-4143-98B7-27320C7F7163}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FBBB5129-006E-4AD7-BAD5-8B7CA1D10ED6}"
 EndProject
@@ -56,9 +56,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "veso.MediaEncoding.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "veso.Naming.Tests", "tests\veso.Naming.Tests\veso.Naming.Tests.csproj", "{3998657B-1CCC-49DD-A19F-275DC8495F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "veso.Api.Tests", "tests\veso.Api.Tests\veso.Api.Tests.csproj", "{A2FD0A10-8F62-4F9D-B171-FFDF9F0AFA9D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veso.Api.Tests", "tests\Veso.Api.Tests\Veso.Api.Tests.csproj", "{A2FD0A10-8F62-4F9D-B171-FFDF9F0AFA9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "veso.Server.Implementations.Tests", "tests\veso.Server.Implementations.Tests\veso.Server.Implementations.Tests.csproj", "{2E3A1B4B-4225-4AAA-8B29-0181A84E7AEE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veso.Server.Implementations.Tests", "tests\Veso.Server.Implementations.Tests\Veso.Server.Implementations.Tests.csproj", "{2E3A1B4B-4225-4AAA-8B29-0181A84E7AEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "veso.Controller.Tests", "tests\veso.Controller.Tests\veso.Controller.Tests.csproj", "{462584F7-5023-4019-9EAC-B98CA458C0A0}"
 EndProject
