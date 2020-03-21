@@ -2,10 +2,10 @@ ARG DOTNET_VERSION=2.2
 ARG FFMPEG_VERSION=latest
 
 FROM node:alpine as web-builder
-ARG JELLYFIN_WEB_VERSION=v10.4.1
+ARG JELLYFIN_WEB_VERSION=master
 RUN apk add curl \
- && curl -L https://www.dropbox.com/s/xavgzubfy7y7oar/veso-web.tar.gz | tar zxf - \
- && cd veso-web \
+ && curl -L https://github.com/vesotv/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
+ && cd veso-web-* \
  && yarn install \
  && yarn build \
  && mv dist /dist
