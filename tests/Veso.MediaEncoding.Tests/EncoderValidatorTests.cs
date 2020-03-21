@@ -5,7 +5,7 @@ using MediaBrowser.MediaEncoding.Encoder;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Veso.MediaEncoding.Tests
+namespace veso.MediaEncoding.Tests
 {
     public class EncoderValidatorTests
     {

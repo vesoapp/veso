@@ -4,7 +4,7 @@ using Emby.Server.Implementations.IO;
 using MediaBrowser.Model.System;
 using Xunit;
 
-namespace Veso.Server.Implementations.Tests.IO
+namespace veso.Server.Implementations.Tests.IO
 {
     public class ManagedFileSystemTests
     {

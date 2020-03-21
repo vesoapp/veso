@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <Authors>Veso Contributors</Authors>
-    <PackageId>Veso.Naming</PackageId>
+    <Authors>veso Contributors</Authors>
+    <PackageId>veso.Naming</PackageId>
     <PackageLicenseUrl>https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/vesotv/veso</RepositoryUrl>
   </PropertyGroup>

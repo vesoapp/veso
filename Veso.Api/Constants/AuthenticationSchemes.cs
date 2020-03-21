@@ -1,4 +1,4 @@
-namespace Veso.Api.Constants
+namespace veso.Api.Constants
 {
     /// <summary>
     /// Authentication schemes for user authentication in the API.

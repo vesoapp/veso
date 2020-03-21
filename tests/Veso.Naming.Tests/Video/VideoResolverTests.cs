@@ -1,7 +1,7 @@
 ﻿using MediaBrowser.Model.Entities;
 using Xunit;
 
-namespace Veso.Naming.Tests.Video
+namespace veso.Naming.Tests.Video
 {
     public class VideoResolverTests : BaseVideoTest
     {

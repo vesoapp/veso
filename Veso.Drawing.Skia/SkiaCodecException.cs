@@ -1,7 +1,7 @@
 using System.Globalization;
 using SkiaSharp;
 
-namespace Veso.Drawing.Skia
+namespace veso.Drawing.Skia
 {
     /// <summary>
     /// Represents errors that occur during interaction with Skia codecs.

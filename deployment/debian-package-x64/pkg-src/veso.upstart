@@ -16,5 +16,5 @@ script
 	# Log file
 	logger -t "$0" "DEBUG: `set`"
     . /etc/default/veso
-    exec su -u $Veso_USER -c /usr/bin/veso $Veso_ARGS
+    exec su -u $veso_USER -c /usr/bin/veso $veso_ARGS
 end script

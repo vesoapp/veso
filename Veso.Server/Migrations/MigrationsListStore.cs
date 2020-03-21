@@ -1,6 +1,6 @@
 using MediaBrowser.Common.Configuration;
 
-namespace Veso.Server.Migrations
+namespace veso.Server.Migrations
 {
     /// <summary>
     /// A configuration that lists all the migration routines that were applied.

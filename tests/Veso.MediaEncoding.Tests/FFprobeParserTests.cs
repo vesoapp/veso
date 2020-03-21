@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using MediaBrowser.MediaEncoding.Probing;
 using Xunit;
 
-namespace Veso.MediaEncoding.Tests
+namespace veso.MediaEncoding.Tests
 {
     public class FFprobeParserTests
     {

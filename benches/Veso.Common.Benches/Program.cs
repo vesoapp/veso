@@ -1,7 +1,7 @@
 ﻿using System;
 using BenchmarkDotNet.Running;
 
-namespace Veso.Common.Benches
+namespace veso.Common.Benches
 {
     public static class Program
     {

@@ -1,4 +1,4 @@
-using Veso.Server.Extensions;
+using veso.Server.Extensions;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Veso.Server
+namespace veso.Server
 {
     /// <summary>
     /// Startup configuration for the Kestrel webhost.
@@ -32,14 +32,14 @@ namespace Veso.Server
         {
             services.AddResponseCompression();
             services.AddHttpContextAccessor();
-            services.AddVesoApi(_serverConfigurationManager.Configuration.BaseUrl.TrimStart('/'));
+            services.AddvesoApi(_serverConfigurationManager.Configuration.BaseUrl.TrimStart('/'));
 
-            services.AddVesoApiSwagger();
+            services.AddvesoApiSwagger();
 
             // configure custom legacy authentication
             services.AddCustomAuthentication();
 
-            services.AddVesoApiAuthorization();
+            services.AddvesoApiAuthorization();
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Veso.Server
             app.Use(serverApplicationHost.ExecuteWebsocketHandlerAsync);
 
             // TODO use when old API is removed: app.UseAuthentication();
-            app.UseVesoApiSwagger();
+            app.UsevesoApiSwagger();
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

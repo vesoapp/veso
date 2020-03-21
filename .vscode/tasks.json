@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Veso.Server/Veso.Server.csproj"
+                "${workspaceFolder}/veso.Server/veso.Server.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

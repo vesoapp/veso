@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Emby.Drawing")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Veso Project")]
-[assembly: AssemblyProduct("Veso Server")]
-[assembly: AssemblyCopyright("Copyright ©  2019 Veso Contributors. Code released under the GNU General Public License")]
+[assembly: AssemblyCompany("veso Project")]
+[assembly: AssemblyProduct("veso Server")]
+[assembly: AssemblyCopyright("Copyright ©  2019 veso Contributors. Code released under the GNU General Public License")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

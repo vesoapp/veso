@@ -3,7 +3,7 @@ using System.Linq;
 using MediaBrowser.Common.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Veso.Server.Migrations
+namespace veso.Server.Migrations
 {
     /// <summary>
     /// The class that knows which migrations to apply and how to apply them.

@@ -1,4 +1,4 @@
-# Veso RPM
+# veso RPM
 
 ## Build Fedora Package with docker
 
@@ -20,7 +20,7 @@ $ sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpm
 
 ## ISO mounting
 
-To allow Veso to mount/umount ISO files uncomment these two lines in `/etc/sudoers.d/veso-sudoers`
+To allow veso to mount/umount ISO files uncomment these two lines in `/etc/sudoers.d/veso-sudoers`
 ```
 # %veso ALL=(ALL) NOPASSWD: /bin/mount
 # %veso ALL=(ALL) NOPASSWD: /bin/umount
@@ -28,7 +28,7 @@ To allow Veso to mount/umount ISO files uncomment these two lines in `/etc/sudoe
 
 ## Building with dotnet
 
-Veso is build with `--self-contained` so no dotnet required for runtime.
+veso is build with `--self-contained` so no dotnet required for runtime.
 
 ```shell
 # dotnet required for building the RPM

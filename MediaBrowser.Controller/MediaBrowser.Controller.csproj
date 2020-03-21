@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>Veso Contributors</Authors>
-    <PackageId>Veso.Controller</PackageId>
+    <Authors>veso Contributors</Authors>
+    <PackageId>veso.Controller</PackageId>
     <PackageLicenseUrl>https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/vesotv/veso</RepositoryUrl>
   </PropertyGroup>

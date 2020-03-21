@@ -1,7 +1,7 @@
 using MediaBrowser.Model.Drawing;
 using SkiaSharp;
 
-namespace Veso.Drawing.Skia
+namespace veso.Drawing.Skia
 {
     /// <summary>
     /// Static helper class for drawing 'played' indicators.

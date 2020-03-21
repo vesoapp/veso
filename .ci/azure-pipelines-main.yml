@@ -1,6 +1,6 @@
 parameters:
   LinuxImage: "ubuntu-latest"
-  RestoreBuildProjects: "Veso.Server/Veso.Server.csproj"
+  RestoreBuildProjects: "veso.Server/veso.Server.csproj"
   DotNetSdkVersion: 3.1.100
 
 jobs:
@@ -76,26 +76,26 @@ jobs:
         displayName: "Publish Artifact Naming"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/Emby.Naming.dll"
-          artifactName: "Veso.Naming"
+          targetPath: "$(build.artifactstagingdirectory)/veso.Server/Emby.Naming.dll"
+          artifactName: "veso.Naming"
 
       - task: PublishPipelineArtifact@0
         displayName: "Publish Artifact Controller"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Controller.dll"
-          artifactName: "Veso.Controller"
+          targetPath: "$(build.artifactstagingdirectory)/veso.Server/MediaBrowser.Controller.dll"
+          artifactName: "veso.Controller"
 
       - task: PublishPipelineArtifact@0
         displayName: "Publish Artifact Model"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Model.dll"
-          artifactName: "Veso.Model"
+          targetPath: "$(build.artifactstagingdirectory)/veso.Server/MediaBrowser.Model.dll"
+          artifactName: "veso.Model"
 
       - task: PublishPipelineArtifact@0
         displayName: "Publish Artifact Common"
         condition: and(succeeded(), eq(variables['BuildConfiguration'], 'Release'))
         inputs:
-          targetPath: "$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Common.dll"
-          artifactName: "Veso.Common"
+          targetPath: "$(build.artifactstagingdirectory)/veso.Server/MediaBrowser.Common.dll"
+          artifactName: "veso.Common"

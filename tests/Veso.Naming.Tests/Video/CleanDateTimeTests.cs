@@ -3,7 +3,7 @@ using Emby.Naming.Common;
 using Emby.Naming.Video;
 using Xunit;
 
-namespace Veso.Naming.Tests.Video
+namespace veso.Naming.Tests.Video
 {
     public sealed class CleanDateTimeTests
     {

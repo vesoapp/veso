@@ -4,7 +4,7 @@ variables:
   - name: TestProjects
     value: "tests/**/*Tests.csproj"
   - name: RestoreBuildProjects
-    value: "Veso.Server/Veso.Server.csproj"
+    value: "veso.Server/veso.Server.csproj"
   - name: DotNetSdkVersion
     value: 3.1.100
 
@@ -36,15 +36,15 @@ jobs:
     parameters:
       Packages:
         Naming:
-          NugetPackageName: Veso.Naming
+          NugetPackageName: veso.Naming
           AssemblyFileName: Emby.Naming.dll
         Controller:
-          NugetPackageName: Veso.Controller
+          NugetPackageName: veso.Controller
           AssemblyFileName: MediaBrowser.Controller.dll
         Model:
-          NugetPackageName: Veso.Model
+          NugetPackageName: veso.Model
           AssemblyFileName: MediaBrowser.Model.dll
         Common:
-          NugetPackageName: Veso.Common
+          NugetPackageName: veso.Common
           AssemblyFileName: MediaBrowser.Common.dll
       LinuxImage: "ubuntu-latest"

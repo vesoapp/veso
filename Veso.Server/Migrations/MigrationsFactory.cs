@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MediaBrowser.Common.Configuration;
 
-namespace Veso.Server.Migrations
+namespace veso.Server.Migrations
 {
     /// <summary>
     /// A factory that can find a persistent file of the migration configuration, which lists all applied migrations.

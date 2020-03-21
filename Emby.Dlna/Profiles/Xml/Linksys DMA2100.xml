@@ -6,9 +6,9 @@
     <ModelName>DMA2100us</ModelName>
     <Headers />
   </Identification>
-  <Manufacturer>Veso</Manufacturer>
+  <Manufacturer>veso</Manufacturer>
   <ManufacturerUrl>https://github.com/vesotv/veso</ManufacturerUrl>
-  <ModelName>Veso Server</ModelName>
+  <ModelName>veso Server</ModelName>
   <ModelDescription>UPnP/AV 1.0 Compliant Media Server</ModelDescription>
   <ModelNumber>01</ModelNumber>
   <ModelUrl>https://github.com/vesotv/veso</ModelUrl>

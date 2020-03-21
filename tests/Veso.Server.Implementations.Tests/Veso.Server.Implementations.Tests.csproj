@@ -5,7 +5,7 @@
       <IsPackable>false</IsPackable>
       <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
       <Nullable>enable</Nullable>
-      <RootNamespace>Veso.Server.Implementations.Tests</RootNamespace>
+      <RootNamespace>veso.Server.Implementations.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

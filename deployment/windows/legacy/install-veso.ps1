@@ -5,15 +5,15 @@ param(
     [Switch]$InstallAsService,
     [System.Management.Automation.pscredential]$ServiceUser,
     [switch]$CreateDesktopShorcut,
-    [switch]$LaunchVeso,
+    [switch]$Launchveso,
     [switch]$MigrateEmbyLibrary,
     [string]$InstallLocation,
     [string]$EmbyLibraryLocation,
-    [string]$VesoLibraryLocation
+    [string]$vesoLibraryLocation
 )
 <# This form was created using POSHGUI.com  a free online gui designer for PowerShell
 .NAME
-    Install-Veso
+    Install-veso
 #>
 
 #This doesn't need to be used by default anymore, but I am keeping it in as a function for future use.
@@ -57,15 +57,15 @@ function Elevate-Window {
 #FIXME The install methods should be a function that takes all the params, the quiet flag should be a paramset
 
 if($Quiet.IsPresent -or $Quiet -eq $true){
-    if([string]::IsNullOrEmpty($VesoLibraryLocation)){
-        $Script:VesoDataDir = "$env:LOCALAPPDATA\veso\"
+    if([string]::IsNullOrEmpty($vesoLibraryLocation)){
+        $Script:vesoDataDir = "$env:LOCALAPPDATA\veso\"
     }else{
-        $Script:VesoDataDir = $VesoLibraryLocation
+        $Script:vesoDataDir = $vesoLibraryLocation
     }
     if([string]::IsNullOrEmpty($InstallLocation)){
-        $Script:DefaultVesoInstallDirectory = "$env:Appdata\veso\"
+        $Script:DefaultvesoInstallDirectory = "$env:Appdata\veso\"
     }else{
-        $Script:DefaultVesoInstallDirectory = $InstallLocation
+        $Script:DefaultvesoInstallDirectory = $InstallLocation
     }
     
     if([string]::IsNullOrEmpty($EmbyLibraryLocation)){
@@ -82,47 +82,47 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
     }else{
         $Script:InstallServiceAsUser = $true
         $Script:UserCredentials = $ServiceUser
-        $Script:VesoDataDir = "$env:HOMEDRIVE\Users\$($Script:UserCredentials.UserName)\Appdata\Local\veso\"}
+        $Script:vesoDataDir = "$env:HOMEDRIVE\Users\$($Script:UserCredentials.UserName)\Appdata\Local\veso\"}
     if($CreateDesktopShorcut.IsPresent -or $CreateDesktopShorcut -eq $true) {$Script:CreateShortcut = $true}else{$Script:CreateShortcut = $false}
     if($MigrateEmbyLibrary.IsPresent -or $MigrateEmbyLibrary -eq $true){$Script:MigrateLibrary = $true}else{$Script:MigrateLibrary = $false}
-    if($LaunchVeso.IsPresent -or $LaunchVeso -eq $true){$Script:StartVeso = $true}else{$Script:StartVeso = $false}
+    if($Launchveso.IsPresent -or $Launchveso -eq $true){$Script:Startveso = $true}else{$Script:Startveso = $false}
     
-    if(-not (Test-Path $Script:DefaultVesoInstallDirectory)){
-        mkdir $Script:DefaultVesoInstallDirectory
+    if(-not (Test-Path $Script:DefaultvesoInstallDirectory)){
+        mkdir $Script:DefaultvesoInstallDirectory
     }
-    Copy-Item -Path $PSScriptRoot/* -DestinationPath "$Script:DefaultVesoInstallDirectory/" -Force -Recurse
+    Copy-Item -Path $PSScriptRoot/* -DestinationPath "$Script:DefaultvesoInstallDirectory/" -Force -Recurse
     if($Script:InstallAsService){
         if($Script:InstallServiceAsUser){
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" install veso `"$Script:DefaultvesoInstallDirectory\veso.exe`" --datadir `"$Script:vesoDataDir`"
             Start-Sleep -Milliseconds 500
-            &sc.exe config Veso obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
+            &sc.exe config veso obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" set veso Start SERVICE_DELAYED_AUTO_START 
         }else{
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" install veso `"$Script:DefaultvesoInstallDirectory\veso.exe`" --datadir `"$Script:vesoDataDir`"
             Start-Sleep -Milliseconds 500
-            #&"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso ObjectName $Script:UserCredentials.UserName $Script:UserCredentials.GetNetworkCredential().Password
-            #Set-Service -Name Veso -Credential $Script:UserCredentials
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
+            #&"$Script:DefaultvesoInstallDirectory\nssm.exe" set veso ObjectName $Script:UserCredentials.UserName $Script:UserCredentials.GetNetworkCredential().Password
+            #Set-Service -Name veso -Credential $Script:UserCredentials
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" set veso Start SERVICE_DELAYED_AUTO_START 
         }
     }
     if($Script:MigrateLibrary){
-        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:VesoDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:VesoDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:VesoDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:VesoDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:vesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:vesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:vesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:vesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:vesoDataDir -force -Recurse
     }
     if($Script:CreateShortcut){
         $WshShell = New-Object -comObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Veso.lnk")
-        $Shortcut.TargetPath = "$Script:DefaultVesoInstallDirectory\veso.exe"
+        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\veso.lnk")
+        $Shortcut.TargetPath = "$Script:DefaultvesoInstallDirectory\veso.exe"
         $Shortcut.Save()
     }
-    if($Script:StartVeso){
+    if($Script:Startveso){
         if($Script:InstallAsService){
-            Get-Service Veso | Start-Service
+            Get-Service veso | Start-Service
         }else{
-            Start-Process -FilePath $Script:DefaultVesoInstallDirectory\veso.exe -PassThru
+            Start-Process -FilePath $Script:DefaultvesoInstallDirectory\veso.exe -PassThru
         }
     }
 }else{
@@ -131,16 +131,16 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-$Script:VesoDataDir = "$env:LOCALAPPDATA\veso\"
-$Script:DefaultVesoInstallDirectory = "$env:Appdata\veso\"
+$Script:vesoDataDir = "$env:LOCALAPPDATA\veso\"
+$Script:DefaultvesoInstallDirectory = "$env:Appdata\veso\"
 $Script:defaultEmbyDataDir = "$env:Appdata\Emby-Server\"
 $Script:InstallAsService = $False
 $Script:InstallServiceAsUser = $false
 $Script:CreateShortcut = $false
 $Script:MigrateLibrary = $false
-$Script:StartVeso = $false
+$Script:Startveso = $false
 
-function InstallVeso {
+function Installveso {
     Write-Host "Install as service: $Script:InstallAsService" 
     Write-Host "Install as serviceuser: $Script:InstallServiceAsUser"
     Write-Host "Create Shortcut: $Script:CreateShortcut"
@@ -148,38 +148,38 @@ function InstallVeso {
     $GUIElementsCollection | ForEach-Object {
         $_.Enabled = $false
     }
-    Write-Host "Making Veso directory"
+    Write-Host "Making veso directory"
     $ProgressBar.Minimum = 1
     $ProgressBar.Maximum = 100
     $ProgressBar.Value = 1
-    if($Script:DefaultVesoInstallDirectory -ne $InstallLocationBox.Text){
+    if($Script:DefaultvesoInstallDirectory -ne $InstallLocationBox.Text){
         Write-Host "Custom Install Location Chosen: $($InstallLocationBox.Text)"
-        $Script:DefaultVesoInstallDirectory = $InstallLocationBox.Text
+        $Script:DefaultvesoInstallDirectory = $InstallLocationBox.Text
     }
-    if($Script:VesoDataDir -ne $CustomLibraryBox.Text){
+    if($Script:vesoDataDir -ne $CustomLibraryBox.Text){
         Write-Host "Custom Library Location Chosen: $($CustomLibraryBox.Text)"
-        $Script:VesoDataDir = $CustomLibraryBox.Text
+        $Script:vesoDataDir = $CustomLibraryBox.Text
     }
-    if(-not (Test-Path $Script:DefaultVesoInstallDirectory)){
-        mkdir $Script:DefaultVesoInstallDirectory
+    if(-not (Test-Path $Script:DefaultvesoInstallDirectory)){
+        mkdir $Script:DefaultvesoInstallDirectory
     }
-    Write-Host "Copying Veso Data"
+    Write-Host "Copying veso Data"
     $progressbar.Value = 10 
-    Copy-Item -Path $PSScriptRoot/* -Destination $Script:DefaultVesoInstallDirectory/ -Force -Recurse
+    Copy-Item -Path $PSScriptRoot/* -Destination $Script:DefaultvesoInstallDirectory/ -Force -Recurse
     Write-Host "Finished Copying"
     $ProgressBar.Value = 50
     if($Script:InstallAsService){
         if($Script:InstallServiceAsUser){
             Write-Host "Installing Service as user $($Script:UserCredentials.UserName)"
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" install veso `"$Script:DefaultvesoInstallDirectory\veso.exe`" --datadir `"$Script:vesoDataDir`"
             Start-Sleep -Milliseconds 2000
-            &sc.exe config Veso obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
+            &sc.exe config veso obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" set veso Start SERVICE_DELAYED_AUTO_START 
         }else{
             Write-Host "Installing Service as LocalSystem"
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" install veso `"$Script:DefaultvesoInstallDirectory\veso.exe`" --datadir `"$Script:vesoDataDir`"
             Start-Sleep -Milliseconds 2000
-            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
+            &"$Script:DefaultvesoInstallDirectory\nssm.exe" set veso Start SERVICE_DELAYED_AUTO_START 
         }
     }
     $progressbar.Value = 60
@@ -188,35 +188,35 @@ function InstallVeso {
            Write-Host "Custom location defined for emby library: $($LibraryLocationBox.Text)"
            $Script:defaultEmbyDataDir = $LibraryLocationBox.Text
         }
-        Write-Host "Copying emby library from $Script:defaultEmbyDataDir to $Script:VesoDataDir"
+        Write-Host "Copying emby library from $Script:defaultEmbyDataDir to $Script:vesoDataDir"
         Write-Host "This could take a while depending on the size of your library. Please be patient"
         Write-Host "Copying config"
-        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:vesoDataDir -force -Recurse
         Write-Host "Copying cache"
-        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:vesoDataDir -force -Recurse
         Write-Host "Copying data"
-        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:vesoDataDir -force -Recurse
         Write-Host "Copying metadata"
-        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:vesoDataDir -force -Recurse
         Write-Host "Copying root dir"
-        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:VesoDataDir  -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:vesoDataDir  -force -Recurse
     }
     $progressbar.Value = 80
     if($Script:CreateShortcut){
         Write-Host "Creating Shortcut"
         $WshShell = New-Object -comObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Veso.lnk")
-        $Shortcut.TargetPath = "$Script:DefaultVesoInstallDirectory\veso.exe"
+        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\veso.lnk")
+        $Shortcut.TargetPath = "$Script:DefaultvesoInstallDirectory\veso.exe"
         $Shortcut.Save()
     }
     $ProgressBar.Value = 90
-    if($Script:StartVeso){
+    if($Script:Startveso){
         if($Script:InstallAsService){
-            Write-Host "Starting Veso Service"
-            Get-Service Veso | Start-Service
+            Write-Host "Starting veso Service"
+            Get-Service veso | Start-Service
         }else{
-            Write-Host "Starting Veso"
-            Start-Process -FilePath $Script:DefaultVesoInstallDirectory\veso.exe -PassThru
+            Write-Host "Starting veso"
+            Start-Process -FilePath $Script:DefaultvesoInstallDirectory\veso.exe -PassThru
         }
     }
     $progressbar.Value = 100
@@ -249,7 +249,7 @@ function UserSelect {
          $ServiceUserBox.Items.Add("Custom User")
     }elseif($ServiceUserBox.Text -eq 'Custom User'){
         $Script:InstallServiceAsUser = $true
-        $Script:UserCredentials = Get-Credential -Message "Please enter the credentials of the user you with to run Veso Service as" -UserName $env:USERNAME
+        $Script:UserCredentials = Get-Credential -Message "Please enter the credentials of the user you with to run veso Service as" -UserName $env:USERNAME
         $ServiceUserBox.Items[1] = "$($Script:UserCredentials.UserName)"
     }
 }
@@ -260,11 +260,11 @@ function CreateShortcutBoxCheckChanged {
         $Script:CreateShortcut = $False
     }
 }
-function StartVesoBoxCheckChanged {
+function StartvesoBoxCheckChanged {
     if($StartProgramCheck.Checked){
-        $Script:StartVeso = $true
+        $Script:Startveso = $true
     }else{
-        $Script:StartVeso = $false
+        $Script:Startveso = $false
     }
 }
 
@@ -301,7 +301,7 @@ function MigrateLibraryCheckboxChanged {
 
 $InstallForm                     = New-Object system.Windows.Forms.Form
 $InstallForm.ClientSize          = '320,240'
-$InstallForm.text                = "Terrible Veso Installer"
+$InstallForm.text                = "Terrible veso Installer"
 $InstallForm.TopMost             = $false
 
 $GUIElementsCollection = @()
@@ -334,7 +334,7 @@ $InstallLocationBox.multiline    = $false
 $InstallLocationBox.width        = 205
 $InstallLocationBox.height       = 20
 $InstallLocationBox.location     = New-Object System.Drawing.Point(110,50)
-$InstallLocationBox.Text            = $Script:DefaultVesoInstallDirectory
+$InstallLocationBox.Text            = $Script:DefaultvesoInstallDirectory
 $InstallLocationBox.Font         = 'Microsoft Sans Serif,10'
 $GUIElementsCollection += $InstallLocationBox
 
@@ -353,7 +353,7 @@ $CustomLibraryBox.multiline    = $false
 $CustomLibraryBox.width        = 130
 $CustomLibraryBox.height       = 20
 $CustomLibraryBox.location     = New-Object System.Drawing.Point(185,75)
-$CustomLibraryBox.Text            = $Script:VesoDataDir
+$CustomLibraryBox.Text            = $Script:vesoDataDir
 $CustomLibraryBox.Font         = 'Microsoft Sans Serif,10'
 $CustomLibraryBox.Enabled      = $false
 $GUIElementsCollection += $CustomLibraryBox
@@ -433,7 +433,7 @@ $CreateShortcutCheck.Font                  = 'Microsoft Sans Serif,10'
 $GUIElementsCollection += $CreateShortcutCheck
 
 $StartProgramCheck                       = New-Object system.Windows.Forms.CheckBox
-$StartProgramCheck.text                  = "Start Veso"
+$StartProgramCheck.text                  = "Start veso"
 $StartProgramCheck.AutoSize              = $false
 $StartProgramCheck.width                 = 160
 $StartProgramCheck.height                = 20
@@ -445,13 +445,13 @@ $InstallForm.controls.AddRange($GUIElementsCollection)
 $InstallForm.Controls.Add($ProgressBar)
 
 #region gui events {
-$InstallButton.Add_Click({ InstallVeso })
+$InstallButton.Add_Click({ Installveso })
 $CustomLibraryCheck.Add_CheckedChanged({CustomLibraryCheckChanged})
 $InstallAsServiceCheck.Add_CheckedChanged({ServiceBoxCheckChanged})
 $ServiceUserBox.Add_SelectedValueChanged({ UserSelect })
 $MigrateLibraryCheck.Add_CheckedChanged({MigrateLibraryCheckboxChanged})
 $CreateShortcutCheck.Add_CheckedChanged({CreateShortcutBoxCheckChanged})
-$StartProgramCheck.Add_CheckedChanged({StartVesoBoxCheckChanged})
+$StartProgramCheck.Add_CheckedChanged({StartvesoBoxCheckChanged})
 #endregion events }
 
 #endregion GUI }

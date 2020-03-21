@@ -98,7 +98,7 @@ namespace Emby.Server.Implementations.Udp
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var text = Encoding.UTF8.GetString(_receiveBuffer, 0, result.ReceivedBytes);
-                    if (text.Contains("who is VesoServer?", StringComparison.OrdinalIgnoreCase))
+                    if (text.Contains("who is vesoServer?", StringComparison.OrdinalIgnoreCase))
                     {
                         await RespondToV2Message(text, result.RemoteEndPoint, cancellationToken).ConfigureAwait(false);
                     }

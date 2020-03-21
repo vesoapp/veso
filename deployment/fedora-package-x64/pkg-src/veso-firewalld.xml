@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <service>
-  <short>Veso</short>
+  <short>veso</short>
   <description>The Free Software Media System.</description>
   <port protocol="tcp" port="8096"/>
   <port protocol="tcp" port="8920"/>

@@ -3,15 +3,15 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy;
-using Veso.Api.Constants;
+using veso.Api.Auth.FirstTimeSetupOrElevatedPolicy;
+using veso.Api.Constants;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Moq;
 using Xunit;
 
-namespace Veso.Api.Tests.Auth.FirstTimeSetupOrElevatedPolicy
+namespace veso.Api.Tests.Auth.FirstTimeSetupOrElevatedPolicy
 {
     public class FirstTimeSetupOrElevatedHandlerTests
     {

@@ -1,11 +1,11 @@
 [Unit]
 After=network.target
-Description=Veso is a free software media system that puts you in control of managing and streaming your media.
+Description=veso is a free software media system that puts you in control of managing and streaming your media.
 
 [Service]
 EnvironmentFile=/etc/sysconfig/veso
 WorkingDirectory=/var/lib/veso
-ExecStart=/usr/bin/veso ${Veso_RESTART_OPT} ${Veso_FFMPEG_OPT} ${Veso_SERVICE_OPT} ${Veso_NOWEBAPP_OPT}
+ExecStart=/usr/bin/veso ${veso_RESTART_OPT} ${veso_FFMPEG_OPT} ${veso_SERVICE_OPT} ${veso_NOWEBAPP_OPT}
 TimeoutSec=15
 Restart=on-failure
 User=veso

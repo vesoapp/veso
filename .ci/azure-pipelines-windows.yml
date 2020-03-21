@@ -79,4 +79,4 @@ jobs:
         condition: succeeded()
         inputs:
           targetPath: "$(build.artifactstagingdirectory)/setup"
-          artifactName: "Veso Server Setup"
+          artifactName: "veso Server Setup"

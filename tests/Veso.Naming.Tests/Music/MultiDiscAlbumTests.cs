@@ -2,7 +2,7 @@
 using Emby.Naming.Common;
 using Xunit;
 
-namespace Veso.Naming.Tests.Music
+namespace veso.Naming.Tests.Music
 {
     public class MultiDiscAlbumTests
     {

@@ -4,7 +4,7 @@ using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Sorting;
 using Xunit;
 
-namespace Veso.Controller.Tests
+namespace veso.Controller.Tests
 {
     public class AlphanumComparatorTests
     {

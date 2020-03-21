@@ -235,10 +235,10 @@ namespace MediaBrowser.MediaEncoding.Encoder
         /// <returns></returns>
         private string ExistsOnSystemPath(string fileName)
         {
-            string inVesoPath = GetEncoderPathFromDirectory(System.AppContext.BaseDirectory, fileName);
-            if (!string.IsNullOrEmpty(inVesoPath))
+            string invesoPath = GetEncoderPathFromDirectory(System.AppContext.BaseDirectory, fileName);
+            if (!string.IsNullOrEmpty(invesoPath))
             {
-                return inVesoPath;
+                return invesoPath;
             }
             var values = Environment.GetEnvironmentVariable("PATH");
 

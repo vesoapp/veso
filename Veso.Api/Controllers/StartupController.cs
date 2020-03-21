@@ -1,19 +1,19 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Veso.Api.Constants;
-using Veso.Api.Models.StartupDtos;
+using veso.Api.Constants;
+using veso.Api.Models.StartupDtos;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Veso.Api.Controllers
+namespace veso.Api.Controllers
 {
     /// <summary>
     /// The startup wizard controller.
     /// </summary>
     [Authorize(Policy = Policies.FirstTimeSetupOrElevated)]
-    public class StartupController : BaseVesoApiController
+    public class StartupController : BasevesoApiController
     {
         private readonly IServerConfigurationManager _config;
         private readonly IUserManager _userManager;

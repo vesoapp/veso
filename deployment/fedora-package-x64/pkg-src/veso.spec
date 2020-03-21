@@ -12,9 +12,9 @@ Release:        1%{?dist}
 Summary:        The Free Software Media Browser
 License:        GPLv2
 URL:            https://veso.media
-# Veso Server tarball created by `make -f .copr/Makefile srpm`, real URL ends with `v%{version}.tar.gz`
+# veso Server tarball created by `make -f .copr/Makefile srpm`, real URL ends with `v%{version}.tar.gz`
 Source0:        https://github.com/%{name}/%{name}/archive/%{name}-%{version}.tar.gz
-# Veso Webinterface downloaded by `make -f .copr/Makefile srpm`, real URL ends with `v%{version}.tar.gz`
+# veso Webinterface downloaded by `make -f .copr/Makefile srpm`, real URL ends with `v%{version}.tar.gz`
 Source1:        https://github.com/%{name}/%{name}-web/archive/%{name}-web-%{version}.tar.gz
 Source11:       veso.service
 Source12:       veso.env
@@ -46,7 +46,7 @@ Requires:       ffmpeg
 AutoReqProv:    no
 
 %description
-Veso is a free software media system that puts you in control of managing and streaming your media.
+veso is a free software media system that puts you in control of managing and streaming your media.
 
 
 %prep
@@ -69,10 +69,10 @@ popd
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 dotnet publish --configuration Release --output='%{buildroot}%{_libdir}/veso' --self-contained --runtime %{dotnet_runtime} \
-    "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none" Veso.Server
+    "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none" veso.Server
 %{__install} -D -m 0644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 %{__install} -D -m 0644 %{SOURCE15} %{buildroot}%{_sysconfdir}/systemd/system/%{name}.service.d/override.conf
-%{__install} -D -m 0644 Veso.Server/Resources/Configuration/logging.json %{buildroot}%{_sysconfdir}/%{name}/logging.json
+%{__install} -D -m 0644 veso.Server/Resources/Configuration/logging.json %{buildroot}%{_sysconfdir}/%{name}/logging.json
 %{__mkdir} -p %{buildroot}%{_bindir}
 tee %{buildroot}%{_bindir}/veso << EOF
 #!/bin/sh
@@ -121,7 +121,7 @@ EOF
 getent group veso >/dev/null || groupadd -r veso
 getent passwd veso >/dev/null || \
     useradd -r -g veso -d %{_sharedstatedir}/veso -s /sbin/nologin \
-    -c "Veso default user" veso
+    -c "veso default user" veso
 exit 0
 
 %post
@@ -159,26 +159,26 @@ fi
 %systemd_postun_with_restart veso.service
 
 %changelog
-* Sun Mar 15 2020 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.5.1; release changelog at https://github.com/Veso/Veso/releases/tag/v10.5.1
-* Fri Oct 11 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.5.0; release changelog at https://github.com/Veso/Veso/releases/tag/v10.5.0
-* Sat Aug 31 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.4.0; release changelog at https://github.com/Veso/Veso/releases/tag/v10.4.0
-* Wed Jul 24 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.7; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.7
-* Sat Jul 06 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.6; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.6
-* Sun Jun 09 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.5; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.5
-* Thu Jun 06 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.4; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.4
-* Fri May 17 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.3; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.3
-* Tue Apr 30 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.2; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.2
-* Sat Apr 20 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.1; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.1
-* Fri Apr 19 2019 Veso Packaging Team <packaging@Veso.org>
-- New upstream version 10.3.0; release changelog at https://github.com/Veso/Veso/releases/tag/v10.3.0
->>>>>>> release-10.5.z:deployment/fedora-package-x64/pkg-src/Veso.spec
+* Sun Mar 15 2020 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.5.1; release changelog at https://github.com/veso/veso/releases/tag/v10.5.1
+* Fri Oct 11 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.5.0; release changelog at https://github.com/veso/veso/releases/tag/v10.5.0
+* Sat Aug 31 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.4.0; release changelog at https://github.com/veso/veso/releases/tag/v10.4.0
+* Wed Jul 24 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.7; release changelog at https://github.com/veso/veso/releases/tag/v10.3.7
+* Sat Jul 06 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.6; release changelog at https://github.com/veso/veso/releases/tag/v10.3.6
+* Sun Jun 09 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.5; release changelog at https://github.com/veso/veso/releases/tag/v10.3.5
+* Thu Jun 06 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.4; release changelog at https://github.com/veso/veso/releases/tag/v10.3.4
+* Fri May 17 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.3; release changelog at https://github.com/veso/veso/releases/tag/v10.3.3
+* Tue Apr 30 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.2; release changelog at https://github.com/veso/veso/releases/tag/v10.3.2
+* Sat Apr 20 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.1; release changelog at https://github.com/veso/veso/releases/tag/v10.3.1
+* Fri Apr 19 2019 veso Packaging Team <packaging@veso.org>
+- New upstream version 10.3.0; release changelog at https://github.com/veso/veso/releases/tag/v10.3.0
+>>>>>>> release-10.5.z:deployment/fedora-package-x64/pkg-src/veso.spec

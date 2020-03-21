@@ -23,7 +23,7 @@ namespace MediaBrowser.Providers.Music
     public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, AlbumInfo>, IHasOrder
     {
         /// <summary>
-        /// The Veso user-agent is unrestricted but source IP must not exceed
+        /// The veso user-agent is unrestricted but source IP must not exceed
         /// one request per second, therefore we rate limit to avoid throttling.
         /// Be prudent, use a value slightly above the minimun required.
         /// https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting

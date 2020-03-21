@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace Veso.Server.Migrations
+namespace veso.Server.Migrations
 {
     /// <summary>
     /// Interface that describes a migration routine.

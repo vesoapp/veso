@@ -897,12 +897,12 @@ namespace Emby.Server.Implementations
                 .GetCommandLineArgs()
                 .Distinct();
 
-            // Get all 'Veso_' prefixed environment variables
+            // Get all 'veso_' prefixed environment variables
             var allEnvVars = Environment.GetEnvironmentVariables();
             var vesoEnvVars = new Dictionary<object, object>();
             foreach (var key in allEnvVars.Keys)
             {
-                if (key.ToString().StartsWith("Veso_", StringComparison.OrdinalIgnoreCase))
+                if (key.ToString().StartsWith("veso_", StringComparison.OrdinalIgnoreCase))
                 {
                     vesoEnvVars.Add(key, allEnvVars[key]);
                 }

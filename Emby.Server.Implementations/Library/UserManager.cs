@@ -535,7 +535,7 @@ namespace Emby.Server.Implementations.Library
             var defaultName = Environment.UserName;
             if (string.IsNullOrWhiteSpace(defaultName))
             {
-                defaultName = "MyVesoUser";
+                defaultName = "MyvesoUser";
             }
 
             _logger.LogWarning("No users, creating one with username {UserName}", defaultName);

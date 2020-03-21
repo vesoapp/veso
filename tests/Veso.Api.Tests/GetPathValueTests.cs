@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
-namespace Veso.Api.Tests
+namespace veso.Api.Tests
 {
     public class GetPathValueTests
     {
@@ -18,9 +18,9 @@ namespace Veso.Api.Tests
         [InlineData("https://localhost:8096/veso/2/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
         [InlineData("https://localhost:8096/veso/2/emby/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
         [InlineData("https://localhost:8096/veso/2/mediabrowser/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
-        [InlineData("https://localhost:8096/Veso/2/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
-        [InlineData("https://localhost:8096/Veso/2/Emby/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
-        [InlineData("https://localhost:8096/Veso/2/MediaBrowser/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
+        [InlineData("https://localhost:8096/veso/2/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
+        [InlineData("https://localhost:8096/veso/2/Emby/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
+        [InlineData("https://localhost:8096/veso/2/MediaBrowser/ScheduledTasks/1234/Triggers", "veso/2", 1, "1234")]
         public void GetPathValueTest(string path, string baseUrl, int index, string value)
         {
             var reqMock = Mock.Of<IRequest>(x => x.PathInfo == path);

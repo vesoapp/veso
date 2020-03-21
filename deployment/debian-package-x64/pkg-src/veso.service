@@ -1,12 +1,12 @@
 [Unit]
-Description = Veso Media Server
+Description = veso Media Server
 After = network.target
 
 [Service]
 Type = simple
 EnvironmentFile = /etc/default/veso
 User = veso
-ExecStart = /usr/bin/veso ${Veso_RESTART_OPT} ${Veso_FFMPEG_OPT} ${Veso_SERVICE_OPT} ${Veso_NOWEBAPP_OPT}
+ExecStart = /usr/bin/veso ${veso_RESTART_OPT} ${veso_FFMPEG_OPT} ${veso_SERVICE_OPT} ${veso_NOWEBAPP_OPT}
 Restart = on-failure
 TimeoutSec = 15
 

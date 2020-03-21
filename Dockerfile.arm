@@ -7,7 +7,7 @@ ARG DOTNET_VERSION=3.1
 
 FROM node:alpine as web-builder
 RUN apk add curl git \
- && curl -L https://github.com/vesotv/veso-web/archive/${Veso_WEB_VERSION}.tar.gz | tar zxf - \
+ && curl -L https://github.com/vesotv/veso-web/archive/${veso_WEB_VERSION}.tar.gz | tar zxf - \
  && cd veso-web-* \
  && yarn install \
  && yarn build \
@@ -21,7 +21,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 # Discard objs - may cause failures if exists
 RUN find . -type d -name obj | xargs -r rm -r
 # Build
-RUN dotnet publish Veso.Server --configuration Release --output="/veso" --self-contained --runtime linux-arm "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+RUN dotnet publish veso.Server --configuration Release --output="/veso" --self-contained --runtime linux-arm "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
 
 FROM multiarch/qemu-user-static:x86_64-arm as qemu

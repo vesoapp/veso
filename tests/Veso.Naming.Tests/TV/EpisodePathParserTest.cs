@@ -2,7 +2,7 @@ using Emby.Naming.Common;
 using Emby.Naming.TV;
 using Xunit;
 
-namespace Veso.Naming.Tests.TV
+namespace veso.Naming.Tests.TV
 {
     public class EpisodePathParserTest
     {

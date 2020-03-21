@@ -7,7 +7,7 @@ using static MediaBrowser.Common.Cryptography.Constants;
 namespace MediaBrowser.Common.Cryptography
 {
     /// <summary>
-    /// Class containing extension methods for working with Veso cryptography objects.
+    /// Class containing extension methods for working with veso cryptography objects.
     /// </summary>
     public static class Extensions
     {

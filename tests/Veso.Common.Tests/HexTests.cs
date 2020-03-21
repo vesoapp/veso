@@ -1,7 +1,7 @@
 using MediaBrowser.Common;
 using Xunit;
 
-namespace Veso.Common.Tests
+namespace veso.Common.Tests
 {
     public class HexTests
     {

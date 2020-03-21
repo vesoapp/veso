@@ -2,7 +2,7 @@ using MediaBrowser.Common;
 using MediaBrowser.Common.Cryptography;
 using Xunit;
 
-namespace Veso.Common.Tests
+namespace veso.Common.Tests
 {
     public class PasswordHashTests
     {

@@ -2,7 +2,7 @@
 using Emby.Naming.Video;
 using Xunit;
 
-namespace Veso.Naming.Tests.Video
+namespace veso.Naming.Tests.Video
 {
     public class Format3DTests : BaseVideoTest
     {

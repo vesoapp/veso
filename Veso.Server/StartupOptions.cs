@@ -1,7 +1,7 @@
 using CommandLine;
 using Emby.Server.Implementations;
 
-namespace Veso.Server
+namespace veso.Server
 {
     /// <summary>
     /// Class used by CommandLine package when parsing the command line arguments.
@@ -19,7 +19,7 @@ namespace Veso.Server
         /// Gets or sets the path to the web directory.
         /// </summary>
         /// <value>The path to the web directory.</value>
-        [Option('w', "webdir", Required = false, HelpText = "Path to the Veso web UI resources.")]
+        [Option('w', "webdir", Required = false, HelpText = "Path to the veso web UI resources.")]
         public string? WebDir { get; set; }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Veso.Server
         public bool NoAutoRunWebApp { get; set; }
 
         /// <inheritdoc />
-        [Option("package-name", Required = false, HelpText = "Used when packaging Veso (example, synology).")]
+        [Option("package-name", Required = false, HelpText = "Used when packaging veso (example, synology).")]
         public string? PackageName { get; set; }
 
         /// <inheritdoc />

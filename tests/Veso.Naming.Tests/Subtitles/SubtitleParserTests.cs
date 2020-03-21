@@ -2,7 +2,7 @@
 using Emby.Naming.Subtitles;
 using Xunit;
 
-namespace Veso.Naming.Tests.Subtitles
+namespace veso.Naming.Tests.Subtitles
 {
     public class SubtitleParserTests
     {

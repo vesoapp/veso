@@ -1,4 +1,4 @@
-namespace Veso.Api.Constants
+namespace veso.Api.Constants
 {
     /// <summary>
     /// Constants for user roles used in the authentication and authorization for the API.

@@ -1,4 +1,4 @@
-namespace Veso.Api.Models.StartupDtos
+namespace veso.Api.Models.StartupDtos
 {
     /// <summary>
     /// The startup configuration DTO.

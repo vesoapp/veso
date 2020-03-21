@@ -4,7 +4,7 @@ using Emby.Naming.Video;
 using MediaBrowser.Model.IO;
 using Xunit;
 
-namespace Veso.Naming.Tests.Video
+namespace veso.Naming.Tests.Video
 {
     public class StackTests : BaseVideoTest
     {

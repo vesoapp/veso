@@ -15,7 +15,7 @@
                         {
                             "Name": "File",
                             "Args": {
-                                "path": "%Veso_LOG_DIR%//veso.log",
+                                "path": "%veso_LOG_DIR%//veso.log",
                                 "fileSizeLimitBytes": 10485700,
                                 "rollOnFileSizeLimit": true,
                                 "retainedFileCountLimit": 10,

@@ -279,9 +279,9 @@ namespace Emby.Dlna.Main
                     Location = uri, // Must point to the URL that serves your devices UPnP description document.
                     Address = address,
                     SubnetMask = _networkManager.GetLocalIpSubnetMask(address),
-                    FriendlyName = "Veso",
-                    Manufacturer = "Veso",
-                    ModelName = "Veso Server",
+                    FriendlyName = "veso",
+                    Manufacturer = "veso",
+                    ModelName = "veso Server",
                     Uuid = udn
                     // This must be a globally unique value that survives reboots etc. Get from storage or embedded hardware etc.
                 };

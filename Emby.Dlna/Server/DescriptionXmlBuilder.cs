@@ -215,7 +215,7 @@ namespace Emby.Dlna.Server
         {
             if (string.IsNullOrEmpty(_profile.FriendlyName))
             {
-                return "Veso - " + _serverName;
+                return "veso - " + _serverName;
             }
 
             var characterList = new List<char>();

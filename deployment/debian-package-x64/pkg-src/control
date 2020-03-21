@@ -1,7 +1,7 @@
 Source: veso
 Section: misc
 Priority: optional
-Maintainer: Veso Team <team@veso.org>
+Maintainer: veso Team <team@veso.org>
 Build-Depends:  debhelper (>= 9),
                 dotnet-sdk-3.1,
                 libc6-dev,
@@ -27,5 +27,5 @@ Depends: at,
          libfontconfig1,
          libfreetype6,
          libssl1.1
-Description: Veso is a home media server.
+Description: veso is a home media server.
  It is built on top of other popular open source technologies such as Service Stack, jQuery, jQuery mobile, and Mono. It features a REST-based api with built-in documentation to facilitate client development. We also have client libraries for our api to enable rapid development.

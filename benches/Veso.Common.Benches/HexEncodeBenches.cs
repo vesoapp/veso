@@ -3,7 +3,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using MediaBrowser.Common;
 
-namespace Veso.Common.Benches
+namespace veso.Common.Benches
 {
     [MemoryDiagnoser]
     public class HexEncodeBenches

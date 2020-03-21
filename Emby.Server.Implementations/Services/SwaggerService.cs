@@ -149,12 +149,12 @@ namespace Emby.Server.Implementations.Services
                 swagger = "2.0",
                 info = new SwaggerInfo
                 {
-                    title = "Veso Server API",
+                    title = "veso Server API",
                     version = "1.0.0",
-                    description = "Explore the Veso Server API",
+                    description = "Explore the veso Server API",
                     contact = new SwaggerConcactInfo
                     {
-                        name = "Veso Community",
+                        name = "veso Community",
                         url = "https://veso.readthedocs.io/en/latest/user-docs/getting-help/"
                     }
                 },

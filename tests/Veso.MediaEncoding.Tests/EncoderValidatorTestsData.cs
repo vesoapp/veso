@@ -1,4 +1,4 @@
-namespace Veso.MediaEncoding.Tests
+namespace veso.MediaEncoding.Tests
 {
     internal static class EncoderValidatorTestsData
     {

@@ -4,16 +4,16 @@ set -e
 NAME=veso
 DEFAULT_FILE=/etc/default/${NAME}
 
-# Source Veso default configuration
+# Source veso default configuration
 if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
 
 # Data directories for program data (cache, db), configs, and logs
-PROGRAMDATA=${Veso_DATA_DIRECTORY-/var/lib/$NAME}
-CONFIGDATA=${Veso_CONFIG_DIRECTORY-/etc/$NAME}
-LOGDATA=${Veso_LOG_DIRECTORY-/var/log/$NAME}
-CACHEDATA=${Veso_CACHE_DIRECTORY-/var/cache/$NAME}
+PROGRAMDATA=${veso_DATA_DIRECTORY-/var/lib/$NAME}
+CONFIGDATA=${veso_CONFIG_DIRECTORY-/etc/$NAME}
+LOGDATA=${veso_LOG_DIRECTORY-/var/log/$NAME}
+CACHEDATA=${veso_CACHE_DIRECTORY-/var/cache/$NAME}
 
 case "$1" in
   configure)
@@ -24,7 +24,7 @@ case "$1" in
     # create veso user if it does not exist
     if [[ -z "$(getent passwd veso)"  ]]; then
       adduser --system --ingroup veso --shell /bin/false veso --no-create-home --home ${PROGRAMDATA} \
-        --gecos "Veso default user" > /dev/null 2>&1
+        --gecos "veso default user" > /dev/null 2>&1
     fi
     # ensure $PROGRAMDATA exists
     if [[ ! -d $PROGRAMDATA ]]; then

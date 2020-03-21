@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Veso.Api
+namespace veso.Api
 {
     /// <summary>
     /// Route prefixing for ASP.NET MVC.

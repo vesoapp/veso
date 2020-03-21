@@ -1,6 +1,6 @@
 using System;
 
-namespace Veso.Drawing.Skia
+namespace veso.Drawing.Skia
 {
     /// <summary>
     /// Represents errors that occur during interaction with Skia.

@@ -14,8 +14,8 @@ Unicode True
     !include "helpers\ShowError.nsh"
 
 ; Global variables that we'll use
-    Var _VesoVERSION_
-    Var _VesoDATADIR_
+    Var _vesoVERSION_
+    Var _vesoDATADIR_
     Var _SETUPTYPE_
     Var _INSTALLSERVICE_
     Var _SERVICESTART_
@@ -28,13 +28,13 @@ Unicode True
 !ifdef x64
     !define ARCH "x64"
     !define NAMESUFFIX "(64 bit)"
-    !define INSTALL_DIRECTORY "$PROGRAMFILES64\Veso\Server"
+    !define INSTALL_DIRECTORY "$PROGRAMFILES64\veso\Server"
 !endif
 
 !ifdef x84
     !define ARCH "x86"
     !define NAMESUFFIX "(32 bit)"
-    !define INSTALL_DIRECTORY "$PROGRAMFILES32\Veso\Server"
+    !define INSTALL_DIRECTORY "$PROGRAMFILES32\veso\Server"
 !endif
 
 !ifndef ARCH
@@ -43,22 +43,22 @@ Unicode True
 
 ;--------------------------------
 
-    !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\VesoServer" ;Registry to show up in Add/Remove Programs
-    !define REG_CONFIG_KEY "Software\Veso\Server" ;Registry to store all configuration
+    !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\vesoServer" ;Registry to show up in Add/Remove Programs
+    !define REG_CONFIG_KEY "Software\veso\Server" ;Registry to store all configuration
 
     !getdllversion "$%InstallLocation%\veso.dll" ver_ ;Align installer version with veso.dll version
 
-    Name "Veso Server ${ver_1}.${ver_2}.${ver_3} ${NAMESUFFIX}" ; This is referred in various header text labels
+    Name "veso Server ${ver_1}.${ver_2}.${ver_3} ${NAMESUFFIX}" ; This is referred in various header text labels
     OutFile "veso_${ver_1}.${ver_2}.${ver_3}_windows-${ARCH}.exe" ; Naming convention veso_{version}_windows-{arch].exe
-    BrandingText "Veso Server ${ver_1}.${ver_2}.${ver_3} Installer" ; This shows in just over the buttons
+    BrandingText "veso Server ${ver_1}.${ver_2}.${ver_3} Installer" ; This shows in just over the buttons
 
 ; installer attributes, these show up in details tab on installer properties
     VIProductVersion "${ver_1}.${ver_2}.${ver_3}.0" ; VIProductVersion format, should be X.X.X.X
     VIFileVersion "${ver_1}.${ver_2}.${ver_3}.0" ; VIFileVersion format, should be X.X.X.X
-    VIAddVersionKey "ProductName" "Veso Server"
+    VIAddVersionKey "ProductName" "veso Server"
     VIAddVersionKey "FileVersion" "${ver_1}.${ver_2}.${ver_3}.0"
-    VIAddVersionKey "LegalCopyright" "(c) 2019 Veso Contributors. Code released under the GNU General Public License"
-    VIAddVersionKey "FileDescription" "Veso Server: The Free Software Media System"
+    VIAddVersionKey "LegalCopyright" "(c) 2019 veso Contributors. Code released under the GNU General Public License"
+    VIAddVersionKey "FileDescription" "veso Server: The Free Software Media System"
 
 ;TODO, check defaults
     InstallDir ${INSTALL_DIRECTORY} ;Default installation folder
@@ -70,7 +70,7 @@ Unicode True
 
     !define MUI_ABORTWARNING ;Prompts user in case of aborting install
 
-; TODO: Replace with nice Veso Icons
+; TODO: Replace with nice veso Icons
 !ifdef UXPATH
     !define MUI_ICON "${UXPATH}\branding\NSIS\modern-install.ico" ; Installer Icon
     !define MUI_UNICON "${UXPATH}\branding\NSIS\modern-install.ico" ; Uninstaller Icon
@@ -85,7 +85,7 @@ Unicode True
 ;Pages
 
 ; Welcome Page
-    !define MUI_WELCOMEPAGE_TEXT "The installer will ask for details to install Veso Server."
+    !define MUI_WELCOMEPAGE_TEXT "The installer will ask for details to install veso Server."
     !insertmacro MUI_PAGE_WELCOME
 ; License Page
     !insertmacro MUI_PAGE_LICENSE "$%InstallLocation%\LICENSE" ; picking up generic GPL
@@ -103,10 +103,10 @@ Unicode True
 ; Data folder Page
     !define MUI_PAGE_CUSTOMFUNCTION_PRE HideDataDirectoryPage ; Controls when to hide / show
     !define MUI_PAGE_HEADER_TEXT "Choose Data Location"
-    !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which to install the Veso Server data."
-    !define MUI_DIRECTORYPAGE_TEXT_TOP "The installer will set the following folder for Veso Server data. To install in a different folder, click Browse and select another folder. Please make sure the folder exists and is accessible. Click Next to continue."
+    !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which to install the veso Server data."
+    !define MUI_DIRECTORYPAGE_TEXT_TOP "The installer will set the following folder for veso Server data. To install in a different folder, click Browse and select another folder. Please make sure the folder exists and is accessible. Click Next to continue."
     !define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Data folder"
-    !define MUI_DIRECTORYPAGE_VARIABLE $_VesoDATADIR_
+    !define MUI_DIRECTORYPAGE_VARIABLE $_vesoDATADIR_
     !insertmacro MUI_PAGE_DIRECTORY
 
 ; Custom Dialogs
@@ -137,7 +137,7 @@ Unicode True
 
 ;--------------------------------
 ;Installer Sections
-Section "!Veso Server (required)" InstallVesoServer
+Section "!veso Server (required)" InstallvesoServer
     SectionIn RO ; Mandatory section, isn't this the whole purpose to run the installer.
 
     StrCmp "$_EXISTINGINSTALLATION_" "Yes" RunUninstaller CarryOn ; Silently uninstall in case of previous installation
@@ -154,12 +154,12 @@ Section "!Veso Server (required)" InstallVesoServer
 
     CarryOn:
     ${If} $_EXISTINGSERVICE_ == 'Yes'
-        ExecWait '"$INSTDIR\nssm.exe" stop VesoServer' $0
+        ExecWait '"$INSTDIR\nssm.exe" stop vesoServer' $0
         ${If} $0 <> 0
-            MessageBox MB_OK|MB_ICONSTOP "Could not stop the Veso Server service."
+            MessageBox MB_OK|MB_ICONSTOP "Could not stop the veso Server service."
             Abort
         ${EndIf}
-        DetailPrint "Stopped Veso Server service, $0"
+        DetailPrint "Stopped veso Server service, $0"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -170,19 +170,19 @@ Section "!Veso Server (required)" InstallVesoServer
 
 ; Write the InstallFolder, DataFolder, Network Service info into the registry for later use
     WriteRegExpandStr HKLM "${REG_CONFIG_KEY}" "InstallFolder" "$INSTDIR"
-    WriteRegExpandStr HKLM "${REG_CONFIG_KEY}" "DataFolder" "$_VesoDATADIR_"
+    WriteRegExpandStr HKLM "${REG_CONFIG_KEY}" "DataFolder" "$_vesoDATADIR_"
     WriteRegStr HKLM "${REG_CONFIG_KEY}" "ServiceAccountType" "$_SERVICEACCOUNTTYPE_"
 
     !getdllversion "$%InstallLocation%\veso.dll" ver_
-    StrCpy $_VesoVERSION_ "${ver_1}.${ver_2}.${ver_3}" ;
+    StrCpy $_vesoVERSION_ "${ver_1}.${ver_2}.${ver_3}" ;
 
 ; Write the uninstall keys for Windows
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Veso Server $_VesoVERSION_ ${NAMESUFFIX}"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "veso Server $_vesoVERSION_ ${NAMESUFFIX}"
     WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" '"$INSTDIR\Uninstall.exe",0'
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "The Veso Project"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "The veso Project"
     WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://veso.org/"
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "$_VesoVERSION_"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "$_vesoVERSION_"
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" 1
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" 1
 
@@ -190,75 +190,75 @@ Section "!Veso Server (required)" InstallVesoServer
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 SectionEnd
 
-Section "Veso Server Service" InstallService
+Section "veso Server Service" InstallService
 ${If} $_INSTALLSERVICE_ == "Yes" ; Only run this if we're going to install the service!
-    ExecWait '"$INSTDIR\nssm.exe" statuscode VesoServer' $0
-    DetailPrint "Veso Server service statuscode, $0"
+    ExecWait '"$INSTDIR\nssm.exe" statuscode vesoServer' $0
+    DetailPrint "veso Server service statuscode, $0"
     ${If} $0 == 0
         InstallRetry:
-        ExecWait '"$INSTDIR\nssm.exe" install VesoServer "$INSTDIR\veso.exe" --service --datadir \"$_VesoDATADIR_\"' $0
+        ExecWait '"$INSTDIR\nssm.exe" install vesoServer "$INSTDIR\veso.exe" --service --datadir \"$_vesoDATADIR_\"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not install the Veso Server service." InstallRetry
+            !insertmacro ShowError "Could not install the veso Server service." InstallRetry
         ${EndIf}
-        DetailPrint "Veso Server Service install, $0"
+        DetailPrint "veso Server Service install, $0"
     ${Else}
-        DetailPrint "Veso Server Service exists, updating..."
+        DetailPrint "veso Server Service exists, updating..."
 
         ConfigureApplicationRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set VesoServer Application "$INSTDIR\veso.exe"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set vesoServer Application "$INSTDIR\veso.exe"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Veso Server service." ConfigureApplicationRetry
+            !insertmacro ShowError "Could not configure the veso Server service." ConfigureApplicationRetry
         ${EndIf}
-        DetailPrint "Veso Server Service setting (Application), $0"
+        DetailPrint "veso Server Service setting (Application), $0"
 
         ConfigureAppParametersRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set VesoServer AppParameters --service --datadir \"$_VesoDATADIR_\"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set vesoServer AppParameters --service --datadir \"$_vesoDATADIR_\"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Veso Server service." ConfigureAppParametersRetry
+            !insertmacro ShowError "Could not configure the veso Server service." ConfigureAppParametersRetry
         ${EndIf}
-        DetailPrint "Veso Server Service setting (AppParameters), $0"
+        DetailPrint "veso Server Service setting (AppParameters), $0"
     ${EndIf}
 
 
     Sleep 3000 ; Give time for Windows to catchup
     ConfigureStartRetry:
-    ExecWait '"$INSTDIR\nssm.exe" set VesoServer Start SERVICE_DELAYED_AUTO_START' $0
+    ExecWait '"$INSTDIR\nssm.exe" set vesoServer Start SERVICE_DELAYED_AUTO_START' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not configure the Veso Server service." ConfigureStartRetry
+        !insertmacro ShowError "Could not configure the veso Server service." ConfigureStartRetry
     ${EndIf}
-    DetailPrint "Veso Server Service setting (Start), $0"
+    DetailPrint "veso Server Service setting (Start), $0"
 
     ConfigureDescriptionRetry:
-    ExecWait '"$INSTDIR\nssm.exe" set VesoServer Description "Veso Server: The Free Software Media System"' $0
+    ExecWait '"$INSTDIR\nssm.exe" set vesoServer Description "veso Server: The Free Software Media System"' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not configure the Veso Server service." ConfigureDescriptionRetry
+        !insertmacro ShowError "Could not configure the veso Server service." ConfigureDescriptionRetry
     ${EndIf}
-    DetailPrint "Veso Server Service setting (Description), $0"
+    DetailPrint "veso Server Service setting (Description), $0"
     ConfigureDisplayNameRetry:
-    ExecWait '"$INSTDIR\nssm.exe" set VesoServer DisplayName "Veso Server"' $0
+    ExecWait '"$INSTDIR\nssm.exe" set vesoServer DisplayName "veso Server"' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not configure the Veso Server service." ConfigureDisplayNameRetry
+        !insertmacro ShowError "Could not configure the veso Server service." ConfigureDisplayNameRetry
 
     ${EndIf}
-    DetailPrint "Veso Server Service setting (DisplayName), $0"
+    DetailPrint "veso Server Service setting (DisplayName), $0"
 
     Sleep 3000
     ${If} $_SERVICEACCOUNTTYPE_ == "NetworkService" ; the default install using NSSM is Local System
         ConfigureNetworkServiceRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set VesoServer Objectname "Network Service"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set vesoServer Objectname "Network Service"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Veso Server service account." ConfigureNetworkServiceRetry
+            !insertmacro ShowError "Could not configure the veso Server service account." ConfigureNetworkServiceRetry
         ${EndIf}
-        DetailPrint "Veso Server service account change, $0"
+        DetailPrint "veso Server service account change, $0"
     ${EndIf}
 
     Sleep 3000
     ConfigureDefaultAppExit:
-        ExecWait '"$INSTDIR\nssm.exe" set VesoServer AppExit Default Exit' $0
+        ExecWait '"$INSTDIR\nssm.exe" set vesoServer AppExit Default Exit' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Veso Server service app exit action." ConfigureDefaultAppExit
+            !insertmacro ShowError "Could not configure the veso Server service app exit action." ConfigureDefaultAppExit
         ${EndIf}
-        DetailPrint "Veso Server service exit action set, $0"
+        DetailPrint "veso Server service exit action set, $0"
 ${EndIf}
 
 SectionEnd
@@ -267,21 +267,21 @@ Section "-start service" StartService
 ${If} $_SERVICESTART_ == "Yes"
 ${AndIf} $_INSTALLSERVICE_ == "Yes"
     StartRetry:
-    ExecWait '"$INSTDIR\nssm.exe" start VesoServer' $0
+    ExecWait '"$INSTDIR\nssm.exe" start vesoServer' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not start the Veso Server service." StartRetry
+        !insertmacro ShowError "Could not start the veso Server service." StartRetry
     ${EndIf}
-    DetailPrint "Veso Server service start, $0"
+    DetailPrint "veso Server service start, $0"
 ${EndIf}
 SectionEnd
 
 Section "Create Shortcuts" CreateWinShortcuts
     ${If} $_MAKESHORTCUTS_ == "Yes"
-        CreateDirectory "$SMPROGRAMS\Veso Server"
-        CreateShortCut "$SMPROGRAMS\Veso Server\Veso (View Console).lnk" "$INSTDIR\veso.exe" "--datadir $\"$_VesoDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMAXIMIZED
-        CreateShortCut "$SMPROGRAMS\Veso Server\Veso Tray App.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
-        ;CreateShortCut "$DESKTOP\Veso Server.lnk" "$INSTDIR\veso.exe" "--datadir $\"$_VesoDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMINIMIZED
-        CreateShortCut "$DESKTOP\Veso Server\Veso Server.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
+        CreateDirectory "$SMPROGRAMS\veso Server"
+        CreateShortCut "$SMPROGRAMS\veso Server\veso (View Console).lnk" "$INSTDIR\veso.exe" "--datadir $\"$_vesoDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMAXIMIZED
+        CreateShortCut "$SMPROGRAMS\veso Server\veso Tray App.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
+        ;CreateShortCut "$DESKTOP\veso Server.lnk" "$INSTDIR\veso.exe" "--datadir $\"$_vesoDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMINIMIZED
+        CreateShortCut "$DESKTOP\veso Server\veso Server.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
     ${EndIf}
 SectionEnd
 
@@ -289,12 +289,12 @@ SectionEnd
 ;Descriptions
 
 ;Language strings
-    LangString DESC_InstallVesoServer ${LANG_ENGLISH} "Install Veso Server"
+    LangString DESC_InstallvesoServer ${LANG_ENGLISH} "Install veso Server"
     LangString DESC_InstallService ${LANG_ENGLISH} "Install As a Service"
 
 ;Assign language strings to sections
     !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${InstallVesoServer} $(DESC_InstallVesoServer)
+    !insertmacro MUI_DESCRIPTION_TEXT ${InstallvesoServer} $(DESC_InstallvesoServer)
     !insertmacro MUI_DESCRIPTION_TEXT ${InstallService} $(DESC_InstallService)
     !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -304,44 +304,44 @@ SectionEnd
 Section "Uninstall"
 
     ReadRegStr $INSTDIR HKLM "${REG_CONFIG_KEY}" "InstallFolder"  ; read the installation folder
-    ReadRegStr $_VesoDATADIR_ HKLM "${REG_CONFIG_KEY}" "DataFolder"  ; read the data folder
+    ReadRegStr $_vesoDATADIR_ HKLM "${REG_CONFIG_KEY}" "DataFolder"  ; read the data folder
     ReadRegStr $_SERVICEACCOUNTTYPE_ HKLM "${REG_CONFIG_KEY}" "ServiceAccountType"  ; read the account name
 
-    DetailPrint "Veso Install location: $INSTDIR"
-    DetailPrint "Veso Data folder: $_VesoDATADIR_"
+    DetailPrint "veso Install location: $INSTDIR"
+    DetailPrint "veso Data folder: $_vesoDATADIR_"
 
-    MessageBox MB_YESNO|MB_ICONINFORMATION "Do you want to retain the Veso Server data folder? The media will not be touched. $\r$\nIf unsure choose YES." /SD IDYES IDYES PreserveData
+    MessageBox MB_YESNO|MB_ICONINFORMATION "Do you want to retain the veso Server data folder? The media will not be touched. $\r$\nIf unsure choose YES." /SD IDYES IDYES PreserveData
 
-    RMDir /r /REBOOTOK "$_VesoDATADIR_"
+    RMDir /r /REBOOTOK "$_vesoDATADIR_"
 
     PreserveData:
 
-    ExecWait '"$INSTDIR\nssm.exe" statuscode VesoServer' $0
-    DetailPrint "Veso Server service statuscode, $0"
+    ExecWait '"$INSTDIR\nssm.exe" statuscode vesoServer' $0
+    DetailPrint "veso Server service statuscode, $0"
     IntCmp $0 0 NoServiceUninstall ; service doesn't exist, may be run from desktop shortcut
 
     Sleep 3000 ; Give time for Windows to catchup
 
     UninstallStopRetry:
-    ExecWait '"$INSTDIR\nssm.exe" stop VesoServer' $0
+    ExecWait '"$INSTDIR\nssm.exe" stop vesoServer' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not stop the Veso Server service." UninstallStopRetry
+        !insertmacro ShowError "Could not stop the veso Server service." UninstallStopRetry
     ${EndIf}
-    DetailPrint "Stopped Veso Server service, $0"
+    DetailPrint "Stopped veso Server service, $0"
 
     UninstallRemoveRetry:
-    ExecWait '"$INSTDIR\nssm.exe" remove VesoServer confirm' $0
+    ExecWait '"$INSTDIR\nssm.exe" remove vesoServer confirm' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not remove the Veso Server service." UninstallRemoveRetry
+        !insertmacro ShowError "Could not remove the veso Server service." UninstallRemoveRetry
     ${EndIf}
-    DetailPrint "Removed Veso Server service, $0"
+    DetailPrint "Removed veso Server service, $0"
 
     Sleep 3000 ; Give time for Windows to catchup
 
     NoServiceUninstall: ; existing install was present but no service was detected. Remove shortcuts if account is set to none
         ${If} $_SERVICEACCOUNTTYPE_ == "None"
-            RMDir /r "$SMPROGRAMS\Veso Server"
-            Delete "$DESKTOP\Veso Server.lnk"
+            RMDir /r "$SMPROGRAMS\veso Server"
+            Delete "$DESKTOP\veso Server.lnk"
             DetailPrint "Removed old shortcuts..."
         ${EndIf}
 
@@ -350,7 +350,7 @@ Section "Uninstall"
     Delete "$INSTDIR\Uninstall.exe"
     RMDir /r /REBOOTOK "$INSTDIR"
     
-    DeleteRegKey HKLM "Software\Veso"
+    DeleteRegKey HKLM "Software\veso"
     DeleteRegKey HKLM "${REG_UNINST_KEY}"
 
 SectionEnd
@@ -365,15 +365,15 @@ Function .onInit
     StrCpy $_MAKESHORTCUTS_ "No"
 
     SetShellVarContext current
-    StrCpy $_VesoDATADIR_ "$%ProgramData%\Veso\Server"
+    StrCpy $_vesoDATADIR_ "$%ProgramData%\veso\Server"
 
-    System::Call 'kernel32::CreateMutex(p 0, i 0, t "VesoServerMutex") p .r1 ?e'
+    System::Call 'kernel32::CreateMutex(p 0, i 0, t "vesoServerMutex") p .r1 ?e'
     Pop $R0
 
     StrCmp $R0 0 +3
     !insertmacro ShowErrorFinal "The installer is already running."
 
-;Detect if Veso is already installed.
+;Detect if veso is already installed.
 ; In case it is installed, let the user choose either
 ;	1. Exit installer
 ;   2. Upgrade without messing with data
@@ -384,26 +384,26 @@ Function .onInit
     ReadRegStr "$0" HKLM "${REG_CONFIG_KEY}" "InstallFolder"
     IfErrors NoExisitingInstall
 
-    DetailPrint "Existing Veso Server detected at: $0"
+    DetailPrint "Existing veso Server detected at: $0"
     StrCpy "$INSTDIR" "$0" ; set the location fro registry as new default
 
     StrCpy $_EXISTINGINSTALLATION_ "Yes" ; Set our flag to be used later
-    SectionSetText ${InstallVesoServer} "Upgrade Veso Server (required)" ; Change install text to "Upgrade"
+    SectionSetText ${InstallvesoServer} "Upgrade veso Server (required)" ; Change install text to "Upgrade"
 
   ; check if service was run using Network Service account
     ClearErrors
     ReadRegStr $_SERVICEACCOUNTTYPE_ HKLM "${REG_CONFIG_KEY}" "ServiceAccountType" ; in case of error _SERVICEACCOUNTTYPE_ will be NetworkService as default
 
     ClearErrors
-    ReadRegStr $_VesoDATADIR_ HKLM "${REG_CONFIG_KEY}" "DataFolder" ; in case of error, the default holds
+    ReadRegStr $_vesoDATADIR_ HKLM "${REG_CONFIG_KEY}" "DataFolder" ; in case of error, the default holds
 
     ; Hide sections which will not be needed in case of previous install
     ; SectionSetText ${InstallService} ""
 
-; check if there is a service called Veso, there should be
-; hack : nssm statuscode Veso will return non zero return code in case it exists
-    ExecWait '"$INSTDIR\nssm.exe" statuscode VesoServer' $0
-    DetailPrint "Veso Server service statuscode, $0"
+; check if there is a service called veso, there should be
+; hack : nssm statuscode veso will return non zero return code in case it exists
+    ExecWait '"$INSTDIR\nssm.exe" statuscode vesoServer' $0
+    DetailPrint "veso Server service statuscode, $0"
     IntCmp $0 0 NoService ; service doesn't exist, may be run from desktop shortcut
 
     ; if service was detected, set defaults going forward.
@@ -423,7 +423,7 @@ Function .onInit
         ${EndIf}
 
 ; Let the user know that we'll upgrade and provide an option to quit.
-    MessageBox MB_OKCANCEL|MB_ICONINFORMATION "Existing installation of Veso Server was detected, it'll be upgraded, settings will be retained. \
+    MessageBox MB_OKCANCEL|MB_ICONINFORMATION "Existing installation of veso Server was detected, it'll be upgraded, settings will be retained. \
     $\r$\nClick OK to proceed, Cancel to exit installer." /SD IDOK IDOK ProceedWithUpgrade
     Quit ; Quit if the user is not sure about upgrade
 
@@ -500,7 +500,7 @@ Var BasicInstall
 
 Function SetupTypePage_Config
 ${NSD_GetState} $hCtl_setuptype_BasicInstall $BasicInstall
- IfFileExists "$LOCALAPPDATA\Veso" folderfound foldernotfound ; if the folder exists, use this, otherwise, go with new default
+ IfFileExists "$LOCALAPPDATA\veso" folderfound foldernotfound ; if the folder exists, use this, otherwise, go with new default
         folderfound:
             StrCpy $_FOLDEREXISTS_ "Yes"
             Goto InstallCheck
@@ -516,7 +516,7 @@ ${If} $BasicInstall == 1
     StrCpy $_SERVICEACCOUNTTYPE_ "None"
     StrCpy $_MAKESHORTCUTS_ "Yes"
     ${If} $_FOLDEREXISTS_ == "Yes"
-        StrCpy $_VesoDATADIR_ "$LOCALAPPDATA\Veso\"
+        StrCpy $_vesoDATADIR_ "$LOCALAPPDATA\veso\"
     ${EndIf}
 ${Else}
     StrCpy $_SETUPTYPE_ "Advanced"
@@ -525,12 +525,12 @@ ${Else}
     ${If} $_FOLDEREXISTS_ == "Yes"
             MessageBox MB_OKCANCEL|MB_ICONINFORMATION "An existing data folder was detected.\
             $\r$\nBasic Setup is highly recommended.\
-            $\r$\nIf you proceed, you will need to set up Veso again." IDOK GoAhead IDCANCEL GoBack
+            $\r$\nIf you proceed, you will need to set up veso again." IDOK GoAhead IDCANCEL GoBack
         GoBack:
             Abort
     ${EndIf}
         GoAhead:
-            StrCpy $_VesoDATADIR_ "$%ProgramData%\Veso\Server"
+            StrCpy $_vesoDATADIR_ "$%ProgramData%\veso\Server"
             SectionSetText ${CreateWinShortcuts} ""
 ${EndIf}
     

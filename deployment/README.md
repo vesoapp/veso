@@ -1,6 +1,6 @@
-# Veso Packaging
+# veso Packaging
 
-This directory contains the packaging configuration of Veso for multiple platforms. The specification is below; all package platforms must follow the specification to be compatable with the central `build` script.
+This directory contains the packaging configuration of veso for multiple platforms. The specification is below; all package platforms must follow the specification to be compatable with the central `build` script.
 
 ## Package List
 

@@ -2,7 +2,7 @@ using System;
 using MediaBrowser.Model.Drawing;
 using SkiaSharp;
 
-namespace Veso.Drawing.Skia
+namespace veso.Drawing.Skia
 {
     /// <summary>
     /// Static helper class used to draw percentage-played indicators on images.
