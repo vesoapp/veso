@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using Microsoft.AspNetCore.Http;
 
 namespace MediaBrowser.Model.Services

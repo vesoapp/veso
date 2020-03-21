@@ -2,25 +2,18 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MediaBrowser.Common;
 using MediaBrowser.Common.Cryptography;
 using MediaBrowser.Controller.Authentication;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Model.Cryptography;
+using static MediaBrowser.Common.HexHelper;
 
 namespace Emby.Server.Implementations.Library
 {
-    /// <summary>
-    /// The default authentication provider.
-    /// </summary>
     public class DefaultAuthenticationProvider : IAuthenticationProvider, IRequiresResolvedUser
     {
         private readonly ICryptoProvider _cryptographyProvider;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultAuthenticationProvider"/> class.
-        /// </summary>
-        /// <param name="cryptographyProvider">The cryptography provider.</param>
         public DefaultAuthenticationProvider(ICryptoProvider cryptographyProvider)
         {
             _cryptographyProvider = cryptographyProvider;
@@ -45,14 +38,13 @@ namespace Emby.Server.Implementations.Library
         // This is the version that we need to use for local users. Because reasons.
         public Task<ProviderAuthenticationResult> Authenticate(string username, string password, User resolvedUser)
         {
+            bool success = false;
             if (resolvedUser == null)
             {
                 throw new ArgumentNullException(nameof(resolvedUser));
             }
 
-            bool success = false;
-
-            // As long as veso supports passwordless users, we need this little block here to accommodate
+            // As long as jellyfin supports passwordless users, we need this little block here to accommodate
             if (!HasPassword(resolvedUser) && string.IsNullOrEmpty(password))
             {
                 return Task.FromResult(new ProviderAuthenticationResult
@@ -67,12 +59,9 @@ namespace Emby.Server.Implementations.Library
             if (_cryptographyProvider.GetSupportedHashMethods().Contains(readyHash.Id)
                 || _cryptographyProvider.DefaultHashMethod == readyHash.Id)
             {
-                byte[] calculatedHash = _cryptographyProvider.ComputeHash(
-                    readyHash.Id,
-                    passwordbytes,
-                    readyHash.Salt.ToArray());
+                byte[] calculatedHash = _cryptographyProvider.ComputeHash(readyHash.Id, passwordbytes, readyHash.Salt);
 
-                if (readyHash.Hash.SequenceEqual(calculatedHash))
+                if (calculatedHash.SequenceEqual(readyHash.Hash))
                 {
                     success = true;
                 }
@@ -133,7 +122,7 @@ namespace Emby.Server.Implementations.Library
         {
             return string.IsNullOrEmpty(user.EasyPassword)
                 ? null
-                : Hex.Encode(PasswordHash.Parse(user.EasyPassword).Hash);
+                : ToHexString(PasswordHash.Parse(user.EasyPassword).Hash);
         }
 
         /// <summary>
@@ -148,18 +137,17 @@ namespace Emby.Server.Implementations.Library
 
             // TODO: make use of iterations parameter?
             PasswordHash passwordHash = PasswordHash.Parse(user.Password);
-            var salt = passwordHash.Salt.ToArray();
             return new PasswordHash(
                 passwordHash.Id,
                 _cryptographyProvider.ComputeHash(
                     passwordHash.Id,
                     Encoding.UTF8.GetBytes(str),
-                    salt),
-                salt,
+                    passwordHash.Salt),
+                passwordHash.Salt,
                 passwordHash.Parameters.ToDictionary(x => x.Key, y => y.Value)).ToString();
         }
 
-        public ReadOnlySpan<byte> GetHashed(User user, string str)
+        public byte[] GetHashed(User user, string str)
         {
             if (string.IsNullOrEmpty(user.Password))
             {
@@ -171,7 +159,7 @@ namespace Emby.Server.Implementations.Library
             return _cryptographyProvider.ComputeHash(
                     passwordHash.Id,
                     Encoding.UTF8.GetBytes(str),
-                    passwordHash.Salt.ToArray());
+                    passwordHash.Salt);
         }
     }
 }

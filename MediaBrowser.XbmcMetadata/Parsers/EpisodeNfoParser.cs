@@ -11,17 +11,8 @@ using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.XbmcMetadata.Parsers
 {
-    /// <summary>
-    /// Nfo parser for episodes.
-    /// </summary>
     public class EpisodeNfoParser : BaseNfoParser<Episode>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EpisodeNfoParser"/> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        /// <param name="config">the configuration manager.</param>
-        /// <param name="providerManager">The provider manager.</param>
         public EpisodeNfoParser(ILogger logger, IConfigurationManager config, IProviderManager providerManager)
             : base(logger, config, providerManager)
         {
@@ -72,6 +63,7 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                 }
                 catch (XmlException)
                 {
+
                 }
             }
         }
@@ -94,7 +86,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                                 item.ParentIndexNumber = num;
                             }
                         }
-
                         break;
                     }
 
@@ -109,7 +100,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                                 item.IndexNumber = num;
                             }
                         }
-
                         break;
                     }
 
@@ -124,7 +114,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                                 item.IndexNumberEnd = num;
                             }
                         }
-
                         break;
                     }
 
@@ -207,6 +196,7 @@ namespace MediaBrowser.XbmcMetadata.Parsers
 
                         break;
                     }
+
 
                 default:
                     base.FetchDataFromXmlNode(reader, itemResult);

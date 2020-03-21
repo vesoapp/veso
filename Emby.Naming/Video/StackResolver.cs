@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +17,7 @@ namespace Emby.Naming.Video
             _options = options;
         }
 
-        public IEnumerable<FileStack> ResolveDirectories(IEnumerable<string> files)
+        public StackResult ResolveDirectories(IEnumerable<string> files)
         {
             return Resolve(files.Select(i => new FileSystemMetadata
             {
@@ -28,7 +26,7 @@ namespace Emby.Naming.Video
             }));
         }
 
-        public IEnumerable<FileStack> ResolveFiles(IEnumerable<string> files)
+        public StackResult ResolveFiles(IEnumerable<string> files)
         {
             return Resolve(files.Select(i => new FileSystemMetadata
             {
@@ -37,8 +35,9 @@ namespace Emby.Naming.Video
             }));
         }
 
-        public IEnumerable<FileStack> ResolveAudioBooks(IEnumerable<FileSystemMetadata> files)
+        public StackResult ResolveAudioBooks(IEnumerable<FileSystemMetadata> files)
         {
+            var result = new StackResult();
             foreach (var directory in files.GroupBy(file => file.IsDirectory ? file.FullName : Path.GetDirectoryName(file.FullName)))
             {
                 var stack = new FileStack()
@@ -56,16 +55,20 @@ namespace Emby.Naming.Video
                     stack.Files.Add(file.FullName);
                 }
 
-                yield return stack;
+                result.Stacks.Add(stack);
             }
+
+            return result;
         }
 
-        public IEnumerable<FileStack> Resolve(IEnumerable<FileSystemMetadata> files)
+        public StackResult Resolve(IEnumerable<FileSystemMetadata> files)
         {
+            var result = new StackResult();
+
             var resolver = new VideoResolver(_options);
 
             var list = files
-                .Where(i => i.IsDirectory || resolver.IsVideoFile(i.FullName) || resolver.IsStubFile(i.FullName))
+                .Where(i => i.IsDirectory || (resolver.IsVideoFile(i.FullName) || resolver.IsStubFile(i.FullName)))
                 .OrderBy(i => i.FullName)
                 .ToList();
 
@@ -185,15 +188,17 @@ namespace Emby.Naming.Video
 
                     if (stack.Files.Count > 1)
                     {
-                        yield return stack;
+                        result.Stacks.Add(stack);
                         i += stack.Files.Count - 1;
                         break;
                     }
                 }
             }
+
+            return result;
         }
 
-        private static string GetRegexInput(FileSystemMetadata file)
+        private string GetRegexInput(FileSystemMetadata file)
         {
             // For directories, dummy up an extension otherwise the expressions will fail
             var input = !file.IsDirectory
@@ -203,7 +208,7 @@ namespace Emby.Naming.Video
             return Path.GetFileName(input);
         }
 
-        private static Match FindMatch(FileSystemMetadata input, Regex regex, int offset)
+        private Match FindMatch(FileSystemMetadata input, Regex regex, int offset)
         {
             var regexInput = GetRegexInput(input);
 

@@ -14,19 +14,14 @@ namespace MediaBrowser.MediaEncoding.Subtitles
         {
             using (var writer = new StreamWriter(stream, Encoding.UTF8, 1024, true))
             {
-                var trackEvents = info.TrackEvents;
+                var index = 1;
 
-                for (int i = 0; i < trackEvents.Count; i++)
+                foreach (var trackEvent in info.TrackEvents)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    var trackEvent = trackEvents[i];
-
-                    writer.WriteLine((i + 1).ToString(CultureInfo.InvariantCulture));
-                    writer.WriteLine(
-                        @"{0:hh\:mm\:ss\,fff} --> {1:hh\:mm\:ss\,fff}",
-                        TimeSpan.FromTicks(trackEvent.StartPositionTicks),
-                        TimeSpan.FromTicks(trackEvent.EndPositionTicks));
+                    writer.WriteLine(index.ToString(CultureInfo.InvariantCulture));
+                    writer.WriteLine(@"{0:hh\:mm\:ss\,fff} --> {1:hh\:mm\:ss\,fff}", TimeSpan.FromTicks(trackEvent.StartPositionTicks), TimeSpan.FromTicks(trackEvent.EndPositionTicks));
 
                     var text = trackEvent.Text;
 
@@ -34,7 +29,9 @@ namespace MediaBrowser.MediaEncoding.Subtitles
                     text = Regex.Replace(text, @"\\n", " ", RegexOptions.IgnoreCase);
 
                     writer.WriteLine(text);
-                    writer.WriteLine();
+                    writer.WriteLine(string.Empty);
+
+                    index++;
                 }
             }
         }

@@ -64,7 +64,7 @@ namespace MediaBrowser.Controller.Channels
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task{DynamicImageResponse}.</returns>
+        /// <returns>Task{DynamicImageInfo}.</returns>
         Task<DynamicImageResponse> GetChannelImage(ImageType type, CancellationToken cancellationToken);
 
         /// <summary>

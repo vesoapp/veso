@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using Emby.Dlna.Eventing;
 using MediaBrowser.Common.Net;
 using Microsoft.Extensions.Logging;
@@ -12,7 +10,7 @@ namespace Emby.Dlna.Service
         protected IHttpClient HttpClient;
         protected ILogger Logger;
 
-        protected BaseService(ILogger<BaseService> logger, IHttpClient httpClient)
+        protected BaseService(ILogger logger, IHttpClient httpClient)
         {
             Logger = logger;
             HttpClient = httpClient;

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Common.Extensions;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
@@ -15,7 +14,6 @@ using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Querying;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.UserLibrary
 {
@@ -272,18 +270,7 @@ namespace MediaBrowser.Api.UserLibrary
         private readonly IFileSystem _fileSystem;
         private readonly IAuthorizationContext _authContext;
 
-        public UserLibraryService(
-            ILogger<UserLibraryService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            IUserManager userManager,
-            ILibraryManager libraryManager,
-            IUserDataManager userDataRepository,
-            IDtoService dtoService,
-            IUserViewManager userViewManager,
-            IFileSystem fileSystem,
-            IAuthorizationContext authContext)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public UserLibraryService(IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataRepository, IDtoService dtoService, IUserViewManager userViewManager, IFileSystem fileSystem, IAuthorizationContext authContext)
         {
             _userManager = userManager;
             _libraryManager = libraryManager;
@@ -426,7 +413,7 @@ namespace MediaBrowser.Api.UserLibrary
 
                 if (!hasMetdata)
                 {
-                    var options = new MetadataRefreshOptions(new DirectoryService(_fileSystem))
+                    var options = new MetadataRefreshOptions(new DirectoryService(Logger, _fileSystem))
                     {
                         MetadataRefreshMode = MetadataRefreshMode.FullRefresh,
                         ImageRefreshMode = MetadataRefreshMode.FullRefresh,

@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,22 +16,22 @@ namespace Emby.Server.Implementations.IO
     public class LibraryMonitor : ILibraryMonitor
     {
         /// <summary>
-        /// The file system watchers.
+        /// The file system watchers
         /// </summary>
         private readonly ConcurrentDictionary<string, FileSystemWatcher> _fileSystemWatchers = new ConcurrentDictionary<string, FileSystemWatcher>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// The affected paths.
+        /// The affected paths
         /// </summary>
         private readonly List<FileRefresher> _activeRefreshers = new List<FileRefresher>();
 
         /// <summary>
-        /// A dynamic list of paths that should be ignored.  Added to during our own file system modifications.
+        /// A dynamic list of paths that should be ignored.  Added to during our own file sytem modifications.
         /// </summary>
         private readonly ConcurrentDictionary<string, string> _tempIgnoredPaths = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Any file name ending in any of these will be ignored by the watchers.
+        /// Any file name ending in any of these will be ignored by the watchers
         /// </summary>
         private static readonly HashSet<string> _alwaysIgnoreFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {

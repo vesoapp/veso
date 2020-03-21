@@ -1,43 +1,27 @@
 using System.IO;
-using System.Text.Json;
+using System.Text;
 using System.Threading;
 using MediaBrowser.Model.MediaInfo;
+using MediaBrowser.Model.Serialization;
 
 namespace MediaBrowser.MediaEncoding.Subtitles
 {
-    /// <summary>
-    /// JSON subtitle writer.
-    /// </summary>
     public class JsonWriter : ISubtitleWriter
     {
-        /// <inheritdoc />
+        private readonly IJsonSerializer _json;
+
+        public JsonWriter(IJsonSerializer json)
+        {
+            _json = json;
+        }
+
         public void Write(SubtitleTrackInfo info, Stream stream, CancellationToken cancellationToken)
         {
-            using (var writer = new Utf8JsonWriter(stream))
+            using (var writer = new StreamWriter(stream, Encoding.UTF8, 1024, true))
             {
-                var trackevents = info.TrackEvents;
-                writer.WriteStartObject();
-                writer.WriteStartArray("TrackEvents");
+                var json = _json.SerializeToString(info);
 
-                for (int i = 0; i < trackevents.Count; i++)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var current = trackevents[i];
-                    writer.WriteStartObject();
-
-                    writer.WriteString("Id", current.Id);
-                    writer.WriteString("Text", current.Text);
-                    writer.WriteNumber("StartPositionTicks", current.StartPositionTicks);
-                    writer.WriteNumber("EndPositionTicks", current.EndPositionTicks);
-
-                    writer.WriteEndObject();
-                }
-
-                writer.WriteEndArray();
-                writer.WriteEndObject();
-
-                writer.Flush();
+                writer.Write(json);
             }
         }
     }

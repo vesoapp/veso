@@ -1,47 +1,86 @@
-#pragma warning disable CS1591
-#nullable enable
-
-using System.Collections.Generic;
+using System;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using Emby.Naming.Common;
 
 namespace Emby.Naming.Video
 {
     /// <summary>
-    /// <see href="http://kodi.wiki/view/Advancedsettings.xml#video" />.
+    /// http://kodi.wiki/view/Advancedsettings.xml#video
     /// </summary>
-    public static class CleanDateTimeParser
+    public class CleanDateTimeParser
     {
-        public static CleanDateTimeResult Clean(string name, IReadOnlyList<Regex> cleanDateTimeRegexes)
-        {
-            CleanDateTimeResult result = new CleanDateTimeResult(name);
-            var len = cleanDateTimeRegexes.Count;
-            for (int i = 0; i < len; i++)
-            {
-                if (TryClean(name, cleanDateTimeRegexes[i], ref result))
-                {
-                    return result;
-                }
-            }
+        private readonly NamingOptions _options;
 
-            return result;
+        public CleanDateTimeParser(NamingOptions options)
+        {
+            _options = options;
         }
 
-        private static bool TryClean(string name, Regex expression, ref CleanDateTimeResult result)
+        public CleanDateTimeResult Clean(string name)
         {
+            var originalName = name;
+
+            try
+            {
+                var extension = Path.GetExtension(name) ?? string.Empty;
+                // Check supported extensions
+                if (!_options.VideoFileExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase)
+                    && !_options.AudioFileExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+                {
+                    // Dummy up a file extension because the expressions will fail without one
+                    // This is tricky because we can't just check Path.GetExtension for empty
+                    // If the input is "St. Vincent (2014)", it will produce ". Vincent (2014)" as the extension
+                    name += ".mkv";
+                }
+            }
+            catch (ArgumentException)
+            {
+            }
+
+            var result = _options.CleanDateTimeRegexes.Select(i => Clean(name, i))
+                .FirstOrDefault(i => i.HasChanged) ??
+                new CleanDateTimeResult { Name = originalName };
+
+            if (result.HasChanged)
+            {
+                return result;
+            }
+
+            // Make a second pass, running clean string first
+            var cleanStringResult = new CleanStringParser().Clean(name, _options.CleanStringRegexes);
+
+            if (!cleanStringResult.HasChanged)
+            {
+                return result;
+            }
+
+            return _options.CleanDateTimeRegexes.Select(i => Clean(cleanStringResult.Name, i))
+                .FirstOrDefault(i => i.HasChanged) ??
+                result;
+        }
+
+        private static CleanDateTimeResult Clean(string name, Regex expression)
+        {
+            var result = new CleanDateTimeResult();
+
             var match = expression.Match(name);
 
             if (match.Success
-                && match.Groups.Count == 5
+                && match.Groups.Count == 4
                 && match.Groups[1].Success
                 && match.Groups[2].Success
                 && int.TryParse(match.Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var year))
             {
-                result = new CleanDateTimeResult(match.Groups[1].Value.TrimEnd(), year);
-                return true;
+                name = match.Groups[1].Value;
+                result.Year = year;
+                result.HasChanged = true;
             }
 
-            return false;
+            result.Name = name;
+            return result;
         }
     }
 }

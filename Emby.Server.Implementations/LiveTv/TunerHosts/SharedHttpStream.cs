@@ -1,13 +1,8 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Library;
@@ -31,10 +26,10 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
             IFileSystem fileSystem,
             IHttpClient httpClient,
             ILogger logger,
-            IConfigurationManager configurationManager,
+            IServerApplicationPaths appPaths,
             IServerApplicationHost appHost,
             IStreamHelper streamHelper)
-            : base(mediaSource, tunerHostInfo, fileSystem, logger, configurationManager, streamHelper)
+            : base(mediaSource, tunerHostInfo, fileSystem, logger, appPaths, streamHelper)
         {
             _httpClient = httpClient;
             _appHost = appHost;
@@ -68,7 +63,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
                 httpRequestOptions.RequestHeaders[header.Key] = header.Value;
             }
 
-            var response = await _httpClient.SendAsync(httpRequestOptions, HttpMethod.Get).ConfigureAwait(false);
+            var response = await _httpClient.SendAsync(httpRequestOptions, "GET").ConfigureAwait(false);
 
             var extension = "ts";
             var requiresRemux = false;
@@ -130,12 +125,12 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
                     Logger.LogInformation("Beginning {0} stream to {1}", GetType().Name, TempFilePath);
                     using (response)
                     using (var stream = response.Content)
-                    using (var fileStream = new FileStream(TempFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                    using (var fileStream = FileSystem.GetFileStream(TempFilePath, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read, FileOpenOptions.None))
                     {
                         await StreamHelper.CopyToAsync(
                             stream,
                             fileStream,
-                            IODefaults.CopyToBufferSize,
+                            StreamDefaults.DefaultCopyToBufferSize,
                             () => Resolve(openTaskCompletionSource),
                             cancellationToken).ConfigureAwait(false);
                     }

@@ -37,12 +37,7 @@ namespace MediaBrowser.Providers.Tmdb.People
         private readonly IHttpClient _httpClient;
         private readonly ILogger _logger;
 
-        public TmdbPersonProvider(
-            IFileSystem fileSystem,
-            IServerConfigurationManager configurationManager,
-            IJsonSerializer jsonSerializer,
-            IHttpClient httpClient,
-            ILogger<TmdbPersonProvider> logger)
+        public TmdbPersonProvider(IFileSystem fileSystem, IServerConfigurationManager configurationManager, IJsonSerializer jsonSerializer, IHttpClient httpClient, ILogger logger)
         {
             _fileSystem = fileSystem;
             _configurationManager = configurationManager;
@@ -239,7 +234,7 @@ namespace MediaBrowser.Providers.Tmdb.People
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(dataFilePath));
 
-                    using (var fs = new FileStream(dataFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, IODefaults.FileStreamBufferSize, true))
+                    using (var fs = _fileSystem.GetFileStream(dataFilePath, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read, true))
                     {
                         await json.CopyToAsync(fs).ConfigureAwait(false);
                     }

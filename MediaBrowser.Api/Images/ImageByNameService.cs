@@ -5,13 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.Images
 {
@@ -103,19 +101,17 @@ namespace MediaBrowser.Api.Images
         private readonly IServerApplicationPaths _appPaths;
 
         private readonly IFileSystem _fileSystem;
+        private readonly IHttpResultFactory _resultFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageByNameService" /> class.
         /// </summary>
-        public ImageByNameService(
-            ILogger<ImageByNameService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory resultFactory,
-            IFileSystem fileSystem)
-            : base(logger, serverConfigurationManager, resultFactory)
+        /// <param name="appPaths">The app paths.</param>
+        public ImageByNameService(IServerApplicationPaths appPaths, IFileSystem fileSystem, IHttpResultFactory resultFactory)
         {
-            _appPaths = serverConfigurationManager.ApplicationPaths;
+            _appPaths = appPaths;
             _fileSystem = fileSystem;
+            _resultFactory = resultFactory;
         }
 
         public object Get(GetMediaInfoImages request)
@@ -191,7 +187,7 @@ namespace MediaBrowser.Api.Images
 
             var path = paths.FirstOrDefault(File.Exists) ?? paths.FirstOrDefault();
 
-            return ResultFactory.GetStaticFileResult(Request, path);
+            return _resultFactory.GetStaticFileResult(Request, path);
         }
 
         /// <summary>
@@ -211,7 +207,7 @@ namespace MediaBrowser.Api.Images
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    return ResultFactory.GetStaticFileResult(Request, path);
+                    return _resultFactory.GetStaticFileResult(Request, path);
                 }
             }
 
@@ -228,7 +224,7 @@ namespace MediaBrowser.Api.Images
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    return ResultFactory.GetStaticFileResult(Request, path);
+                    return _resultFactory.GetStaticFileResult(Request, path);
                 }
             }
 
@@ -251,7 +247,7 @@ namespace MediaBrowser.Api.Images
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    return ResultFactory.GetStaticFileResult(Request, path);
+                    return _resultFactory.GetStaticFileResult(Request, path);
                 }
             }
 
@@ -267,7 +263,7 @@ namespace MediaBrowser.Api.Images
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    return ResultFactory.GetStaticFileResult(Request, path);
+                    return _resultFactory.GetStaticFileResult(Request, path);
                 }
             }
 

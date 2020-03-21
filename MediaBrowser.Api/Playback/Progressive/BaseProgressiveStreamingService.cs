@@ -15,7 +15,6 @@ using MediaBrowser.Model.IO;
 using MediaBrowser.Model.MediaInfo;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 
 namespace MediaBrowser.Api.Playback.Progressive
@@ -28,36 +27,31 @@ namespace MediaBrowser.Api.Playback.Progressive
         protected IHttpClient HttpClient { get; private set; }
 
         public BaseProgressiveStreamingService(
-            ILogger logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
             IHttpClient httpClient,
+            IServerConfigurationManager serverConfig,
             IUserManager userManager,
             ILibraryManager libraryManager,
             IIsoManager isoManager,
             IMediaEncoder mediaEncoder,
             IFileSystem fileSystem,
             IDlnaManager dlnaManager,
+            ISubtitleEncoder subtitleEncoder,
             IDeviceManager deviceManager,
             IMediaSourceManager mediaSourceManager,
             IJsonSerializer jsonSerializer,
-            IAuthorizationContext authorizationContext,
-            EncodingHelper encodingHelper)
-            : base(
-                logger,
-                serverConfigurationManager,
-                httpResultFactory,
+            IAuthorizationContext authorizationContext)
+            : base(serverConfig,
                 userManager,
                 libraryManager,
                 isoManager,
                 mediaEncoder,
                 fileSystem,
                 dlnaManager,
+                subtitleEncoder,
                 deviceManager,
                 mediaSourceManager,
                 jsonSerializer,
-                authorizationContext,
-                encodingHelper)
+                authorizationContext)
         {
             HttpClient = httpClient;
         }
@@ -248,7 +242,7 @@ namespace MediaBrowser.Api.Playback.Progressive
             //            ContentType = contentType,
             //            IsHeadRequest = isHeadRequest,
             //            Path = outputPath,
-            //            FileShare = FileShare.ReadWrite,
+            //            FileShare = FileShareMode.ReadWrite,
             //            OnComplete = () =>
             //            {
             //                if (transcodingJob != null)

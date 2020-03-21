@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +7,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Emby.Server.Implementations.Configuration;
 using Emby.Server.Implementations.Net;
 using Emby.Server.Implementations.Services;
 using MediaBrowser.Common.Extensions;
@@ -17,9 +16,11 @@ using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Events;
+using MediaBrowser.Model.Extensions;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -39,9 +40,9 @@ namespace Emby.Server.Implementations.HttpServer
         private readonly Func<Type, Func<string, object>> _funcParseFn;
         private readonly string _defaultRedirectPath;
         private readonly string _baseUrlPrefix;
-        private readonly Dictionary<Type, Type> _serviceOperationsMap = new Dictionary<Type, Type>();
-        private readonly List<IWebSocketConnection> _webSocketConnections = new List<IWebSocketConnection>();
+        private readonly Dictionary<Type, Type> ServiceOperationsMap = new Dictionary<Type, Type>();
         private IWebSocketListener[] _webSocketListeners = Array.Empty<IWebSocketListener>();
+        private readonly List<IWebSocketConnection> _webSocketConnections = new List<IWebSocketConnection>();
         private bool _disposed = false;
 
         public HttpListenerHost(
@@ -71,8 +72,6 @@ namespace Emby.Server.Implementations.HttpServer
             ResponseFilters = Array.Empty<Action<IRequest, HttpResponse, object>>();
         }
 
-        public event EventHandler<GenericEventArgs<IWebSocketConnection>> WebSocketConnected;
-
         public Action<IRequest, HttpResponse, object>[] ResponseFilters { get; set; }
 
         public static HttpListenerHost Instance { get; protected set; }
@@ -83,6 +82,8 @@ namespace Emby.Server.Implementations.HttpServer
 
         public ServiceController ServiceController { get; private set; }
 
+        public event EventHandler<GenericEventArgs<IWebSocketConnection>> WebSocketConnected;
+
         public object CreateInstance(Type type)
         {
             return _appHost.CreateInstance(type);
@@ -90,7 +91,7 @@ namespace Emby.Server.Implementations.HttpServer
 
         private static string NormalizeUrlPath(string path)
         {
-            if (path.Length > 0 && path[0] == '/')
+            if (path.StartsWith("/"))
             {
                 // If the path begins with a leading slash, just return it as-is
                 return path;
@@ -130,13 +131,13 @@ namespace Emby.Server.Implementations.HttpServer
 
         public Type GetServiceTypeByRequest(Type requestType)
         {
-            _serviceOperationsMap.TryGetValue(requestType, out var serviceType);
+            ServiceOperationsMap.TryGetValue(requestType, out var serviceType);
             return serviceType;
         }
 
         public void AddServiceInfo(Type serviceType, Type requestType)
         {
-            _serviceOperationsMap[requestType] = serviceType;
+            ServiceOperationsMap[requestType] = serviceType;
         }
 
         private List<IHasRequestFilter> GetRequestFilterAttributes(Type requestDtoType)
@@ -165,7 +166,7 @@ namespace Emby.Server.Implementations.HttpServer
             {
                 OnReceive = ProcessWebSocketMessageReceived,
                 Url = e.Url,
-                QueryString = e.QueryString
+                QueryString = e.QueryString ?? new QueryCollection()
             };
 
             connection.Closed += OnConnectionClosed;
@@ -198,7 +199,7 @@ namespace Emby.Server.Implementations.HttpServer
                 else
                 {
                     var inners = agg.InnerExceptions;
-                    if (inners.Count > 0)
+                    if (inners != null && inners.Count > 0)
                     {
                         return GetActualException(inners[0]);
                     }
@@ -218,6 +219,7 @@ namespace Emby.Server.Implementations.HttpServer
                 case FileNotFoundException _:
                 case ResourceNotFoundException _: return 404;
                 case MethodNotAllowedException _: return 405;
+                case RemoteServiceUnavailableException _: return 502;
                 default: return 500;
             }
         }
@@ -361,7 +363,7 @@ namespace Emby.Server.Implementations.HttpServer
                 return true;
             }
 
-            host ??= string.Empty;
+            host = host ?? string.Empty;
 
             if (_networkManager.IsInPrivateAddressSpace(host))
             {
@@ -432,7 +434,7 @@ namespace Emby.Server.Implementations.HttpServer
         }
 
         /// <summary>
-        /// Overridable method that can be used to implement a custom handler.
+        /// Overridable method that can be used to implement a custom hnandler
         /// </summary>
         public async Task RequestHandler(IHttpRequest httpReq, string urlString, string host, string localPath, CancellationToken cancellationToken)
         {
@@ -491,7 +493,7 @@ namespace Emby.Server.Implementations.HttpServer
                     || string.Equals(localPath, _baseUrlPrefix, StringComparison.OrdinalIgnoreCase)
                     || string.Equals(localPath, "/", StringComparison.OrdinalIgnoreCase)
                     || string.IsNullOrEmpty(localPath)
-                    || !localPath.StartsWith(_baseUrlPrefix, StringComparison.OrdinalIgnoreCase))
+                    || !localPath.StartsWith(_baseUrlPrefix))
                 {
                     // Always redirect back to the default path if the base prefix is invalid or missing
                     _logger.LogDebug("Normalizing a URL at {0}", localPath);
@@ -692,10 +694,7 @@ namespace Emby.Server.Implementations.HttpServer
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
+            if (_disposed) return;
 
             if (disposing)
             {

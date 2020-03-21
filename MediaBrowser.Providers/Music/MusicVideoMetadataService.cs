@@ -13,11 +13,12 @@ namespace MediaBrowser.Providers.Music
     {
         public MusicVideoMetadataService(
             IServerConfigurationManager serverConfigurationManager,
-            ILogger<MusicVideoMetadataService> logger,
+            ILogger logger,
             IProviderManager providerManager,
             IFileSystem fileSystem,
+            IUserDataManager userDataManager,
             ILibraryManager libraryManager)
-            : base(serverConfigurationManager, logger, providerManager, fileSystem, libraryManager)
+            : base(serverConfigurationManager, logger, providerManager, fileSystem, userDataManager, libraryManager)
         {
         }
 

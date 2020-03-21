@@ -6,12 +6,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Common.Extensions;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Drawing;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Net;
+using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Drawing;
 using MediaBrowser.Model.Dto;
@@ -24,7 +24,7 @@ using Microsoft.Net.Http.Headers;
 namespace MediaBrowser.Api.Images
 {
     /// <summary>
-    /// Class GetItemImage.
+    /// Class GetItemImage
     /// </summary>
     [Route("/Items/{Id}/Images", "GET", Summary = "Gets information about an item's images")]
     [Authenticated]
@@ -231,6 +231,7 @@ namespace MediaBrowser.Api.Images
 
         private readonly IProviderManager _providerManager;
 
+        private readonly IItemRepository _itemRepo;
         private readonly IImageProcessor _imageProcessor;
         private readonly IFileSystem _fileSystem;
         private readonly IAuthorizationContext _authContext;
@@ -238,21 +239,12 @@ namespace MediaBrowser.Api.Images
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageService" /> class.
         /// </summary>
-        public ImageService(
-            ILogger<ImageService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            IUserManager userManager,
-            ILibraryManager libraryManager,
-            IProviderManager providerManager,
-            IImageProcessor imageProcessor,
-            IFileSystem fileSystem,
-            IAuthorizationContext authContext)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public ImageService(IUserManager userManager, ILibraryManager libraryManager, IProviderManager providerManager, IItemRepository itemRepo, IImageProcessor imageProcessor, IFileSystem fileSystem, IAuthorizationContext authContext)
         {
             _userManager = userManager;
             _libraryManager = libraryManager;
             _providerManager = providerManager;
+            _itemRepo = itemRepo;
             _imageProcessor = imageProcessor;
             _fileSystem = fileSystem;
             _authContext = authContext;
@@ -410,7 +402,7 @@ namespace MediaBrowser.Api.Images
 
         public object Get(GetItemByNameImage request)
         {
-            var type = GetPathValue(0).ToString();
+            var type = GetPathValue(0);
 
             var item = GetItemByName(request.Name, type, _libraryManager, new DtoOptions(false));
 
@@ -419,7 +411,7 @@ namespace MediaBrowser.Api.Images
 
         public object Head(GetItemByNameImage request)
         {
-            var type = GetPathValue(0).ToString();
+            var type = GetPathValue(0);
 
             var item = GetItemByName(request.Name, type, _libraryManager, new DtoOptions(false));
 
@@ -432,13 +424,12 @@ namespace MediaBrowser.Api.Images
         /// <param name="request">The request.</param>
         public Task Post(PostUserImage request)
         {
-            var id = Guid.Parse(GetPathValue(1));
+            var userId = GetPathValue(1);
+            AssertCanUpdateUser(_authContext, _userManager, new Guid(userId), true);
 
-            AssertCanUpdateUser(_authContext, _userManager, id, true);
+            request.Type = (ImageType)Enum.Parse(typeof(ImageType), GetPathValue(3), true);
 
-            request.Type = Enum.Parse<ImageType>(GetPathValue(3).ToString(), true);
-
-            var item = _userManager.GetUserById(id);
+            var item = _userManager.GetUserById(userId);
 
             return PostImage(item, request.RequestStream, request.Type, Request.ContentType);
         }
@@ -449,9 +440,9 @@ namespace MediaBrowser.Api.Images
         /// <param name="request">The request.</param>
         public Task Post(PostItemImage request)
         {
-            var id = Guid.Parse(GetPathValue(1));
+            var id = GetPathValue(1);
 
-            request.Type = Enum.Parse<ImageType>(GetPathValue(3).ToString(), true);
+            request.Type = (ImageType)Enum.Parse(typeof(ImageType), GetPathValue(3), true);
 
             var item = _libraryManager.GetItemById(id);
 
@@ -558,6 +549,21 @@ namespace MediaBrowser.Api.Images
                 throw new ResourceNotFoundException(string.Format("{0} does not have an image of type {1}", displayText, request.Type));
             }
 
+            IImageEnhancer[] supportedImageEnhancers;
+            if (_imageProcessor.ImageEnhancers.Count > 0)
+            {
+                if (item == null)
+                {
+                    item = _libraryManager.GetItemById(itemId);
+                }
+
+                supportedImageEnhancers = request.EnableImageEnhancers ? _imageProcessor.GetSupportedEnhancers(item, request.Type).ToArray() : Array.Empty<IImageEnhancer>();
+            }
+            else
+            {
+                supportedImageEnhancers = Array.Empty<IImageEnhancer>();
+            }
+
             bool cropwhitespace;
             if (request.CropWhitespace.HasValue)
             {
@@ -583,25 +589,25 @@ namespace MediaBrowser.Api.Images
                 {"realTimeInfo.dlna.org", "DLNA.ORG_TLAG=*"}
             };
 
-            return GetImageResult(
-                item,
+            return GetImageResult(item,
                 itemId,
                 request,
                 imageInfo,
                 cropwhitespace,
                 outputFormats,
+                supportedImageEnhancers,
                 cacheDuration,
                 responseHeaders,
                 isHeadRequest);
         }
 
-        private async Task<object> GetImageResult(
-            BaseItem item,
+        private async Task<object> GetImageResult(BaseItem item,
             Guid itemId,
             ImageRequest request,
             ItemImageInfo image,
             bool cropwhitespace,
             IReadOnlyCollection<ImageFormat> supportedFormats,
+            IReadOnlyCollection<IImageEnhancer> enhancers,
             TimeSpan? cacheDuration,
             IDictionary<string, string> headers,
             bool isHeadRequest)
@@ -609,6 +615,7 @@ namespace MediaBrowser.Api.Images
             var options = new ImageProcessingOptions
             {
                 CropWhiteSpace = cropwhitespace,
+                Enhancers = enhancers,
                 Height = request.Height,
                 ImageIndex = request.Index ?? 0,
                 Image = image,
@@ -640,7 +647,7 @@ namespace MediaBrowser.Api.Images
                 IsHeadRequest = isHeadRequest,
                 Path = imageResult.Item1,
 
-                FileShare = FileShare.Read
+                FileShare = FileShareMode.Read
 
             }).ConfigureAwait(false);
         }

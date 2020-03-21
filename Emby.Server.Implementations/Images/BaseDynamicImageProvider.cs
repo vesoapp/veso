@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,6 +21,14 @@ namespace Emby.Server.Implementations.Images
     public abstract class BaseDynamicImageProvider<T> : IHasItemChangeMonitor, IForcedProvider, ICustomMetadataProvider<T>, IHasOrder
         where T : BaseItem
     {
+        protected virtual IReadOnlyCollection<ImageType> SupportedImages { get; }
+            = new ImageType[] { ImageType.Primary };
+
+        protected IFileSystem FileSystem { get; private set; }
+        protected IProviderManager ProviderManager { get; private set; }
+        protected IApplicationPaths ApplicationPaths { get; private set; }
+        protected IImageProcessor ImageProcessor { get; set; }
+
         protected BaseDynamicImageProvider(IFileSystem fileSystem, IProviderManager providerManager, IApplicationPaths applicationPaths, IImageProcessor imageProcessor)
         {
             ApplicationPaths = applicationPaths;
@@ -30,24 +36,6 @@ namespace Emby.Server.Implementations.Images
             FileSystem = fileSystem;
             ImageProcessor = imageProcessor;
         }
-
-        protected IFileSystem FileSystem { get; }
-
-        protected IProviderManager ProviderManager { get; }
-
-        protected IApplicationPaths ApplicationPaths { get; }
-
-        protected IImageProcessor ImageProcessor { get; set; }
-
-        protected virtual IReadOnlyCollection<ImageType> SupportedImages { get; }
-            = new ImageType[] { ImageType.Primary };
-
-        /// <inheritdoc />
-        public string Name => "Dynamic Image Provider";
-
-        protected virtual int MaxImageAgeDays => 7;
-
-        public int Order => 0;
 
         protected virtual bool Supports(BaseItem _) => true;
 
@@ -97,8 +85,7 @@ namespace Emby.Server.Implementations.Images
             return FetchToFileInternal(item, items, imageType, cancellationToken);
         }
 
-        protected async Task<ItemUpdateType> FetchToFileInternal(
-            BaseItem item,
+        protected async Task<ItemUpdateType> FetchToFileInternal(BaseItem item,
             IReadOnlyList<BaseItem> itemsWithImages,
             ImageType imageType,
             CancellationToken cancellationToken)
@@ -194,6 +181,8 @@ namespace Emby.Server.Implementations.Images
             return outputPath;
         }
 
+        public string Name => "Dynamic Image Provider";
+
         protected virtual string CreateImage(BaseItem item,
             IReadOnlyCollection<BaseItem> itemsWithImages,
             string outputPathWithoutExtension,
@@ -224,6 +213,8 @@ namespace Emby.Server.Implementations.Images
 
             throw new ArgumentException("Unexpected image type", nameof(imageType));
         }
+
+        protected virtual int MaxImageAgeDays => 7;
 
         public bool HasChanged(BaseItem item, IDirectoryService directoryServicee)
         {
@@ -272,8 +263,14 @@ namespace Emby.Server.Implementations.Images
         protected virtual bool HasChangedByDate(BaseItem item, ItemImageInfo image)
         {
             var age = DateTime.UtcNow - image.DateModified;
-            return age.TotalDays > MaxImageAgeDays;
+            if (age.TotalDays <= MaxImageAgeDays)
+            {
+                return false;
+            }
+            return true;
         }
+
+        public int Order => 0;
 
         protected string CreateSingleImage(IEnumerable<BaseItem> itemsWithImages, string outputPathWithoutExtension, ImageType imageType)
         {

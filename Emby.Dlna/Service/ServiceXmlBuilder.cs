@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Collections.Generic;
 using System.Text;
 using Emby.Dlna.Common;

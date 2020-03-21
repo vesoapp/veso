@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 namespace MediaBrowser.Model.Configuration
 {
     public class EncodingOptions
@@ -10,14 +8,12 @@ namespace MediaBrowser.Model.Configuration
         public bool EnableThrottling { get; set; }
         public int ThrottleDelaySeconds { get; set; }
         public string HardwareAccelerationType { get; set; }
-
         /// <summary>
-        /// FFmpeg path as set by the user via the UI.
+        /// FFmpeg path as set by the user via the UI
         /// </summary>
         public string EncoderAppPath { get; set; }
-
         /// <summary>
-        /// The current FFmpeg path being used by the system and displayed on the transcode page.
+        /// The current FFmpeg path being used by the system and displayed on the transcode page
         /// </summary>
         public string EncoderAppPathDisplay { get; set; }
         public string VaapiDevice { get; set; }
@@ -33,7 +29,7 @@ namespace MediaBrowser.Model.Configuration
         public EncodingOptions()
         {
             DownMixAudioBoost = 2;
-            EnableThrottling = false;
+            EnableThrottling = true;
             ThrottleDelaySeconds = 180;
             EncodingThreadCount = -1;
             // This is a DRM device that is almost guaranteed to be there on every intel platform, plus it's the default one in ffmpeg if you don't specify anything

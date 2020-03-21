@@ -1,6 +1,3 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -39,7 +36,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
 
         public HdHomerunHost(
             IServerConfigurationManager config,
-            ILogger<HdHomerunHost> logger,
+            ILogger logger,
             IJsonSerializer jsonSerializer,
             IFileSystem fileSystem,
             IHttpClient httpClient,
@@ -188,7 +185,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
                 Url = string.Format("{0}/tuners.html", GetApiUrl(info)),
                 CancellationToken = cancellationToken,
                 BufferContent = false
-            }, HttpMethod.Get).ConfigureAwait(false))
+            }, HttpMethod.Get))
             using (var stream = response.Content)
             using (var sr = new StreamReader(stream, System.Text.Encoding.UTF8))
             {
@@ -262,7 +259,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
                 for (int i = 0; i < model.TunerCount; ++i)
                 {
                     var name = string.Format("Tuner {0}", i + 1);
-                    var currentChannel = "none"; // @todo Get current channel and map back to Station Id
+                    var currentChannel = "none"; /// @todo Get current channel and map back to Station Id
                     var isAvailable = await manager.CheckTunerAvailability(ipInfo, i, cancellationToken).ConfigureAwait(false);
                     var status = isAvailable ? LiveTvTunerStatus.Available : LiveTvTunerStatus.LiveTv;
                     tuners.Add(new LiveTvTunerInfo
@@ -301,7 +298,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
         public async Task<List<LiveTvTunerInfo>> GetTunerInfos(TunerHostInfo info, CancellationToken cancellationToken)
         {
             // TODO Need faster way to determine UDP vs HTTP
-            var channels = await GetChannels(info, true, cancellationToken).ConfigureAwait(false);
+            var channels = await GetChannels(info, true, cancellationToken);
 
             var hdHomerunChannelInfo = channels.FirstOrDefault() as HdHomerunChannelInfo;
 
@@ -585,10 +582,11 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
                     modelInfo.TunerCount,
                     FileSystem,
                     Logger,
-                    Config,
+                    Config.ApplicationPaths,
                     _appHost,
                     _networkManager,
                     _streamHelper);
+
             }
 
             var enableHttpStream = true;
@@ -613,7 +611,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
                     FileSystem,
                     _httpClient,
                     Logger,
-                    Config,
+                    Config.ApplicationPaths,
                     _appHost,
                     _streamHelper);
             }
@@ -626,7 +624,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts.HdHomerun
                 modelInfo.TunerCount,
                 FileSystem,
                 Logger,
-                Config,
+                Config.ApplicationPaths,
                 _appHost,
                 _networkManager,
                 _streamHelper);

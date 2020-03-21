@@ -15,9 +15,6 @@ namespace MediaBrowser.Controller.MediaEncoding
     /// </summary>
     public interface IMediaEncoder : ITranscoderSupport
     {
-        /// <summary>
-        /// The location of the discovered FFmpeg tool.
-        /// </summary>
         FFmpegLocation EncoderLocation { get; }
 
         /// <summary>
@@ -100,6 +97,7 @@ namespace MediaBrowser.Controller.MediaEncoding
         void UpdateEncoderPath(string path, string pathType);
         bool SupportsEncoder(string encoder);
 
+        string[] GetPlayableStreamFileNames(string path, VideoType videoType);
         IEnumerable<string> GetPrimaryPlaylistVobFiles(string path, IIsoMount isoMount, uint? titleNumber);
     }
 }

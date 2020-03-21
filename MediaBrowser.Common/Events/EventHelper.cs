@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Common.Events
 {
-    /// <summary>
-    /// Class EventHelper.
-    /// </summary>
     // TODO: @bond Remove
+    /// <summary>
+    /// Class EventHelper
+    /// </summary>
     public static class EventHelper
     {
         /// <summary>
@@ -38,7 +38,7 @@ namespace MediaBrowser.Common.Events
         /// <summary>
         /// Queues the event.
         /// </summary>
-        /// <typeparam name="T">Argument type for the <c>handler</c>.</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="handler">The handler.</param>
         /// <param name="sender">The sender.</param>
         /// <param name="args">The args.</param>

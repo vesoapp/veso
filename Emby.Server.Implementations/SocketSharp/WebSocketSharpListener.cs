@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Emby.Server.Implementations.HttpServer;
 using Emby.Server.Implementations.Net;
+using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -21,14 +23,15 @@ namespace Emby.Server.Implementations.SocketSharp
         private CancellationTokenSource _disposeCancellationTokenSource = new CancellationTokenSource();
         private CancellationToken _disposeCancellationToken;
 
-        public WebSocketSharpListener(ILogger<WebSocketSharpListener> logger)
+        public WebSocketSharpListener(
+            ILogger logger)
         {
             _logger = logger;
+
             _disposeCancellationToken = _disposeCancellationTokenSource.Token;
         }
 
         public Func<Exception, IRequest, bool, bool, Task> ErrorHandler { get; set; }
-
         public Func<IHttpRequest, string, string, string, CancellationToken, Task> RequestHandler { get; set; }
 
         public Action<WebSocketConnectEventArgs> WebSocketConnected { get; set; }
@@ -78,10 +81,8 @@ namespace Emby.Server.Implementations.SocketSharp
 
                 if (webSocketContext.State == WebSocketState.Open)
                 {
-                    await webSocketContext.CloseAsync(
-                        result.CloseStatus ?? WebSocketCloseStatus.NormalClosure,
-                        result.CloseStatusDescription,
-                        _disposeCancellationToken).ConfigureAwait(false);
+                    await webSocketContext.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure,
+                        result.CloseStatusDescription, _disposeCancellationToken);
                 }
 
                 socket.Dispose();

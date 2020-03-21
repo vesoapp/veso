@@ -1,6 +1,3 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Model.Serialization;
@@ -15,7 +12,6 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
         {
         }
 
-        /// <inheritdoc />
         public override void Add(SeriesTimerInfo item)
         {
             if (string.IsNullOrEmpty(item.Id))

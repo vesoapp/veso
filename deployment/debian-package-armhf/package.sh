@@ -12,7 +12,7 @@ WORKDIR="$( pwd )"
 package_temporary_dir="${WORKDIR}/pkg-dist-tmp"
 output_dir="${WORKDIR}/pkg-dist"
 current_user="$( whoami )"
-image_name="veso-debian_armhf-build"
+image_name="jellyfin-debian_armhf-build"
 
 # Determine if sudo should be used for Docker
 if [[ ! -z $(id -Gn | grep -q 'docker') ]] \

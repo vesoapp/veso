@@ -158,13 +158,11 @@ namespace MediaBrowser.Providers.MediaInfo
             MetadataRefreshOptions options)
         {
             List<MediaStream> mediaStreams;
-            IReadOnlyList<MediaAttachment> mediaAttachments;
             List<ChapterInfo> chapters;
 
             if (mediaInfo != null)
             {
                 mediaStreams = mediaInfo.MediaStreams;
-                mediaAttachments = mediaInfo.MediaAttachments;
 
                 video.TotalBitrate = mediaInfo.Bitrate;
                 //video.FormatName = (mediaInfo.Container ?? string.Empty)
@@ -200,7 +198,6 @@ namespace MediaBrowser.Providers.MediaInfo
             else
             {
                 mediaStreams = new List<MediaStream>();
-                mediaAttachments = Array.Empty<MediaAttachment>();
                 chapters = new List<ChapterInfo>();
             }
 
@@ -213,20 +210,19 @@ namespace MediaBrowser.Providers.MediaInfo
                 FetchEmbeddedInfo(video, mediaInfo, options, libraryOptions);
                 FetchPeople(video, mediaInfo, options);
                 video.Timestamp = mediaInfo.Timestamp;
-                video.Video3DFormat ??= mediaInfo.Video3DFormat;
+                video.Video3DFormat = video.Video3DFormat ?? mediaInfo.Video3DFormat;
             }
 
             var videoStream = mediaStreams.FirstOrDefault(i => i.Type == MediaStreamType.Video);
 
-            video.Height = videoStream?.Height ?? 0;
-            video.Width = videoStream?.Width ?? 0;
+            video.Height = videoStream == null ? 0 : videoStream.Height ?? 0;
+            video.Width = videoStream == null ? 0 : videoStream.Width ?? 0;
 
             video.DefaultVideoStreamIndex = videoStream == null ? (int?)null : videoStream.Index;
 
             video.HasSubtitles = mediaStreams.Any(i => i.Type == MediaStreamType.Subtitle);
 
             _itemRepo.SaveMediaStreams(video.Id, mediaStreams, cancellationToken);
-            _itemRepo.SaveMediaAttachments(video.Id, mediaAttachments, cancellationToken);
 
             if (options.MetadataRefreshMode == MetadataRefreshMode.FullRefresh ||
                 options.MetadataRefreshMode == MetadataRefreshMode.Default)

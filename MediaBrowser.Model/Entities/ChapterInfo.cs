@@ -1,11 +1,9 @@
-#pragma warning disable CS1591
-
 using System;
 
 namespace MediaBrowser.Model.Entities
 {
     /// <summary>
-    /// Class ChapterInfo.
+    /// Class ChapterInfo
     /// </summary>
     public class ChapterInfo
     {

@@ -39,7 +39,7 @@ Function fnc_service_config_Create
   Pop $hCtl_service_config_LocalSystemAccountLabel
 
   ; === NetworkServiceAccountLabel (type: Label) ===
-  ${NSD_CreateLabel} 8u 24u 280u 28u "The NetworkService account is a predefined local account used by the service control manager. It is the recommended way to install the veso Server service."
+  ${NSD_CreateLabel} 8u 24u 280u 28u "The NetworkService account is a predefined local account used by the service control manager. It is the recommended way to install the Jellyfin Server service."
   Pop $hCtl_service_config_NetworkServiceAccountLabel
 
   ; === UseLocalSystemAccount (type: RadioButton) ===

@@ -1,7 +1,6 @@
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
@@ -18,35 +17,19 @@ namespace MediaBrowser.Api
     /// <summary>
     /// Class BaseApiService
     /// </summary>
-    public abstract class BaseApiService : IService, IRequiresRequest
+    public class BaseApiService : IService, IRequiresRequest
     {
-        public BaseApiService(
-            ILogger logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory)
-        {
-            Logger = logger;
-            ServerConfigurationManager = serverConfigurationManager;
-            ResultFactory = httpResultFactory;
-        }
-
         /// <summary>
-        /// Gets the logger.
+        /// Gets or sets the logger.
         /// </summary>
         /// <value>The logger.</value>
-        protected ILogger Logger { get; }
+        public ILogger Logger => ApiEntryPoint.Instance.Logger;
 
         /// <summary>
-        /// Gets or sets the server configuration manager.
-        /// </summary>
-        /// <value>The server configuration manager.</value>
-        protected IServerConfigurationManager ServerConfigurationManager { get; }
-
-        /// <summary>
-        /// Gets the HTTP result factory.
+        /// Gets or sets the HTTP result factory.
         /// </summary>
         /// <value>The HTTP result factory.</value>
-        protected IHttpResultFactory ResultFactory { get; }
+        public IHttpResultFactory ResultFactory => ApiEntryPoint.Instance.ResultFactory;
 
         /// <summary>
         /// Gets or sets the request context.
@@ -54,7 +37,10 @@ namespace MediaBrowser.Api
         /// <value>The request context.</value>
         public IRequest Request { get; set; }
 
-        public string GetHeader(string name) => Request.Headers[name];
+        public string GetHeader(string name)
+        {
+            return Request.Headers[name];
+        }
 
         public static string[] SplitValue(string value, char delim)
         {
@@ -307,97 +293,36 @@ namespace MediaBrowser.Api
             return result;
         }
 
-        /// <summary>
-        /// Gets the path segment at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the path segment.</param>
-        /// <returns>The path segment at the specified index.</returns>
-        /// <exception cref="IndexOutOfRangeException" >Path doesn't contain enough segments.</exception>
-        /// <exception cref="InvalidDataException" >Path doesn't start with the base url.</exception>
-        protected internal ReadOnlySpan<char> GetPathValue(int index)
+        protected string GetPathValue(int index)
         {
-            static void ThrowIndexOutOfRangeException()
-                => throw new IndexOutOfRangeException("Path doesn't contain enough segments.");
+            var pathInfo = Parse(Request.PathInfo);
+            var first = pathInfo[0];
 
-            static void ThrowInvalidDataException()
-                => throw new InvalidDataException("Path doesn't start with the base url.");
-
-            ReadOnlySpan<char> path = Request.PathInfo;
-
-            // Remove the protocol part from the url
-            int pos = path.LastIndexOf("://");
-            if (pos != -1)
+            // backwards compatibility
+            if (string.Equals(first, "mediabrowser", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(first, "emby", StringComparison.OrdinalIgnoreCase))
             {
-                path = path.Slice(pos + 3);
+                index++;
             }
 
-            // Remove the query string
-            pos = path.LastIndexOf('?');
-            if (pos != -1)
+            return pathInfo[index];
+        }
+
+        private static string[] Parse(string pathUri)
+        {
+            var actionParts = pathUri.Split(new[] { "://" }, StringSplitOptions.None);
+
+            var pathInfo = actionParts[actionParts.Length - 1];
+
+            var optionsPos = pathInfo.LastIndexOf('?');
+            if (optionsPos != -1)
             {
-                path = path.Slice(0, pos);
+                pathInfo = pathInfo.Substring(0, optionsPos);
             }
 
-            // Remove the domain
-            pos = path.IndexOf('/');
-            if (pos != -1)
-            {
-                path = path.Slice(pos);
-            }
+            var args = pathInfo.Split('/');
 
-            // Remove base url
-            string baseUrl = ServerConfigurationManager.Configuration.BaseUrl;
-            int baseUrlLen = baseUrl.Length;
-            if (baseUrlLen != 0)
-            {
-                if (path.StartsWith(baseUrl, StringComparison.OrdinalIgnoreCase))
-                {
-                    path = path.Slice(baseUrlLen);
-                }
-                else
-                {
-                    // The path doesn't start with the base url,
-                    // how did we get here?
-                    ThrowInvalidDataException();
-                }
-            }
-
-            // Remove leading /
-            path = path.Slice(1);
-
-            // Backwards compatibility
-            const string Emby = "emby/";
-            if (path.StartsWith(Emby, StringComparison.OrdinalIgnoreCase))
-            {
-                path = path.Slice(Emby.Length);
-            }
-
-            const string MediaBrowser = "mediabrowser/";
-            if (path.StartsWith(MediaBrowser, StringComparison.OrdinalIgnoreCase))
-            {
-                path = path.Slice(MediaBrowser.Length);
-            }
-
-            // Skip segments until we are at the right index
-            for (int i = 0; i < index; i++)
-            {
-                pos = path.IndexOf('/');
-                if (pos == -1)
-                {
-                    ThrowIndexOutOfRangeException();
-                }
-
-                path = path.Slice(pos + 1);
-            }
-
-            // Remove the rest
-            pos = path.IndexOf('/');
-            if (pos != -1)
-            {
-                path = path.Slice(0, pos);
-            }
-
-            return path;
+            return args.Skip(1).ToArray();
         }
 
         /// <summary>

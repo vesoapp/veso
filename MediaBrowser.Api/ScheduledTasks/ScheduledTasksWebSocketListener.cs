@@ -28,7 +28,7 @@ namespace MediaBrowser.Api.ScheduledTasks
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledTasksWebSocketListener" /> class.
         /// </summary>
-        public ScheduledTasksWebSocketListener(ILogger<ScheduledTasksWebSocketListener> logger, ITaskManager taskManager)
+        public ScheduledTasksWebSocketListener(ILogger logger, ITaskManager taskManager)
             : base(logger)
         {
             TaskManager = taskManager;

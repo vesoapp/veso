@@ -32,7 +32,7 @@ namespace MediaBrowser.Api
 
             if (string.IsNullOrEmpty(val))
             {
-                return Array.Empty<ItemFields>();
+                return new ItemFields[] { };
             }
 
             return val.Split(',').Select(v =>
@@ -41,7 +41,6 @@ namespace MediaBrowser.Api
                 {
                     return (ItemFields?)value;
                 }
-
                 return null;
 
             }).Where(i => i.HasValue).Select(i => i.Value).ToArray();

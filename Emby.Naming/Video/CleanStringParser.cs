@@ -1,44 +1,49 @@
-#pragma warning disable CS1591
-#nullable enable
-
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Emby.Naming.Video
 {
     /// <summary>
-    /// <see href="http://kodi.wiki/view/Advancedsettings.xml#video" />.
+    /// http://kodi.wiki/view/Advancedsettings.xml#video
     /// </summary>
-    public static class CleanStringParser
+    public class CleanStringParser
     {
-        public static bool TryClean(string name, IReadOnlyList<Regex> expressions, out ReadOnlySpan<char> newName)
+        public CleanStringResult Clean(string name, IEnumerable<Regex> expressions)
         {
-            var len = expressions.Count;
-            for (int i = 0; i < len; i++)
+            var hasChanged = false;
+
+            foreach (var exp in expressions)
             {
-                if (TryClean(name, expressions[i], out newName))
+                var result = Clean(name, exp);
+
+                if (!string.IsNullOrEmpty(result.Name))
                 {
-                    return true;
+                    name = result.Name;
+                    hasChanged = hasChanged || result.HasChanged;
                 }
             }
 
-            newName = ReadOnlySpan<char>.Empty;
-            return false;
+            return new CleanStringResult
+            {
+                Name = name,
+                HasChanged = hasChanged
+            };
         }
 
-        private static bool TryClean(string name, Regex expression, out ReadOnlySpan<char> newName)
+        private static CleanStringResult Clean(string name, Regex expression)
         {
+            var result = new CleanStringResult();
+
             var match = expression.Match(name);
-            int index = match.Index;
-            if (match.Success && index != 0)
+
+            if (match.Success)
             {
-                newName = name.AsSpan().Slice(0, match.Index);
-                return true;
+                result.HasChanged = true;
+                name = name.Substring(0, match.Index);
             }
 
-            newName = string.Empty;
-            return false;
+            result.Name = name;
+            return result;
         }
     }
 }

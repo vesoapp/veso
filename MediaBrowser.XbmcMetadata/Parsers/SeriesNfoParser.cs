@@ -9,17 +9,8 @@ using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.XbmcMetadata.Parsers
 {
-    /// <summary>
-    /// Nfo parser for series.
-    /// </summary>
     public class SeriesNfoParser : BaseNfoParser<Series>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SeriesNfoParser"/> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        /// <param name="config">the configuration manager.</param>
-        /// <param name="providerManager">The provider manager.</param>
         public SeriesNfoParser(ILogger logger, IConfigurationManager config, IProviderManager providerManager)
             : base(logger, config, providerManager)
         {
@@ -48,25 +39,20 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                         {
                             tvdbId = reader.ReadElementContentAsString();
                         }
-
                         if (!string.IsNullOrWhiteSpace(imdbId))
                         {
                             item.SetProviderId(MetadataProviders.Imdb, imdbId);
                         }
-
                         if (!string.IsNullOrWhiteSpace(tmdbId))
                         {
                             item.SetProviderId(MetadataProviders.Tmdb, tmdbId);
                         }
-
                         if (!string.IsNullOrWhiteSpace(tvdbId))
                         {
                             item.SetProviderId(MetadataProviders.Tvdb, tvdbId);
                         }
-
                         break;
                     }
-
                 case "airs_dayofweek":
                     {
                         item.AirDays = TVUtils.GetAirDays(reader.ReadElementContentAsString());
@@ -81,7 +67,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                         {
                             item.AirTime = val;
                         }
-
                         break;
                     }
 

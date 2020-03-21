@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
@@ -58,17 +58,25 @@ namespace MediaBrowser.Api.UserLibrary
         /// <param name="libraryManager">The library manager.</param>
         /// <param name="localization">The localization.</param>
         /// <param name="dtoService">The dto service.</param>
-        public ItemsService(
-            ILogger logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            IUserManager userManager,
-            ILibraryManager libraryManager,
-            ILocalizationManager localization,
-            IDtoService dtoService,
-            IAuthorizationContext authContext)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public ItemsService(IUserManager userManager, ILibraryManager libraryManager, ILocalizationManager localization, IDtoService dtoService, IAuthorizationContext authContext)
         {
+            if (userManager == null)
+            {
+                throw new ArgumentNullException(nameof(userManager));
+            }
+            if (libraryManager == null)
+            {
+                throw new ArgumentNullException(nameof(libraryManager));
+            }
+            if (localization == null)
+            {
+                throw new ArgumentNullException(nameof(localization));
+            }
+            if (dtoService == null)
+            {
+                throw new ArgumentNullException(nameof(dtoService));
+            }
+
             _userManager = userManager;
             _libraryManager = libraryManager;
             _localization = localization;
@@ -119,7 +127,6 @@ namespace MediaBrowser.Api.UserLibrary
 
             var result = new QueryResult<BaseItemDto>
             {
-                StartIndex = request.StartIndex.GetValueOrDefault(),
                 TotalRecordCount = itemsResult.TotalRecordCount,
                 Items = returnItems
             };
@@ -170,7 +177,6 @@ namespace MediaBrowser.Api.UserLibrary
 
             return new QueryResult<BaseItemDto>
             {
-                StartIndex = request.StartIndex.GetValueOrDefault(),
                 TotalRecordCount = result.TotalRecordCount,
                 Items = dtoList
             };
@@ -231,8 +237,7 @@ namespace MediaBrowser.Api.UserLibrary
                 return new QueryResult<BaseItem>
                 {
                     Items = Array.Empty<BaseItem>(),
-                    TotalRecordCount = 0,
-                    StartIndex = 0
+                    TotalRecordCount = 0
                 };
             }
 
@@ -245,8 +250,7 @@ namespace MediaBrowser.Api.UserLibrary
             return new QueryResult<BaseItem>
             {
                 Items = itemsArray,
-                TotalRecordCount = itemsArray.Length,
-                StartIndex = 0
+                TotalRecordCount = itemsArray.Length
             };
         }
 
@@ -472,7 +476,7 @@ namespace MediaBrowser.Api.UserLibrary
             }
 
             // Apply default sorting if none requested
-            if (query.OrderBy.Count == 0)
+            if (query.OrderBy.Length == 0)
             {
                 // Albums by artist
                 if (query.ArtistIds.Length > 0 && query.IncludeItemTypes.Length == 1 && string.Equals(query.IncludeItemTypes[0], "MusicAlbum", StringComparison.OrdinalIgnoreCase))

@@ -1,11 +1,9 @@
-#pragma warning disable CS1591
-
 using System;
 
 namespace MediaBrowser.Model.Tasks
 {
     /// <summary>
-    /// Class TaskTriggerInfo.
+    /// Class TaskTriggerInfo
     /// </summary>
     public class TaskTriggerInfo
     {

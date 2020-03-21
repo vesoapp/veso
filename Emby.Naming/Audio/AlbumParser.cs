@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -18,13 +16,15 @@ namespace Emby.Naming.Audio
             _options = options;
         }
 
-        public bool IsMultiPart(string path)
+        public MultiPartResult ParseMultiPart(string path)
         {
+            var result = new MultiPartResult();
+
             var filename = Path.GetFileName(path);
 
             if (string.IsNullOrEmpty(filename))
             {
-                return false;
+                return result;
             }
 
             // TODO: Move this logic into options object
@@ -54,11 +54,12 @@ namespace Emby.Naming.Audio
 
                 if (int.TryParse(tmp, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
                 {
-                    return true;
+                    result.IsMultiPart = true;
+                    break;
                 }
             }
 
-            return false;
+            return result;
         }
     }
 }

@@ -86,17 +86,20 @@ namespace Emby.Server.Implementations.UserViews
             {
                 return items
                     .Where(i => i.HasImage(ImageType.Primary) || i.HasImage(ImageType.Thumb))
+                    .OrderBy(i => Guid.NewGuid())
                     .ToList();
             }
 
             return items
                 .Where(i => i.HasImage(ImageType.Primary))
+                .OrderBy(i => Guid.NewGuid())
                 .ToList();
         }
 
         protected override bool Supports(BaseItem item)
         {
-            if (item is UserView view)
+            var view = item as UserView;
+            if (view != null)
             {
                 return IsUsingCollectionStrip(view);
             }

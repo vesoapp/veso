@@ -1,7 +1,3 @@
-#pragma warning disable CS1591
-
-using MediaBrowser.Model.Entities;
-
 namespace Emby.Naming.Video
 {
     public class ExtraResult
@@ -10,8 +6,7 @@ namespace Emby.Naming.Video
         /// Gets or sets the type of the extra.
         /// </summary>
         /// <value>The type of the extra.</value>
-        public ExtraType? ExtraType { get; set; }
-
+        public string ExtraType { get; set; }
         /// <summary>
         /// Gets or sets the rule.
         /// </summary>

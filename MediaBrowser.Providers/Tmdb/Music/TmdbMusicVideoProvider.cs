@@ -6,6 +6,7 @@ using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Providers;
+using MediaBrowser.Providers.Movies;
 using MediaBrowser.Providers.Tmdb.Movies;
 
 namespace MediaBrowser.Providers.Tmdb.Music

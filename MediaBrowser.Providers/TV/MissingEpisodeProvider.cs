@@ -12,21 +12,22 @@ using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Globalization;
 using MediaBrowser.Model.IO;
-using MediaBrowser.Providers.Plugins.TheTvdb;
+using MediaBrowser.Providers.TV.TheTVDB;
 using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Providers.TV
 {
     public class MissingEpisodeProvider
     {
-        private const double UnairedEpisodeThresholdDays = 2;
-
         private readonly IServerConfigurationManager _config;
         private readonly ILogger _logger;
         private readonly ILibraryManager _libraryManager;
         private readonly ILocalizationManager _localization;
         private readonly IFileSystem _fileSystem;
-        private readonly TvdbClientManager _tvdbClientManager;
+        private readonly TvDbClientManager _tvDbClientManager;
+
+        private readonly CultureInfo _usCulture = new CultureInfo("en-US");
+        private const double UnairedEpisodeThresholdDays = 2;
 
         public MissingEpisodeProvider(
             ILogger logger,
@@ -34,14 +35,14 @@ namespace MediaBrowser.Providers.TV
             ILibraryManager libraryManager,
             ILocalizationManager localization,
             IFileSystem fileSystem,
-            TvdbClientManager tvdbClientManager)
+            TvDbClientManager tvDbClientManager)
         {
             _logger = logger;
             _config = config;
             _libraryManager = libraryManager;
             _localization = localization;
             _fileSystem = fileSystem;
-            _tvdbClientManager = tvdbClientManager;
+            _tvDbClientManager = tvDbClientManager;
         }
 
         public async Task<bool> Run(Series series, bool addNewItems, CancellationToken cancellationToken)
@@ -52,7 +53,7 @@ namespace MediaBrowser.Providers.TV
                 return false;
             }
 
-            var episodes = await _tvdbClientManager.GetAllEpisodesAsync(Convert.ToInt32(tvdbId), series.GetPreferredMetadataLanguage(), cancellationToken);
+            var episodes = await _tvDbClientManager.GetAllEpisodesAsync(Convert.ToInt32(tvdbId), series.GetPreferredMetadataLanguage(), cancellationToken);
 
             var episodeLookup = episodes
                 .Select(i =>
@@ -60,7 +61,7 @@ namespace MediaBrowser.Providers.TV
                     DateTime.TryParse(i.FirstAired, out var firstAired);
                     var seasonNumber = i.AiredSeason.GetValueOrDefault(-1);
                     var episodeNumber = i.AiredEpisodeNumber.GetValueOrDefault(-1);
-                    return (seasonNumber, episodeNumber, firstAired);
+                    return (seasonNumber: seasonNumber, episodeNumber: episodeNumber, firstAired: firstAired);
                 })
                 .Where(i => i.seasonNumber != -1 && i.episodeNumber != -1)
                 .OrderBy(i => i.seasonNumber)
@@ -246,9 +247,8 @@ namespace MediaBrowser.Providers.TV
         /// </summary>
         /// <param name="allRecursiveChildren"></param>
         /// <param name="episodeLookup">The episode lookup.</param>
-        /// <returns><see cref="bool" />.</returns>
-        private bool RemoveObsoleteOrMissingSeasons(
-            IList<BaseItem> allRecursiveChildren,
+        /// <returns>Task{System.Boolean}.</returns>
+        private bool RemoveObsoleteOrMissingSeasons(IList<BaseItem> allRecursiveChildren,
             IEnumerable<(int seasonNumber, int episodeNumber, DateTime firstAired)> episodeLookup)
         {
             var existingSeasons = allRecursiveChildren.OfType<Season>().ToList();
@@ -298,6 +298,7 @@ namespace MediaBrowser.Providers.TV
                 _libraryManager.DeleteItem(seasonToRemove, new DeleteOptions
                 {
                     DeleteFileLocation = true
+
                 }, false);
 
                 hasChanges = true;
@@ -321,20 +322,18 @@ namespace MediaBrowser.Providers.TV
 
             if (season == null)
             {
-                var provider = new DummySeasonProvider(_logger, _localization, _libraryManager, _fileSystem);
+                var provider = new DummySeasonProvider(_config, _logger, _localization, _libraryManager, _fileSystem);
                 season = await provider.AddSeason(series, seasonNumber, true, cancellationToken).ConfigureAwait(false);
             }
 
-            var name = "Episode " + episodeNumber.ToString(CultureInfo.InvariantCulture);
+            var name = $"Episode {episodeNumber.ToString(_usCulture)}";
 
             var episode = new Episode
             {
                 Name = name,
                 IndexNumber = episodeNumber,
                 ParentIndexNumber = seasonNumber,
-                Id = _libraryManager.GetNewItemId(
-                    series.Id + seasonNumber.ToString(CultureInfo.InvariantCulture) + name,
-                    typeof(Episode)),
+                Id = _libraryManager.GetNewItemId(series.Id + seasonNumber.ToString(_usCulture) + name, typeof(Episode)),
                 IsVirtualItem = true,
                 SeasonId = season?.Id ?? Guid.Empty,
                 SeriesId = series.Id
@@ -342,7 +341,7 @@ namespace MediaBrowser.Providers.TV
 
             season.AddChild(episode, cancellationToken);
 
-            await episode.RefreshMetadata(new MetadataRefreshOptions(new DirectoryService(_fileSystem)), cancellationToken).ConfigureAwait(false);
+            await episode.RefreshMetadata(new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem)), cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -352,7 +351,7 @@ namespace MediaBrowser.Providers.TV
         /// <param name="seasonCounts"></param>
         /// <param name="episodeTuple"></param>
         /// <returns>Episode.</returns>
-        private Episode GetExistingEpisode(IEnumerable<Episode> existingEpisodes, IReadOnlyDictionary<int, int> seasonCounts, (int seasonNumber, int episodeNumber, DateTime firstAired) episodeTuple)
+        private Episode GetExistingEpisode(IList<Episode> existingEpisodes, IReadOnlyDictionary<int, int> seasonCounts, (int seasonNumber, int episodeNumber, DateTime firstAired) episodeTuple)
         {
             var seasonNumber = episodeTuple.seasonNumber;
             var episodeNumber = episodeTuple.episodeNumber;
@@ -381,6 +380,9 @@ namespace MediaBrowser.Providers.TV
         }
 
         private Episode GetExistingEpisode(IEnumerable<Episode> existingEpisodes, int season, int episode)
-            => existingEpisodes.FirstOrDefault(i => i.ParentIndexNumber == season && i.ContainsEpisodeNumber(episode));
+        {
+            return existingEpisodes
+                .FirstOrDefault(i => i.ParentIndexNumber == season && i.ContainsEpisodeNumber(episode));
+        }
     }
 }

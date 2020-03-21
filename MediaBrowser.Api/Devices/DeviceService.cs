@@ -1,6 +1,6 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Devices;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Controller.Security;
@@ -8,7 +8,6 @@ using MediaBrowser.Controller.Session;
 using MediaBrowser.Model.Devices;
 using MediaBrowser.Model.Querying;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.Devices
 {
@@ -82,14 +81,7 @@ namespace MediaBrowser.Api.Devices
         private readonly IAuthenticationRepository _authRepo;
         private readonly ISessionManager _sessionManager;
 
-        public DeviceService(
-            ILogger<DeviceService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            IDeviceManager deviceManager,
-            IAuthenticationRepository authRepo,
-            ISessionManager sessionManager)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public DeviceService(IDeviceManager deviceManager, IAuthenticationRepository authRepo, ISessionManager sessionManager)
         {
             _deviceManager = deviceManager;
             _authRepo = authRepo;

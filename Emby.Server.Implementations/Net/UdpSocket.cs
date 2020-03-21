@@ -181,6 +181,15 @@ namespace Emby.Server.Implementations.Net
             return taskCompletion.Task;
         }
 
+        public Task<SocketReceiveResult> ReceiveAsync(CancellationToken cancellationToken)
+        {
+            ThrowIfDisposed();
+
+            var buffer = new byte[8192];
+
+            return ReceiveAsync(buffer, 0, buffer.Length, cancellationToken);
+        }
+
         public Task SendToAsync(byte[] buffer, int offset, int size, IPEndPoint endPoint, CancellationToken cancellationToken)
         {
             ThrowIfDisposed();

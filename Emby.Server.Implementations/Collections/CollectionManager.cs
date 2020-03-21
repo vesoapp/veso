@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,7 +29,11 @@ namespace Emby.Server.Implementations.Collections
         private readonly ILogger _logger;
         private readonly IProviderManager _providerManager;
         private readonly ILocalizationManager _localizationManager;
-        private readonly IApplicationPaths _appPaths;
+        private IApplicationPaths _appPaths;
+
+        public event EventHandler<CollectionCreatedEventArgs> CollectionCreated;
+        public event EventHandler<CollectionModifiedEventArgs> ItemsAddedToCollection;
+        public event EventHandler<CollectionModifiedEventArgs> ItemsRemovedFromCollection;
 
         public CollectionManager(
             ILibraryManager libraryManager,
@@ -50,10 +52,6 @@ namespace Emby.Server.Implementations.Collections
             _localizationManager = localizationManager;
             _appPaths = appPaths;
         }
-
-        public event EventHandler<CollectionCreatedEventArgs> CollectionCreated;
-        public event EventHandler<CollectionModifiedEventArgs> ItemsAddedToCollection;
-        public event EventHandler<CollectionModifiedEventArgs> ItemsRemovedFromCollection;
 
         private IEnumerable<Folder> FindFolders(string path)
         {
@@ -123,7 +121,7 @@ namespace Emby.Server.Implementations.Collections
             // This could cause it to get re-resolved as a plain folder
             var folderName = _fileSystem.GetValidFilename(name) + " [boxset]";
 
-            var parentFolder = GetCollectionsFolder(true).GetAwaiter().GetResult();
+            var parentFolder = GetCollectionsFolder(true).Result;
 
             if (parentFolder == null)
             {
@@ -151,7 +149,7 @@ namespace Emby.Server.Implementations.Collections
 
                 if (options.ItemIdList.Length > 0)
                 {
-                    AddToCollection(collection.Id, options.ItemIdList, false, new MetadataRefreshOptions(new DirectoryService(_fileSystem))
+                    AddToCollection(collection.Id, options.ItemIdList, false, new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem))
                     {
                         // The initial adding of items is going to create a local metadata file
                         // This will cause internet metadata to be skipped as a result
@@ -160,7 +158,7 @@ namespace Emby.Server.Implementations.Collections
                 }
                 else
                 {
-                    _providerManager.QueueRefresh(collection.Id, new MetadataRefreshOptions(new DirectoryService(_fileSystem)), RefreshPriority.High);
+                    _providerManager.QueueRefresh(collection.Id, new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem)), RefreshPriority.High);
                 }
 
                 CollectionCreated?.Invoke(this, new CollectionCreatedEventArgs
@@ -180,12 +178,12 @@ namespace Emby.Server.Implementations.Collections
 
         public void AddToCollection(Guid collectionId, IEnumerable<string> ids)
         {
-            AddToCollection(collectionId, ids, true, new MetadataRefreshOptions(new DirectoryService(_fileSystem)));
+            AddToCollection(collectionId, ids, true, new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem)));
         }
 
         public void AddToCollection(Guid collectionId, IEnumerable<Guid> ids)
         {
-            AddToCollection(collectionId, ids.Select(i => i.ToString("N", CultureInfo.InvariantCulture)), true, new MetadataRefreshOptions(new DirectoryService(_fileSystem)));
+            AddToCollection(collectionId, ids.Select(i => i.ToString("N", CultureInfo.InvariantCulture)), true, new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem)));
         }
 
         private void AddToCollection(Guid collectionId, IEnumerable<string> ids, bool fireEvent, MetadataRefreshOptions refreshOptions)
@@ -289,7 +287,7 @@ namespace Emby.Server.Implementations.Collections
             }
 
             collection.UpdateToRepository(ItemUpdateType.MetadataEdit, CancellationToken.None);
-            _providerManager.QueueRefresh(collection.Id, new MetadataRefreshOptions(new DirectoryService(_fileSystem))
+            _providerManager.QueueRefresh(collection.Id, new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem))
             {
                 ForceSave = true
             }, RefreshPriority.High);
@@ -341,23 +339,19 @@ namespace Emby.Server.Implementations.Collections
         }
     }
 
-    public sealed class CollectionManagerEntryPoint : IServerEntryPoint
+    public class CollectionManagerEntryPoint : IServerEntryPoint
     {
         private readonly CollectionManager _collectionManager;
         private readonly IServerConfigurationManager _config;
-        private readonly ILogger _logger;
+        private ILogger _logger;
 
-        public CollectionManagerEntryPoint(
-            ICollectionManager collectionManager,
-            IServerConfigurationManager config,
-            ILogger<CollectionManagerEntryPoint> logger)
+        public CollectionManagerEntryPoint(ICollectionManager collectionManager, IServerConfigurationManager config, ILogger logger)
         {
             _collectionManager = (CollectionManager)collectionManager;
             _config = config;
             _logger = logger;
         }
 
-        /// <inheritdoc />
         public async Task RunAsync()
         {
             if (!_config.Configuration.CollectionsUpgraded && _config.Configuration.IsStartupWizardCompleted)
@@ -381,10 +375,39 @@ namespace Emby.Server.Implementations.Collections
             }
         }
 
-        /// <inheritdoc />
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~CollectionManagerEntryPoint() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {
-            // Nothing to dispose
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
         }
+        #endregion
     }
 }

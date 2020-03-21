@@ -13,11 +13,12 @@ namespace MediaBrowser.Providers.Books
     {
         public AudioBookMetadataService(
             IServerConfigurationManager serverConfigurationManager,
-            ILogger<AudioBookMetadataService> logger,
+            ILogger logger,
             IProviderManager providerManager,
             IFileSystem fileSystem,
+            IUserDataManager userDataManager,
             ILibraryManager libraryManager)
-            : base(serverConfigurationManager, logger, providerManager, fileSystem, libraryManager)
+            : base(serverConfigurationManager, logger, providerManager, fileSystem, userDataManager, libraryManager)
         {
         }
 

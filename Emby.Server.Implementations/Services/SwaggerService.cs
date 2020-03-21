@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using MediaBrowser.Controller.Net;
@@ -149,18 +149,18 @@ namespace Emby.Server.Implementations.Services
                 swagger = "2.0",
                 info = new SwaggerInfo
                 {
-                    title = "veso Server API",
+                    title = "Jellyfin Server API",
                     version = "1.0.0",
-                    description = "Explore the veso Server API",
+                    description = "Explore the Jellyfin Server API",
                     contact = new SwaggerConcactInfo
                     {
-                        name = "veso Community",
-                        url = "https://veso.readthedocs.io/en/latest/user-docs/getting-help/"
+                        name = "Jellyfin Community",
+                        url = "https://jellyfin.readthedocs.io/en/latest/user-docs/getting-help/"
                     }
                 },
                 paths = GetPaths(),
                 definitions = GetDefinitions(),
-                basePath = "/veso",
+                basePath = "/jellyfin",
                 host = host,
 
                 components = new SwaggerComponents
@@ -175,7 +175,7 @@ namespace Emby.Server.Implementations.Services
 
         private SwaggerTag[] GetTags()
         {
-            return Array.Empty<SwaggerTag>();
+            return new SwaggerTag[] { };
         }
 
         private Dictionary<string, SwaggerDefinition> GetDefinitions()
@@ -200,7 +200,7 @@ namespace Emby.Server.Implementations.Services
                     }
 
                     if (info.Path.StartsWith("/mediabrowser", StringComparison.OrdinalIgnoreCase)
-                        || info.Path.StartsWith("/veso", StringComparison.OrdinalIgnoreCase))
+                        || info.Path.StartsWith("/jellyfin", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

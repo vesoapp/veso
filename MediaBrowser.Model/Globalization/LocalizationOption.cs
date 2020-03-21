@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 namespace MediaBrowser.Model.Globalization
 {
     public class LocalizationOption

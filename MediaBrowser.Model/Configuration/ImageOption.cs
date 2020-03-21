@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using MediaBrowser.Model.Entities;
 
 namespace MediaBrowser.Model.Configuration
@@ -11,7 +9,6 @@ namespace MediaBrowser.Model.Configuration
         /// </summary>
         /// <value>The type.</value>
         public ImageType Type { get; set; }
-
         /// <summary>
         /// Gets or sets the limit.
         /// </summary>

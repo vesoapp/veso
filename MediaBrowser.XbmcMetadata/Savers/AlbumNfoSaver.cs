@@ -13,27 +13,15 @@ using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.XbmcMetadata.Savers
 {
-    /// <summary>
-    /// Nfo saver for albums.
-    /// </summary>
     public class AlbumNfoSaver : BaseNfoSaver
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AlbumNfoSaver"/> class.
-        /// </summary>
-        /// <param name="fileSystem">The file system.</param>
-        /// <param name="configurationManager">the server configuration manager.</param>
-        /// <param name="libraryManager">The library manager.</param>
-        /// <param name="userManager">The user manager.</param>
-        /// <param name="userDataManager">The user data manager.</param>
-        /// <param name="logger">The logger.</param>
         public AlbumNfoSaver(
             IFileSystem fileSystem,
             IServerConfigurationManager configurationManager,
             ILibraryManager libraryManager,
             IUserManager userManager,
             IUserDataManager userDataManager,
-            ILogger<AlbumNfoSaver> logger)
+            ILogger logger)
             : base(fileSystem, configurationManager, libraryManager, userManager, userDataManager, logger)
         {
         }
@@ -86,7 +74,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
                 if (track.RunTimeTicks.HasValue)
                 {
-                    var time = TimeSpan.FromTicks(track.RunTimeTicks.Value).ToString(@"mm\:ss", CultureInfo.InvariantCulture);
+                    var time = TimeSpan.FromTicks(track.RunTimeTicks.Value).ToString(@"mm\:ss");
 
                     writer.WriteElementString("duration", time);
                 }

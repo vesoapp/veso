@@ -1,6 +1,3 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,8 +7,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.XmlTv;
-using Jellyfin.XmlTv.Entities;
+using Emby.XmlTv.Classes;
+using Emby.XmlTv.Entities;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Configuration;
@@ -34,7 +31,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
         public XmlTvListingsProvider(
             IServerConfigurationManager config,
             IHttpClient httpClient,
-            ILogger<XmlTvListingsProvider> logger,
+            ILogger logger,
             IFileSystem fileSystem,
             IZipClient zipClient)
         {
@@ -94,12 +91,12 @@ namespace Emby.Server.Implementations.LiveTv.Listings
                 {
                     using (var gzStream = new GZipStream(stream, CompressionMode.Decompress))
                     {
-                        await gzStream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+                        await gzStream.CopyToAsync(fileStream).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await stream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+                    await stream.CopyToAsync(fileStream).ConfigureAwait(false);
                 }
             }
 

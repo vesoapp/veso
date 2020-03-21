@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
+using MediaBrowser.Model.IO;
+
 namespace MediaBrowser.Controller.Net
 {
     public class StaticResultOptions
@@ -22,12 +24,12 @@ namespace MediaBrowser.Controller.Net
         public string Path { get; set; }
         public long? ContentLength { get; set; }
 
-        public FileShare FileShare { get; set; }
+        public FileShareMode FileShare { get; set; }
 
         public StaticResultOptions()
         {
             ResponseHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            FileShare = FileShare.Read;
+            FileShare = FileShareMode.Read;
         }
     }
 

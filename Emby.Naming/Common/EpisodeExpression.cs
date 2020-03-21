@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Text.RegularExpressions;
 
@@ -9,24 +7,6 @@ namespace Emby.Naming.Common
     {
         private string _expression;
         private Regex _regex;
-
-        public EpisodeExpression(string expression, bool byDate)
-        {
-            Expression = expression;
-            IsByDate = byDate;
-            DateTimeFormats = Array.Empty<string>();
-            SupportsAbsoluteEpisodeNumbers = true;
-        }
-
-        public EpisodeExpression(string expression)
-            : this(expression, false)
-        {
-        }
-
-        public EpisodeExpression()
-            : this(null)
-        {
-        }
 
         public string Expression
         {
@@ -49,5 +29,23 @@ namespace Emby.Naming.Common
         public string[] DateTimeFormats { get; set; }
 
         public Regex Regex => _regex ?? (_regex = new Regex(Expression, RegexOptions.IgnoreCase | RegexOptions.Compiled));
+
+        public EpisodeExpression(string expression, bool byDate)
+        {
+            Expression = expression;
+            IsByDate = byDate;
+            DateTimeFormats = Array.Empty<string>();
+            SupportsAbsoluteEpisodeNumbers = true;
+        }
+
+        public EpisodeExpression(string expression)
+            : this(expression, false)
+        {
+        }
+
+        public EpisodeExpression()
+            : this(null)
+        {
+        }
     }
 }

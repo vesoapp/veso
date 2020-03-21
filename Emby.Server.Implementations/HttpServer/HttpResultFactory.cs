@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,10 +5,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Emby.Server.Implementations.Services;
+using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Serialization;
@@ -24,12 +24,12 @@ using MimeTypes = MediaBrowser.Model.Net.MimeTypes;
 namespace Emby.Server.Implementations.HttpServer
 {
     /// <summary>
-    /// Class HttpResultFactory.
+    /// Class HttpResultFactory
     /// </summary>
     public class HttpResultFactory : IHttpResultFactory
     {
         /// <summary>
-        /// The logger.
+        /// The _logger
         /// </summary>
         private readonly ILogger _logger;
         private readonly IFileSystem _fileSystem;
@@ -439,7 +439,7 @@ namespace Emby.Server.Implementations.HttpServer
 
         public Task<object> GetStaticFileResult(IRequest requestContext,
             string path,
-            FileShare fileShare = FileShare.Read)
+            FileShareMode fileShare = FileShareMode.Read)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -460,10 +460,10 @@ namespace Emby.Server.Implementations.HttpServer
 
             if (string.IsNullOrEmpty(path))
             {
-                throw new ArgumentException("Path can't be empty.", nameof(options));
+                throw new ArgumentNullException(nameof(path));
             }
 
-            if (fileShare != FileShare.Read && fileShare != FileShare.ReadWrite)
+            if (fileShare != FileShareMode.Read && fileShare != FileShareMode.ReadWrite)
             {
                 throw new ArgumentException("FileShare must be either Read or ReadWrite");
             }
@@ -491,9 +491,9 @@ namespace Emby.Server.Implementations.HttpServer
         /// <param name="path">The path.</param>
         /// <param name="fileShare">The file share.</param>
         /// <returns>Stream.</returns>
-        private Stream GetFileStream(string path, FileShare fileShare)
+        private Stream GetFileStream(string path, FileShareMode fileShare)
         {
-            return new FileStream(path, FileMode.Open, FileAccess.Read, fileShare);
+            return _fileSystem.GetFileStream(path, FileOpenMode.Open, FileAccessMode.Read, fileShare);
         }
 
         public Task<object> GetStaticResult(IRequest requestContext,

@@ -8,17 +8,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace Emby.Server.Implementations.HttpServer
 {
-    /// <summary>
-    /// Class ResponseFilter.
-    /// </summary>
     public class ResponseFilter
     {
+        private static readonly CultureInfo _usCulture = CultureInfo.ReadOnly(new CultureInfo("en-US"));
         private readonly ILogger _logger;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseFilter"/> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
         public ResponseFilter(ILogger logger)
         {
             _logger = logger;
@@ -43,7 +37,7 @@ namespace Emby.Server.Implementations.HttpServer
 
                 if (!string.IsNullOrEmpty(exception.Message))
                 {
-                    var error = exception.Message.Replace(Environment.NewLine, " ", StringComparison.Ordinal);
+                    var error = exception.Message.Replace(Environment.NewLine, " ");
                     error = RemoveControlCharacters(error);
 
                     res.Headers.Add("X-Application-Error-Code", error);
@@ -61,7 +55,7 @@ namespace Emby.Server.Implementations.HttpServer
                 if (hasHeaders.Headers.TryGetValue(HeaderNames.ContentLength, out string contentLength)
                     && !string.IsNullOrEmpty(contentLength))
                 {
-                    var length = long.Parse(contentLength, CultureInfo.InvariantCulture);
+                    var length = long.Parse(contentLength, _usCulture);
 
                     if (length > 0)
                     {

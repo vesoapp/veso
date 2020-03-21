@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -47,6 +48,13 @@ namespace MediaBrowser.MediaEncoding.Subtitles
 
                 writer.WriteLine("</tt>");
             }
+        }
+
+        private string FormatTime(long ticks)
+        {
+            var time = TimeSpan.FromTicks(ticks);
+
+            return string.Format(@"{0:hh\:mm\:ss\,fff}", time);
         }
     }
 }

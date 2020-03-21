@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,21 +6,10 @@ using Microsoft.Net.Http.Headers;
 namespace MediaBrowser.Common.Net
 {
     /// <summary>
-    /// Class HttpRequestOptions.
+    /// Class HttpRequestOptions
     /// </summary>
     public class HttpRequestOptions
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HttpRequestOptions"/> class.
-        /// </summary>
-        public HttpRequestOptions()
-        {
-            RequestHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            CacheMode = CacheMode.None;
-            DecompressionMethod = CompressionMethod.Deflate;
-        }
-
         /// <summary>
         /// Gets or sets the URL.
         /// </summary>
@@ -82,17 +69,14 @@ namespace MediaBrowser.Common.Net
         public string RequestContentType { get; set; }
 
         public string RequestContent { get; set; }
-
         public byte[] RequestContentBytes { get; set; }
 
         public bool BufferContent { get; set; }
 
         public bool LogErrorResponseBody { get; set; }
-
         public bool EnableKeepAlive { get; set; }
 
         public CacheMode CacheMode { get; set; }
-
         public TimeSpan CacheLength { get; set; }
 
         public bool EnableDefaultUserAgent { get; set; }
@@ -102,6 +86,17 @@ namespace MediaBrowser.Common.Net
             RequestHeaders.TryGetValue(name, out var value);
 
             return value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpRequestOptions"/> class.
+        /// </summary>
+        public HttpRequestOptions()
+        {
+            RequestHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            CacheMode = CacheMode.None;
+            DecompressionMethod = CompressionMethod.Deflate;
         }
     }
 

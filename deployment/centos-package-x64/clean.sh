@@ -3,16 +3,16 @@
 keep_artifacts="${1}"
 
 WORKDIR="$( pwd )"
-VERSION="$( grep -A1 '^Version:' ${WORKDIR}/pkg-src/veso.spec | awk '{ print $NF }' )"
+VERSION="$( grep -A1 '^Version:' ${WORKDIR}/pkg-src/jellyfin.spec | awk '{ print $NF }' )"
 
 package_temporary_dir="${WORKDIR}/pkg-dist-tmp"
 package_source_dir="${WORKDIR}/pkg-src"
 output_dir="${WORKDIR}/pkg-dist"
 current_user="$( whoami )"
-image_name="veso-centos-build"
+image_name="jellyfin-centos-build"
 
-rm -f "${package_source_dir}/veso-${VERSION}.tar.gz" &>/dev/null \
-  || sudo rm -f "${package_source_dir}/veso-${VERSION}.tar.gz" &>/dev/null
+rm -f "${package_source_dir}/jellyfin-${VERSION}.tar.gz" &>/dev/null \
+  || sudo rm -f "${package_source_dir}/jellyfin-${VERSION}.tar.gz" &>/dev/null
 
 rm -rf "${package_temporary_dir}" &>/dev/null \
   || sudo rm -rf "${package_temporary_dir}" &>/dev/null

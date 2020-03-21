@@ -41,10 +41,10 @@ namespace MediaBrowser.Controller.Entities
         public override double GetDefaultPrimaryImageAspectRatio()
         {
             // REVIEW: @bond
-            if (Width != 0 && Height != 0)
+            if (Width.HasValue && Height.HasValue)
             {
-                double width = Width;
-                double height = Height;
+                double width = Width.Value;
+                double height = Height.Value;
 
                 if (Orientation.HasValue)
                 {
@@ -67,6 +67,8 @@ namespace MediaBrowser.Controller.Entities
             return base.GetDefaultPrimaryImageAspectRatio();
         }
 
+        public new int? Width { get; set; }
+        public new int? Height { get; set; }
         public string CameraMake { get; set; }
         public string CameraModel { get; set; }
         public string Software { get; set; }

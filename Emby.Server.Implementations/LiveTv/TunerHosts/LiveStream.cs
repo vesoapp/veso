@@ -1,6 +1,3 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediaBrowser.Controller;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.LiveTv;
@@ -19,10 +16,8 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
 {
     public class LiveStream : ILiveStream
     {
-        private readonly IConfigurationManager _configurationManager;
-
         protected readonly IFileSystem FileSystem;
-
+        protected readonly IServerApplicationPaths AppPaths;
         protected readonly IStreamHelper StreamHelper;
 
         protected string TempFilePath;
@@ -34,7 +29,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
             TunerHostInfo tuner,
             IFileSystem fileSystem,
             ILogger logger,
-            IConfigurationManager configurationManager,
+            IServerApplicationPaths appPaths,
             IStreamHelper streamHelper)
         {
             OriginalMediaSource = mediaSource;
@@ -49,7 +44,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
                 TunerHostId = tuner.Id;
             }
 
-            _configurationManager = configurationManager;
+            AppPaths = appPaths;
             StreamHelper = streamHelper;
 
             ConsumerCount = 1;
@@ -73,7 +68,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
 
         protected void SetTempFilePath(string extension)
         {
-            TempFilePath = Path.Combine(_configurationManager.GetTranscodePath(), UniqueId + "." + extension);
+            TempFilePath = Path.Combine(AppPaths.GetTranscodingTempPath(), UniqueId + "." + extension);
         }
 
         public virtual Task Open(CancellationToken openCancellationToken)
@@ -99,7 +94,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
                 FileMode.Open,
                 FileAccess.Read,
                 FileShare.ReadWrite,
-                IODefaults.FileStreamBufferSize,
+                StreamDefaults.DefaultFileStreamBufferSize,
                 allowAsyncFileRead ? FileOptions.SequentialScan | FileOptions.Asynchronous : FileOptions.SequentialScan);
 
         public Task DeleteTempFiles()
@@ -202,7 +197,7 @@ namespace Emby.Server.Implementations.LiveTv.TunerHosts
                 await StreamHelper.CopyToAsync(
                     inputStream,
                     stream,
-                    IODefaults.CopyToBufferSize,
+                    StreamDefaults.DefaultCopyToBufferSize,
                     emptyReadLimit,
                     cancellationToken).ConfigureAwait(false);
             }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Mime;
+using System.Linq;
 using MediaBrowser.Common.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -13,11 +13,11 @@ using IHttpRequest = MediaBrowser.Model.Services.IHttpRequest;
 
 namespace Emby.Server.Implementations.SocketSharp
 {
-    public class WebSocketSharpRequest : IHttpRequest
+    public partial class WebSocketSharpRequest : IHttpRequest
     {
-        private const string FormUrlEncoded = "application/x-www-form-urlencoded";
-        private const string MultiPartFormData = "multipart/form-data";
-        private const string Soap11 = "text/xml; charset=utf-8";
+        public const string FormUrlEncoded = "application/x-www-form-urlencoded";
+        public const string MultiPartFormData = "multipart/form-data";
+        public const string Soap11 = "text/xml; charset=utf-8";
 
         private string _remoteIp;
         private Dictionary<string, object> _items;
@@ -78,7 +78,7 @@ namespace Emby.Server.Implementations.SocketSharp
             get =>
                 _responseContentType
                 ?? (_responseContentType = GetResponseContentType(Request));
-            set => _responseContentType = value;
+            set => this._responseContentType = value;
         }
 
         public string PathInfo => Request.Path.Value;
@@ -90,6 +90,7 @@ namespace Emby.Server.Implementations.SocketSharp
         public IQueryCollection QueryString => Request.Query;
 
         public bool IsLocal => Request.HttpContext.Connection.LocalIpAddress.Equals(Request.HttpContext.Connection.RemoteIpAddress);
+
 
         public string HttpMethod => Request.Method;
 
@@ -123,29 +124,24 @@ namespace Emby.Server.Implementations.SocketSharp
                 return specifiedContentType;
             }
 
-            const string ServerDefaultContentType = MediaTypeNames.Application.Json;
+            const string serverDefaultContentType = "application/json";
 
             var acceptContentTypes = httpReq.Headers.GetCommaSeparatedValues(HeaderNames.Accept);
             string defaultContentType = null;
             if (HasAnyOfContentTypes(httpReq, FormUrlEncoded, MultiPartFormData))
             {
-                defaultContentType = ServerDefaultContentType;
+                defaultContentType = serverDefaultContentType;
             }
 
             var acceptsAnything = false;
             var hasDefaultContentType = defaultContentType != null;
             if (acceptContentTypes != null)
             {
-                foreach (ReadOnlySpan<char> acceptsType in acceptContentTypes)
+                foreach (var acceptsType in acceptContentTypes)
                 {
-                    ReadOnlySpan<char> contentType = acceptsType;
-                    var index = contentType.IndexOf(';');
-                    if (index != -1)
-                    {
-                        contentType = contentType.Slice(0, index);
-                    }
-
-                    contentType = contentType.Trim();
+                    // TODO: @bond move to Span when Span.Split lands
+                    // https://github.com/dotnet/corefx/issues/26528
+                    var contentType = acceptsType?.Split(';')[0].Trim();
                     acceptsAnything = contentType.Equals("*/*", StringComparison.OrdinalIgnoreCase);
 
                     if (acceptsAnything)
@@ -162,7 +158,7 @@ namespace Emby.Server.Implementations.SocketSharp
                     }
                     else
                     {
-                        return ServerDefaultContentType;
+                        return serverDefaultContentType;
                     }
                 }
             }
@@ -173,7 +169,7 @@ namespace Emby.Server.Implementations.SocketSharp
             }
 
             // We could also send a '406 Not Acceptable', but this is allowed also
-            return ServerDefaultContentType;
+            return serverDefaultContentType;
         }
 
         public static bool HasAnyOfContentTypes(HttpRequest request, params string[] contentTypes)
@@ -201,12 +197,12 @@ namespace Emby.Server.Implementations.SocketSharp
 
         private static string GetQueryStringContentType(HttpRequest httpReq)
         {
-            ReadOnlySpan<char> format = httpReq.Query["format"].ToString();
+            ReadOnlySpan<char> format = httpReq.Query["format"].ToString().AsSpan();
             if (format == null)
             {
-                const int FormatMaxLength = 4;
-                ReadOnlySpan<char> pi = httpReq.Path.ToString();
-                if (pi == null || pi.Length <= FormatMaxLength)
+                const int formatMaxLength = 4;
+                ReadOnlySpan<char> pi = httpReq.Path.ToString().AsSpan();
+                if (pi == null || pi.Length <= formatMaxLength)
                 {
                     return null;
                 }
@@ -217,18 +213,18 @@ namespace Emby.Server.Implementations.SocketSharp
                 }
 
                 format = LeftPart(pi, '/');
-                if (format.Length > FormatMaxLength)
+                if (format.Length > formatMaxLength)
                 {
                     return null;
                 }
             }
 
             format = LeftPart(format, '.');
-            if (format.Contains("json", StringComparison.OrdinalIgnoreCase))
+            if (format.Contains("json".AsSpan(), StringComparison.OrdinalIgnoreCase))
             {
                 return "application/json";
             }
-            else if (format.Contains("xml", StringComparison.OrdinalIgnoreCase))
+            else if (format.Contains("xml".AsSpan(), StringComparison.OrdinalIgnoreCase))
             {
                 return "application/xml";
             }

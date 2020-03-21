@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,9 +6,17 @@ using MediaBrowser.Controller.Plugins;
 
 namespace MediaBrowser.WebDashboard
 {
-    public sealed class ServerEntryPoint : IServerEntryPoint
+    public class ServerEntryPoint : IServerEntryPoint
     {
+        /// <summary>
+        /// Gets the list of plugin configuration pages
+        /// </summary>
+        /// <value>The configuration pages.</value>
+        public List<IPluginConfigurationPage> PluginConfigurationPages { get; private set; }
+
         private readonly IApplicationHost _appHost;
+
+        public static ServerEntryPoint Instance { get; private set; }
 
         public ServerEntryPoint(IApplicationHost appHost)
         {
@@ -18,15 +24,6 @@ namespace MediaBrowser.WebDashboard
             Instance = this;
         }
 
-        public static ServerEntryPoint Instance { get; private set; }
-
-        /// <summary>
-        /// Gets the list of plugin configuration pages.
-        /// </summary>
-        /// <value>The configuration pages.</value>
-        public List<IPluginConfigurationPage> PluginConfigurationPages { get; private set; }
-
-        /// <inheritdoc />
         public Task RunAsync()
         {
             PluginConfigurationPages = _appHost.GetExports<IPluginConfigurationPage>().ToList();
@@ -34,7 +31,6 @@ namespace MediaBrowser.WebDashboard
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
         public void Dispose()
         {
         }

@@ -24,8 +24,7 @@ namespace MediaBrowser.Controller.Subtitles
         /// <summary>
         /// Searches the subtitles.
         /// </summary>
-        Task<RemoteSubtitleInfo[]> SearchSubtitles(
-            Video video,
+        Task<RemoteSubtitleInfo[]> SearchSubtitles(Video video,
             string language,
             bool? isPerfectMatch,
             CancellationToken cancellationToken);
@@ -35,9 +34,8 @@ namespace MediaBrowser.Controller.Subtitles
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task{RemoteSubtitleInfo[]}.</returns>
-        Task<RemoteSubtitleInfo[]> SearchSubtitles(
-            SubtitleSearchRequest request,
+        /// <returns>Task{IEnumerable{RemoteSubtitleInfo}}.</returns>
+        Task<RemoteSubtitleInfo[]> SearchSubtitles(SubtitleSearchRequest request,
             CancellationToken cancellationToken);
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace MediaBrowser.Controller.Subtitles
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns><see cref="Task{SubtitleResponse}" />.</returns>
+        /// <returns>Task{SubtitleResponse}.</returns>
         Task<SubtitleResponse> GetRemoteSubtitles(string id, CancellationToken cancellationToken);
 
         /// <summary>

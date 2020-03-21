@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Emby.Dlna.Common;
 using MediaBrowser.Model.Dlna;
+using MediaBrowser.Model.Extensions;
 
 namespace Emby.Dlna.Server
 {
@@ -215,7 +214,7 @@ namespace Emby.Dlna.Server
         {
             if (string.IsNullOrEmpty(_profile.FriendlyName))
             {
-                return "veso - " + _serverName;
+                return "Jellyfin - " + _serverName;
             }
 
             var characterList = new List<char>();

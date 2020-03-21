@@ -12,9 +12,6 @@ using MediaBrowser.Model.Users;
 
 namespace Emby.Server.Implementations.Library
 {
-    /// <summary>
-    /// The default password reset provider.
-    /// </summary>
     public class DefaultPasswordResetProvider : IPasswordResetProvider
     {
         private const string BaseResetFileName = "passwordreset";
@@ -25,12 +22,6 @@ namespace Emby.Server.Implementations.Library
         private readonly string _passwordResetFileBase;
         private readonly string _passwordResetFileBaseDir;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultPasswordResetProvider"/> class.
-        /// </summary>
-        /// <param name="configurationManager">The configuration manager.</param>
-        /// <param name="jsonSerializer">The JSON serializer.</param>
-        /// <param name="userManager">The user manager.</param>
         public DefaultPasswordResetProvider(
             IServerConfigurationManager configurationManager,
             IJsonSerializer jsonSerializer,
@@ -65,8 +56,8 @@ namespace Emby.Server.Implementations.Library
                     File.Delete(resetfile);
                 }
                 else if (string.Equals(
-                    spr.Pin.Replace("-", string.Empty, StringComparison.Ordinal),
-                    pin.Replace("-", string.Empty, StringComparison.Ordinal),
+                    spr.Pin.Replace("-", string.Empty),
+                    pin.Replace("-", string.Empty),
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     var resetUser = _userManager.GetUserByName(spr.UserName);

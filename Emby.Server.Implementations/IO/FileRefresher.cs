@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,28 +12,26 @@ namespace Emby.Server.Implementations.IO
 {
     public class FileRefresher : IDisposable
     {
-        private readonly ILogger _logger;
-        private readonly ILibraryManager _libraryManager;
-        private readonly IServerConfigurationManager _configurationManager;
-
+        private ILogger Logger { get; set; }
+        private ILibraryManager LibraryManager { get; set; }
+        private IServerConfigurationManager ConfigurationManager { get; set; }
         private readonly List<string> _affectedPaths = new List<string>();
-        private readonly object _timerLock = new object();
         private Timer _timer;
+        private readonly object _timerLock = new object();
+        public string Path { get; private set; }
+
+        public event EventHandler<EventArgs> Completed;
 
         public FileRefresher(string path, IServerConfigurationManager configurationManager, ILibraryManager libraryManager, ILogger logger)
         {
             logger.LogDebug("New file refresher created for {0}", path);
             Path = path;
 
-            _configurationManager = configurationManager;
-            _libraryManager = libraryManager;
-            _logger = logger;
+            ConfigurationManager = configurationManager;
+            LibraryManager = libraryManager;
+            Logger = logger;
             AddPath(path);
         }
-
-        public event EventHandler<EventArgs> Completed;
-
-        public string Path { get; private set; }
 
         private void AddAffectedPath(string path)
         {
@@ -81,11 +77,11 @@ namespace Emby.Server.Implementations.IO
 
                 if (_timer == null)
                 {
-                    _timer = new Timer(OnTimerCallback, null, TimeSpan.FromSeconds(_configurationManager.Configuration.LibraryMonitorDelay), TimeSpan.FromMilliseconds(-1));
+                    _timer = new Timer(OnTimerCallback, null, TimeSpan.FromSeconds(ConfigurationManager.Configuration.LibraryMonitorDelay), TimeSpan.FromMilliseconds(-1));
                 }
                 else
                 {
-                    _timer.Change(TimeSpan.FromSeconds(_configurationManager.Configuration.LibraryMonitorDelay), TimeSpan.FromMilliseconds(-1));
+                    _timer.Change(TimeSpan.FromSeconds(ConfigurationManager.Configuration.LibraryMonitorDelay), TimeSpan.FromMilliseconds(-1));
                 }
             }
         }
@@ -94,7 +90,7 @@ namespace Emby.Server.Implementations.IO
         {
             lock (_timerLock)
             {
-                _logger.LogDebug("Resetting file refresher from {0} to {1}", Path, path);
+                Logger.LogDebug("Resetting file refresher from {0} to {1}", Path, path);
 
                 Path = path;
                 AddAffectedPath(path);
@@ -117,7 +113,7 @@ namespace Emby.Server.Implementations.IO
                 paths = _affectedPaths.ToList();
             }
 
-            _logger.LogDebug("Timer stopped.");
+            Logger.LogDebug("Timer stopped.");
 
             DisposeTimer();
             Completed?.Invoke(this, EventArgs.Empty);
@@ -128,7 +124,7 @@ namespace Emby.Server.Implementations.IO
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing directory changes");
+                Logger.LogError(ex, "Error processing directory changes");
             }
         }
 
@@ -148,7 +144,7 @@ namespace Emby.Server.Implementations.IO
                     continue;
                 }
 
-                _logger.LogInformation("{name} ({path}) will be refreshed.", item.Name, item.Path);
+                Logger.LogInformation("{name} ({path}) will be refreshed.", item.Name, item.Path);
 
                 try
                 {
@@ -159,11 +155,11 @@ namespace Emby.Server.Implementations.IO
                     // For now swallow and log.
                     // Research item: If an IOException occurs, the item may be in a disconnected state (media unavailable)
                     // Should we remove it from it's parent?
-                    _logger.LogError(ex, "Error refreshing {name}", item.Name);
+                    Logger.LogError(ex, "Error refreshing {name}", item.Name);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error refreshing {name}", item.Name);
+                    Logger.LogError(ex, "Error refreshing {name}", item.Name);
                 }
             }
         }
@@ -179,7 +175,7 @@ namespace Emby.Server.Implementations.IO
 
             while (item == null && !string.IsNullOrEmpty(path))
             {
-                item = _libraryManager.FindByPath(path, null);
+                item = LibraryManager.FindByPath(path, null);
 
                 path = System.IO.Path.GetDirectoryName(path);
             }

@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,9 +89,10 @@ namespace Emby.Server.Implementations.Library
 
                 Limit = 200,
 
-                OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                OrderBy = new[] { new ValueTuple<string, SortOrder>(ItemSortBy.Random, SortOrder.Ascending) },
 
                 DtoOptions = dtoOptions
+
             });
         }
 

@@ -1,30 +1,30 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Globalization;
 using System.IO;
-using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Emby.Dlna.Common;
 using MediaBrowser.Common.Net;
+using MediaBrowser.Controller.Configuration;
 
 namespace Emby.Dlna.PlayTo
 {
     public class SsdpHttpClient
     {
         private const string USERAGENT = "Microsoft-Windows/6.2 UPnP/1.0 Microsoft-DLNA DLNADOC/1.50";
-        private const string FriendlyName = "veso";
+        private const string FriendlyName = "Jellyfin";
 
         private readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
         private readonly IHttpClient _httpClient;
+        private readonly IServerConfigurationManager _config;
 
-        public SsdpHttpClient(IHttpClient httpClient)
+        public SsdpHttpClient(IHttpClient httpClient, IServerConfigurationManager config)
         {
             _httpClient = httpClient;
+            _config = config;
         }
 
         public async Task<XDocument> SendCommandAsync(
@@ -64,9 +64,7 @@ namespace Emby.Dlna.PlayTo
             }
 
             if (!serviceUrl.StartsWith("/"))
-            {
                 serviceUrl = "/" + serviceUrl;
-            }
 
             return baseUrl + serviceUrl;
         }
@@ -92,7 +90,7 @@ namespace Emby.Dlna.PlayTo
             options.RequestHeaders["NT"] = "upnp:event";
             options.RequestHeaders["TIMEOUT"] = "Second-" + timeOut.ToString(_usCulture);
 
-            using (await _httpClient.SendAsync(options, new HttpMethod("SUBSCRIBE")).ConfigureAwait(false))
+            using (await _httpClient.SendAsync(options, "SUBSCRIBE").ConfigureAwait(false))
             {
 
             }
@@ -112,7 +110,7 @@ namespace Emby.Dlna.PlayTo
 
             options.RequestHeaders["FriendlyName.DLNA.ORG"] = FriendlyName;
 
-            using (var response = await _httpClient.SendAsync(options, HttpMethod.Get).ConfigureAwait(false))
+            using (var response = await _httpClient.SendAsync(options, "GET").ConfigureAwait(false))
             using (var stream = response.Content)
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             {

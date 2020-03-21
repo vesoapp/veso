@@ -7,10 +7,11 @@ using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Net;
+using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Model.Dto;
+using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Querying;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api
 {
@@ -50,21 +51,19 @@ namespace MediaBrowser.Api
         private readonly ILibraryManager _libraryManager;
         private readonly IUserManager _userManager;
         private readonly IDtoService _dtoService;
+        private readonly IFileSystem _fileSystem;
+        private readonly IItemRepository _itemRepo;
+        private readonly IServerConfigurationManager _config;
         private readonly IAuthorizationContext _authContext;
 
-        public VideosService(
-            ILogger<VideosService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            ILibraryManager libraryManager,
-            IUserManager userManager,
-            IDtoService dtoService,
-            IAuthorizationContext authContext)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public VideosService(ILibraryManager libraryManager, IUserManager userManager, IDtoService dtoService, IItemRepository itemRepo, IFileSystem fileSystem, IServerConfigurationManager config, IAuthorizationContext authContext)
         {
             _libraryManager = libraryManager;
             _userManager = userManager;
             _dtoService = dtoService;
+            _itemRepo = itemRepo;
+            _fileSystem = fileSystem;
+            _config = config;
             _authContext = authContext;
         }
 
@@ -85,8 +84,9 @@ namespace MediaBrowser.Api
 
             var dtoOptions = GetDtoOptions(_authContext, request);
 
+            var video = item as Video;
             BaseItemDto[] items;
-            if (item is Video video)
+            if (video != null)
             {
                 items = video.GetAdditionalParts()
                     .Select(i => _dtoService.GetBaseItemDto(i, dtoOptions, user, video))
@@ -94,7 +94,7 @@ namespace MediaBrowser.Api
             }
             else
             {
-                items = Array.Empty<BaseItemDto>();
+                items = new BaseItemDto[] { };
             }
 
             var result = new QueryResult<BaseItemDto>

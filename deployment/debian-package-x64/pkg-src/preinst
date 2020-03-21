@@ -1,19 +1,19 @@
 #!/bin/bash
 set -e
 
-NAME=veso
+NAME=jellyfin
 DEFAULT_FILE=/etc/default/${NAME}
 
-# Source veso default configuration
+# Source Jellyfin default configuration
 if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
 
 # Data directories for program data (cache, db), configs, and logs
-PROGRAMDATA=${veso_DATA_DIRECTORY-/var/lib/$NAME}
-CONFIGDATA=${veso_CONFIG_DIRECTORY-/etc/$NAME}
-LOGDATA=${veso_LOG_DIRECTORY-/var/log/$NAME}
-CACHEDATA=${veso_CACHE_DIRECTORY-/var/cache/$NAME}
+PROGRAMDATA=${JELLYFIN_DATA_DIRECTORY-/var/lib/$NAME}
+CONFIGDATA=${JELLYFIN_CONFIG_DIRECTORY-/etc/$NAME}
+LOGDATA=${JELLYFIN_LOG_DIRECTORY-/var/log/$NAME}
+CACHEDATA=${JELLYFIN_CACHE_DIRECTORY-/var/cache/$NAME}
 
 # In case this system is running systemd, we make systemd reload the unit files
 # to pick up changes.
@@ -29,22 +29,22 @@ case "$1" in
     elif [ -x "/etc/init.d/${NAME}" ] || [ -e "/etc/init/${NAME}.conf" ]; then
       invoke-rc.d ${NAME} stop > /dev/null 2>&1 || true
     fi
-    # try and figure out if veso is running
-    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1  -name "veso*.pid" -print -quit)
-    [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && veso_PID=$(cat ${PIDFILE})
+    # try and figure out if jellyfin is running
+    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1  -name "jellyfin*.pid" -print -quit)
+    [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && JELLYFIN_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
-    if [[ -n "$veso_PID" ]]; then
-      echo "Stopping veso!"
-      # if veso is still running, kill it
-      if [[ -n "$(ps -p $veso_PID -o pid=)" ]]; then
-        CPIDS=$(pgrep -P $veso_PID)
+    if [[ -n "$JELLYFIN_PID" ]]; then
+      echo "Stopping Jellyfin!"
+      # if jellyfin is still running, kill it
+      if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
+        CPIDS=$(pgrep -P $JELLYFIN_PID)
         sleep 2 && kill -KILL $CPIDS
         kill -TERM $CPIDS > /dev/null 2>&1
       fi
       sleep 1
       # if it's still running, show error
-      if [[ -n "$(ps -p $veso_PID -o pid=)" ]]; then
-        echo "Could not successfully stop vesoServer, please do so before uninstalling."
+      if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
+        echo "Could not successfully stop JellyfinServer, please do so before uninstalling."
         exit 1
       else
         [[ -f $PIDFILE ]] && rm $PIDFILE
@@ -54,7 +54,7 @@ case "$1" in
     # Clean up old Emby cruft that can break the user's system
     [[ -f /etc/sudoers.d/emby ]] && rm -f /etc/sudoers.d/emby
 
-    # If we have existing config, log, or cache dirs in /var/lib/veso, move them into the right place
+    # If we have existing config, log, or cache dirs in /var/lib/jellyfin, move them into the right place
     if [[ -d $PROGRAMDATA/config ]]; then
         mv $PROGRAMDATA/config $CONFIGDATA
     fi

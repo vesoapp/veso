@@ -6,7 +6,6 @@ using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Services;
 using MediaBrowser.Model.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.ScheduledTasks
 {
@@ -86,23 +85,27 @@ namespace MediaBrowser.Api.ScheduledTasks
     public class ScheduledTaskService : BaseApiService
     {
         /// <summary>
-        /// The task manager.
+        /// Gets or sets the task manager.
         /// </summary>
-        private readonly ITaskManager _taskManager;
+        /// <value>The task manager.</value>
+        private ITaskManager TaskManager { get; set; }
+
+        private readonly IServerConfigurationManager _config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledTaskService" /> class.
         /// </summary>
         /// <param name="taskManager">The task manager.</param>
         /// <exception cref="ArgumentNullException">taskManager</exception>
-        public ScheduledTaskService(
-            ILogger<ScheduledTaskService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            ITaskManager taskManager)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public ScheduledTaskService(ITaskManager taskManager, IServerConfigurationManager config)
         {
-            _taskManager = taskManager;
+            if (taskManager == null)
+            {
+                throw new ArgumentNullException(nameof(taskManager));
+            }
+
+            TaskManager = taskManager;
+            _config = config;
         }
 
         /// <summary>
@@ -112,7 +115,7 @@ namespace MediaBrowser.Api.ScheduledTasks
         /// <returns>IEnumerable{TaskInfo}.</returns>
         public object Get(GetScheduledTasks request)
         {
-            IEnumerable<IScheduledTaskWorker> result = _taskManager.ScheduledTasks
+            IEnumerable<IScheduledTaskWorker> result = TaskManager.ScheduledTasks
                 .OrderBy(i => i.Name);
 
             if (request.IsHidden.HasValue)
@@ -168,7 +171,7 @@ namespace MediaBrowser.Api.ScheduledTasks
         /// <exception cref="ResourceNotFoundException">Task not found</exception>
         public object Get(GetScheduledTask request)
         {
-            var task = _taskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, request.Id));
+            var task = TaskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, request.Id));
 
             if (task == null)
             {
@@ -187,14 +190,14 @@ namespace MediaBrowser.Api.ScheduledTasks
         /// <exception cref="ResourceNotFoundException">Task not found</exception>
         public void Post(StartScheduledTask request)
         {
-            var task = _taskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, request.Id));
+            var task = TaskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, request.Id));
 
             if (task == null)
             {
                 throw new ResourceNotFoundException("Task not found");
             }
 
-            _taskManager.Execute(task, new TaskOptions());
+            TaskManager.Execute(task, new TaskOptions());
         }
 
         /// <summary>
@@ -204,14 +207,14 @@ namespace MediaBrowser.Api.ScheduledTasks
         /// <exception cref="ResourceNotFoundException">Task not found</exception>
         public void Delete(StopScheduledTask request)
         {
-            var task = _taskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, request.Id));
+            var task = TaskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, request.Id));
 
             if (task == null)
             {
                 throw new ResourceNotFoundException("Task not found");
             }
 
-            _taskManager.Cancel(task);
+            TaskManager.Cancel(task);
         }
 
         /// <summary>
@@ -223,9 +226,9 @@ namespace MediaBrowser.Api.ScheduledTasks
         {
             // We need to parse this manually because we told service stack not to with IRequiresRequestStream
             // https://code.google.com/p/servicestack/source/browse/trunk/Common/ServiceStack.Text/ServiceStack.Text/Controller/PathInfo.cs
-            var id = GetPathValue(1).ToString();
+            var id = GetPathValue(1);
 
-            var task = _taskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, id, StringComparison.Ordinal));
+            var task = TaskManager.ScheduledTasks.FirstOrDefault(i => string.Equals(i.Id, id, StringComparison.Ordinal));
 
             if (task == null)
             {
