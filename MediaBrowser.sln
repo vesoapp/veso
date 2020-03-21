@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emby.XmlTv", "Emby.XmlTv\Em
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaBrowser.MediaEncoding", "MediaBrowser.MediaEncoding\MediaBrowser.MediaEncoding.csproj", "{960295EE-4AF4-4440-A525-B4C295B01A61}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.Server", "Jellyfin.Server\Jellyfin.Server.csproj", "{07E39F42-A2C6-4B32-AF8C-725F957A73FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veso.Server", "Veso.Server\Veso.Server.csproj", "{07E39F42-A2C6-4B32-AF8C-725F957A73FF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41093F42-C7CC-4D07-956B-6182CBEDE2EC}"
 	ProjectSection(SolutionItems) = preProject
@@ -51,13 +51,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedVersion.cs = SharedVersion.cs
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.Drawing.Skia", "Jellyfin.Drawing.Skia\Jellyfin.Drawing.Skia.csproj", "{154872D9-6C12-4007-96E3-8F70A58386CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veso.Drawing.Skia", "Veso.Drawing.Skia\Veso.Drawing.Skia.csproj", "{154872D9-6C12-4007-96E3-8F70A58386CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FBBB5129-006E-4AD7-BAD5-8B7CA1D10ED6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.Common.Tests", "tests\Jellyfin.Common.Tests\Jellyfin.Common.Tests.csproj", "{DF194677-DFD3-42AF-9F75-D44D5A416478}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veso.Common.Tests", "tests\Veso.Common.Tests\Veso.Common.Tests.csproj", "{DF194677-DFD3-42AF-9F75-D44D5A416478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.MediaEncoding.Tests", "tests\Jellyfin.MediaEncoding.Tests\Jellyfin.MediaEncoding.Tests.csproj", "{28464062-0939-4AA7-9F7B-24DDDA61A7C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veso.MediaEncoding.Tests", "tests\Veso.MediaEncoding.Tests\Veso.MediaEncoding.Tests.csproj", "{28464062-0939-4AA7-9F7B-24DDDA61A7C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

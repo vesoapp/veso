@@ -1,6 +1,6 @@
 {
     "HeaderLiveTV": "Netti-TV",
-    "NewVersionIsAvailable": "Uusi versio Jellyfin palvelimesta on ladattavissa",
+    "NewVersionIsAvailable": "Uusi versio Veso palvelimesta on ladattavissa",
     "NameSeasonUnknown": "Tuntematon Kausi",
     "NameSeasonNumber": "Kausi {0}",
     "NameInstallFailed": "{0} asennus epäonnistui",
@@ -10,8 +10,8 @@
     "MixedContent": "Sekoitettu sisältö",
     "MessageServerConfigurationUpdated": "Palvelimen konfiguraatio on päivitetty",
     "MessageNamedServerConfigurationUpdatedWithValue": "Palvelimen konfiguraatio-osa {0} on päivitetty",
-    "MessageApplicationUpdatedTo": "Jellyfin palvelin on päivitetty {0}",
-    "MessageApplicationUpdated": "Jellyfin palvelin on päivitetty",
+    "MessageApplicationUpdatedTo": "Veso palvelin on päivitetty {0}",
+    "MessageApplicationUpdated": "Veso palvelin on päivitetty",
     "Latest": "Viimeisin",
     "LabelRunningTimeValue": "Kesto: {0}",
     "LabelIpAddressValue": "IP-osoite: {0}",

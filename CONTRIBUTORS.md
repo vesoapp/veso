@@ -1,4 +1,4 @@
-# Jellyfin Contributors
+# Veso Contributors
 
  - [JoshuaBoniface](https://github.com/joshuaboniface)
  - [nvllsvm](https://github.com/nvllsvm)

@@ -209,7 +209,7 @@ namespace Emby.Dlna.Api
             // TODO: Work out what this is doing.
             if (string.Equals(first, "mediabrowser", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(first, "emby", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(first, "jellyfin", StringComparison.OrdinalIgnoreCase))
+                string.Equals(first, "veso", StringComparison.OrdinalIgnoreCase))
             {
                 index++;
             }

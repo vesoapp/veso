@@ -1,6 +1,6 @@
-usr/lib/jellyfin usr/lib/
-debian/conf/jellyfin etc/default/
-debian/conf/logging.json etc/jellyfin/
-debian/conf/jellyfin.service.conf etc/systemd/system/jellyfin.service.d/
-debian/conf/jellyfin-sudoers etc/sudoers.d/
-debian/bin/restart.sh usr/lib/jellyfin/
+usr/lib/veso usr/lib/
+debian/conf/veso etc/default/
+debian/conf/logging.json etc/veso/
+debian/conf/veso.service.conf etc/systemd/system/veso.service.d/
+debian/conf/veso-sudoers etc/sudoers.d/
+debian/bin/restart.sh usr/lib/veso/

@@ -7,7 +7,7 @@ WORKDIR="$( pwd )"
 package_temporary_dir="${WORKDIR}/pkg-dist-tmp"
 output_dir="${WORKDIR}/pkg-dist"
 current_user="$( whoami )"
-image_name="jellyfin-windows-x86-build"
+image_name="veso-windows-x86-build"
 
 rm -rf "${package_temporary_dir}" &>/dev/null \
   || sudo rm -rf "${package_temporary_dir}" &>/dev/null

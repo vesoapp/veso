@@ -1,7 +1,7 @@
 namespace MediaBrowser.Common.Cryptography
 {
     /// <summary>
-    /// Class containing global constants for Jellyfin Cryptography.
+    /// Class containing global constants for Veso Cryptography.
     /// </summary>
     public static class Constants
     {

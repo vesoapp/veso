@@ -14,10 +14,10 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <Authors>Jellyfin Contributors</Authors>
-    <PackageId>Jellyfin.Naming</PackageId>
+    <Authors>Veso Contributors</Authors>
+    <PackageId>Veso.Naming</PackageId>
     <PackageLicenseUrl>https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/jellyfin/jellyfin</RepositoryUrl>
+    <RepositoryUrl>https://github.com/veso/veso</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <CodeAnalysisRuleSet>../jellyfin.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>../veso.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
 </Project>

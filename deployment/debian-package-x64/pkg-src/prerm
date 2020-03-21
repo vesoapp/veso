@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-NAME=jellyfin
+NAME=veso
 DEFAULT_FILE=/etc/default/${NAME}
 
-# Source Jellyfin default configuration
+# Source Veso default configuration
 if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
@@ -17,7 +17,7 @@ CACHEDATA=${JELLYFIN_CACHE_DIRECTORY-/var/cache/$NAME}
 
 case "$1" in
   remove|upgrade|deconfigure)
-    echo "Stopping Jellyfin!"
+    echo "Stopping Veso!"
     # try graceful termination;
     if [[ -d /run/systemd/system ]]; then
       deb-systemd-invoke stop ${NAME}.service > /dev/null 2>&1 || true
@@ -25,11 +25,11 @@ case "$1" in
       invoke-rc.d ${NAME} stop > /dev/null 2>&1 || true
     fi
     # Ensure that it is shutdown
-    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1 -name "jellyfin*.pid" -print -quit)
+    PIDFILE=$(find /var/run/ -maxdepth 1 -mindepth 1 -name "veso*.pid" -print -quit)
     [[ -n "$PIDFILE" ]] && [[ -s "$PIDFILE" ]] && JELLYFIN_PID=$(cat ${PIDFILE})
     # if its running, let's stop it
     if [[ -n "$JELLYFIN_PID" ]]; then
-      # if jellyfin is still running, kill it
+      # if veso is still running, kill it
       if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
         CPIDS=$(pgrep -P $JELLYFIN_PID)
         sleep 2 && kill -KILL $CPIDS
@@ -38,14 +38,14 @@ case "$1" in
       sleep 1
       # if it's still running, show error
       if [[ -n "$(ps -p $JELLYFIN_PID -o pid=)" ]]; then
-        echo "Could not successfully stop Jellyfin, please do so before uninstalling."
+        echo "Could not successfully stop Veso, please do so before uninstalling."
         exit 1
       else
         [[ -f $PIDFILE ]] && rm $PIDFILE
       fi
     fi
-    if [[ -f /usr/lib/jellyfin/bin/MediaBrowser.Server.Mono.exe.so ]]; then
-      rm /usr/lib/jellyfin/bin/MediaBrowser.Server.Mono.exe.so
+    if [[ -f /usr/lib/veso/bin/MediaBrowser.Server.Mono.exe.so ]]; then
+      rm /usr/lib/veso/bin/MediaBrowser.Server.Mono.exe.so
     fi
     ;;
   failed-upgrade)

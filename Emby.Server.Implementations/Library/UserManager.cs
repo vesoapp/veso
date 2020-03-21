@@ -535,7 +535,7 @@ namespace Emby.Server.Implementations.Library
             var defaultName = Environment.UserName;
             if (string.IsNullOrWhiteSpace(defaultName))
             {
-                defaultName = "MyJellyfinUser";
+                defaultName = "MyVesoUser";
             }
 
             var name = MakeValidUsername(defaultName);

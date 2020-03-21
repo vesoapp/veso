@@ -259,7 +259,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
             }
         }
 
-        public string HomePageUrl => "https://github.com/jellyfin/jellyfin";
+        public string HomePageUrl => "https://github.com/veso/veso";
 
         public async Task RefreshSeriesTimers(CancellationToken cancellationToken)
         {

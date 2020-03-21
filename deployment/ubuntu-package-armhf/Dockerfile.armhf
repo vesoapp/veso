@@ -1,11 +1,11 @@
 FROM ubuntu:bionic
 # Docker build arguments
-ARG SOURCE_DIR=/jellyfin
-ARG PLATFORM_DIR=/jellyfin/deployment/ubuntu-package-armhf
+ARG SOURCE_DIR=/veso
+ARG PLATFORM_DIR=/veso/deployment/ubuntu-package-armhf
 ARG ARTIFACT_DIR=/dist
 ARG SDK_VERSION=2.2
 # Docker run environment
-ENV SOURCE_DIR=/jellyfin
+ENV SOURCE_DIR=/veso
 ENV ARTIFACT_DIR=/dist
 ENV DEB_BUILD_OPTIONS=noddebs
 ENV ARCH=armhf

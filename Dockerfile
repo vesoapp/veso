@@ -14,14 +14,14 @@ FROM mcr.microsoft.com/dotnet/core/sdk:${DOTNET_VERSION} as builder
 WORKDIR /repo
 COPY . .
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-RUN dotnet publish Jellyfin.Server --configuration Release --output="/jellyfin" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+RUN dotnet publish Veso.Server --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
 FROM jellyfin/ffmpeg:${FFMPEG_VERSION} as ffmpeg
 
 FROM mcr.microsoft.com/dotnet/core/runtime:${DOTNET_VERSION}
 COPY --from=ffmpeg / /
-COPY --from=builder /jellyfin /jellyfin
-COPY --from=web-builder /dist /jellyfin/jellyfin-web
+COPY --from=builder /veso /veso
+COPY --from=web-builder /dist /veso/veso-web
 # Install dependencies:
 #   libfontconfig1: needed for Skia
 #   mesa-va-drivers: needed for VAAPI
@@ -36,7 +36,7 @@ RUN apt-get update \
 
 EXPOSE 8096
 VOLUME /cache /config /media
-ENTRYPOINT dotnet /jellyfin/jellyfin.dll \
+ENTRYPOINT dotnet /veso/veso.dll \
     --datadir /config \
     --cachedir /cache \
     --ffmpeg /usr/local/bin/ffmpeg

@@ -44,7 +44,7 @@ namespace Emby.Server.Implementations.Library
                 throw new ArgumentNullException(nameof(resolvedUser));
             }
 
-            // As long as jellyfin supports passwordless users, we need this little block here to accommodate
+            // As long as veso supports passwordless users, we need this little block here to accommodate
             if (!HasPassword(resolvedUser) && string.IsNullOrEmpty(password))
             {
                 return Task.FromResult(new ProviderAuthenticationResult

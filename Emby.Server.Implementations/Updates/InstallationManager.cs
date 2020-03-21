@@ -131,7 +131,7 @@ namespace Emby.Server.Implementations.Updates
             using (var response = await _httpClient.SendAsync(
                 new HttpRequestOptions
                 {
-                    Url = "https://repo.jellyfin.org/releases/plugin/manifest.json",
+                    Url = "https://repo.veso.org/releases/plugin/manifest.json",
                     CancellationToken = cancellationToken,
                     CacheMode = CacheMode.Unconditional,
                     CacheLength = GetCacheLength()

@@ -13,8 +13,8 @@ sed -i '/dotnet-sdk-2.2,/d' debian/control
 
 # Clone down and build Web frontend
 web_build_dir="$( mktemp -d )"
-web_target="${SOURCE_DIR}/MediaBrowser.WebDashboard/jellyfin-web"
-git clone https://github.com/jellyfin/jellyfin-web.git ${web_build_dir}/
+web_target="${SOURCE_DIR}/MediaBrowser.WebDashboard/veso-web"
+git clone https://github.com/veso/veso-web.git ${web_build_dir}/
 pushd ${web_build_dir}
 if [[ -n ${web_branch} ]]; then
     checkout -b origin/${web_branch}
@@ -31,5 +31,5 @@ dpkg-buildpackage -us -uc -aarmhf
 
 # Move the artifacts out
 mkdir -p ${ARTIFACT_DIR}/deb
-mv /jellyfin[-_]* ${ARTIFACT_DIR}/deb/
+mv /veso[-_]* ${ARTIFACT_DIR}/deb/
 chown -Rc $(stat -c %u:%g ${ARTIFACT_DIR}) ${ARTIFACT_DIR}

@@ -2,9 +2,9 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 
 variables:
   - name: TestProjects
-    value: 'tests/Jellyfin.Common.Tests/Jellyfin.Common.Tests.csproj'
+    value: 'tests/Veso.Common.Tests/Veso.Common.Tests.csproj'
   - name: RestoreBuildProjects
-    value: 'Jellyfin.Server/Jellyfin.Server.csproj'
+    value: 'Veso.Server/Veso.Server.csproj'
 
 pr:
   autoCancel: true
@@ -34,13 +34,13 @@ jobs:
       displayName: "Check out web"
       condition: and(succeeded(), or(contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
       inputs:
-        script: 'git clone --single-branch --branch $(Build.SourceBranchName) --depth=1 https://github.com/jellyfin/jellyfin-web.git $(Agent.TempDirectory)/jellyfin-web'
+        script: 'git clone --single-branch --branch $(Build.SourceBranchName) --depth=1 https://github.com/veso/veso-web.git $(Agent.TempDirectory)/veso-web'
 
     - task: CmdLine@2
       displayName: "Check out web (PR)"
       condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest'))
       inputs:
-        script: 'git clone --single-branch --branch $(System.PullRequest.TargetBranch) --depth 1 https://github.com/jellyfin/jellyfin-web.git $(Agent.TempDirectory)/jellyfin-web'
+        script: 'git clone --single-branch --branch $(System.PullRequest.TargetBranch) --depth 1 https://github.com/veso/veso-web.git $(Agent.TempDirectory)/veso-web'
 
     - task: NodeTool@0
       displayName: 'Install Node.js'
@@ -53,15 +53,15 @@ jobs:
       condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master'), contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest', 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
       inputs:
         script: yarn install
-        workingDirectory: $(Agent.TempDirectory)/jellyfin-web
+        workingDirectory: $(Agent.TempDirectory)/veso-web
 
     - task: CopyFiles@2
       displayName: Copy the web UI
       condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master'), contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest', 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
       inputs:
-        sourceFolder: $(Agent.TempDirectory)/jellyfin-web/dist # Optional
+        sourceFolder: $(Agent.TempDirectory)/veso-web/dist # Optional
         contents: '**'
-        targetFolder: $(Build.SourcesDirectory)/MediaBrowser.WebDashboard/jellyfin-web
+        targetFolder: $(Build.SourcesDirectory)/MediaBrowser.WebDashboard/veso-web
         cleanTargetFolder: true # Optional
         overWrite: true # Optional
         flattenFolders: false # Optional
@@ -79,29 +79,29 @@ jobs:
       displayName: 'Publish Artifact Naming'
       condition: and(eq(variables['BuildConfiguration'], 'Release'), succeeded())
       inputs:
-        targetPath: '$(build.artifactstagingdirectory)/Jellyfin.Server/Emby.Naming.dll'
-        artifactName: 'Jellyfin.Naming'
+        targetPath: '$(build.artifactstagingdirectory)/Veso.Server/Emby.Naming.dll'
+        artifactName: 'Veso.Naming'
 
     - task: PublishPipelineArtifact@0
       displayName: 'Publish Artifact Controller'
       condition: and(eq(variables['BuildConfiguration'], 'Release'), succeeded())
       inputs:
-        targetPath: '$(build.artifactstagingdirectory)/Jellyfin.Server/MediaBrowser.Controller.dll'
-        artifactName: 'Jellyfin.Controller'
+        targetPath: '$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Controller.dll'
+        artifactName: 'Veso.Controller'
 
     - task: PublishPipelineArtifact@0
       displayName: 'Publish Artifact Model'
       condition: and(eq(variables['BuildConfiguration'], 'Release'), succeeded())
       inputs:
-        targetPath: '$(build.artifactstagingdirectory)/Jellyfin.Server/MediaBrowser.Model.dll'
-        artifactName: 'Jellyfin.Model'
+        targetPath: '$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Model.dll'
+        artifactName: 'Veso.Model'
 
     - task: PublishPipelineArtifact@0
       displayName: 'Publish Artifact Common'
       condition: and(eq(variables['BuildConfiguration'], 'Release'), succeeded())
       inputs:
-        targetPath: '$(build.artifactstagingdirectory)/Jellyfin.Server/MediaBrowser.Common.dll'
-        artifactName: 'Jellyfin.Common'
+        targetPath: '$(build.artifactstagingdirectory)/Veso.Server/MediaBrowser.Common.dll'
+        artifactName: 'Veso.Common'
 
   - job: main_test
     displayName: Main Test
@@ -203,13 +203,13 @@ jobs:
       displayName: "Check out web"
       condition: and(succeeded(), or(contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
       inputs:
-        script: 'git clone --single-branch --branch $(Build.SourceBranchName) --depth=1 https://github.com/jellyfin/jellyfin-web.git $(Agent.TempDirectory)/jellyfin-web'
+        script: 'git clone --single-branch --branch $(Build.SourceBranchName) --depth=1 https://github.com/veso/veso-web.git $(Agent.TempDirectory)/veso-web'
 
     - task: CmdLine@2
       displayName: "Check out web (PR)"
       condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest'))
       inputs:
-        script: 'git clone --single-branch --branch $(System.PullRequest.TargetBranch) --depth 1 https://github.com/jellyfin/jellyfin-web.git $(Agent.TempDirectory)/jellyfin-web'
+        script: 'git clone --single-branch --branch $(System.PullRequest.TargetBranch) --depth 1 https://github.com/veso/veso-web.git $(Agent.TempDirectory)/veso-web'
 
     - task: NodeTool@0
       displayName: 'Install Node.js'
@@ -222,15 +222,15 @@ jobs:
       condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master'), contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest', 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
       inputs:
         script: yarn install
-        workingDirectory: $(Agent.TempDirectory)/jellyfin-web
+        workingDirectory: $(Agent.TempDirectory)/veso-web
 
     - task: CopyFiles@2
       displayName: Copy the web UI
       condition: and(succeeded(), or(contains(variables['System.PullRequest.TargetBranch'], 'release'), contains(variables['System.PullRequest.TargetBranch'], 'master'), contains(variables['Build.SourceBranch'], 'release'), contains(variables['Build.SourceBranch'], 'master')) ,eq(variables['BuildConfiguration'], 'Release'), in(variables['Build.Reason'], 'PullRequest', 'IndividualCI', 'BatchedCI', 'BuildCompletion'))
       inputs:
-        sourceFolder: $(Agent.TempDirectory)/jellyfin-web/dist # Optional
+        sourceFolder: $(Agent.TempDirectory)/veso-web/dist # Optional
         contents: '**'
-        targetFolder: $(Build.SourcesDirectory)/MediaBrowser.WebDashboard/jellyfin-web
+        targetFolder: $(Build.SourcesDirectory)/MediaBrowser.WebDashboard/veso-web
         cleanTargetFolder: true # Optional
         overWrite: true # Optional
         flattenFolders: false # Optional
@@ -238,14 +238,14 @@ jobs:
     - task: CmdLine@2
       displayName: Clone the UX repository
       inputs:
-        script: git clone --depth=1 https://github.com/jellyfin/jellyfin-ux $(Agent.TempDirectory)\jellyfin-ux
+        script: git clone --depth=1 https://github.com/veso/veso-ux $(Agent.TempDirectory)\veso-ux
 
     - task: PowerShell@2
       displayName: Build the NSIS Installer
       inputs:
         targetType: 'filePath' # Optional. Options: filePath, inline
-        filePath: ./deployment/windows/build-jellyfin.ps1 # Required when targetType == FilePath
-        arguments: -InstallFFMPEG -InstallNSSM -MakeNSIS -InstallTrayApp -UXLocation $(Agent.TempDirectory)\jellyfin-ux -InstallLocation $(build.artifactstagingdirectory)
+        filePath: ./deployment/windows/build-veso.ps1 # Required when targetType == FilePath
+        arguments: -InstallFFMPEG -InstallNSSM -MakeNSIS -InstallTrayApp -UXLocation $(Agent.TempDirectory)\veso-ux -InstallLocation $(build.artifactstagingdirectory)
         #script: '# Write your PowerShell commands here.Write-Host Hello World' # Required when targetType == Inline
         errorActionPreference: 'stop' # Optional. Options: stop, continue, silentlyContinue
         #failOnStderr: false # Optional
@@ -257,7 +257,7 @@ jobs:
       displayName: Copy the NSIS Installer to the artifact directory
       inputs:
         sourceFolder: $(Build.SourcesDirectory)/deployment/windows/ # Optional
-        contents: 'jellyfin*.exe'
+        contents: 'veso*.exe'
         targetFolder: $(System.ArtifactsDirectory)/setup
         cleanTargetFolder: true # Optional
         overWrite: true # Optional
@@ -268,7 +268,7 @@ jobs:
       condition: and(eq(variables['BuildConfiguration'], 'Release'), succeeded())
       inputs:
         targetPath: '$(build.artifactstagingdirectory)/setup'
-        artifactName: 'Jellyfin Server Setup'
+        artifactName: 'Veso Server Setup'
 
   - job: dotnet_compat
     displayName: Compatibility Check
@@ -279,16 +279,16 @@ jobs:
     strategy:
       matrix:
         Naming:
-          NugetPackageName: Jellyfin.Naming
+          NugetPackageName: Veso.Naming
           AssemblyFileName: Emby.Naming.dll
         Controller:
-          NugetPackageName: Jellyfin.Controller
+          NugetPackageName: Veso.Controller
           AssemblyFileName: MediaBrowser.Controller.dll
         Model:
-          NugetPackageName: Jellyfin.Model
+          NugetPackageName: Veso.Model
           AssemblyFileName: MediaBrowser.Model.dll
         Common:
-          NugetPackageName: Jellyfin.Common
+          NugetPackageName: Veso.Common
           AssemblyFileName: MediaBrowser.Common.dll
       maxParallel: 2
     steps:
@@ -347,7 +347,7 @@ jobs:
     - task: DownloadGitHubRelease@0
       displayName: Download ABI compatibility check tool from GitHub
       inputs:
-        connection: Jellyfin Release Download
+        connection: Veso Release Download
         userRepository: EraYaN/dotnet-compatibility
         defaultVersionType: 'latest' # Options: latest, specificVersion, specificTag
         #version: # Required when defaultVersionType != Latest

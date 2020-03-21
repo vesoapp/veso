@@ -4,7 +4,7 @@ This file was created by NSISDialogDesigner 1.4.4.0
 http://coolsoft.altervista.org/nsisdialogdesigner
 Do not edit manually!
 -->
-<Dialog Name="confirmation" Title="Confirmation Page" Subtitle="Please confirm your choices for Jellyfin Server installation" GenerateShowFunction="False">
+<Dialog Name="confirmation" Title="Confirmation Page" Subtitle="Please confirm your choices for Veso Server installation" GenerateShowFunction="False">
   <HeaderCustomScript>!include "helpers\StrSlash.nsh"</HeaderCustomScript>
   <CreateFunctionCustomScript>${StrSlash} '$0' $INSTDIR
 
@@ -16,7 +16,7 @@ Do not edit manually!
     Service install:\b0  $_INSTALLSERVICE_\line\b \
     Service start:\b0  $_SERVICESTART_\line\b \
     Service account:\b0  $_SERVICEACCOUNTTYPE_\line\b \
-    Jellyfin Data Folder:\b0  $1\par \
+    Veso Data Folder:\b0  $1\par \
 \
     \pard\sa200\sl276\slmult1\f1\lang1043\par \
     }"</CreateFunctionCustomScript>

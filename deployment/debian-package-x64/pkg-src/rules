@@ -39,13 +39,13 @@ override_dh_auto_test:
 override_dh_clistrip:
 
 override_dh_auto_build:
-	dotnet publish --configuration $(CONFIG) --output='$(CURDIR)/usr/lib/jellyfin/bin' --self-contained --runtime $(DOTNETRUNTIME) \
-		"-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none" Jellyfin.Server
+	dotnet publish --configuration $(CONFIG) --output='$(CURDIR)/usr/lib/veso/bin' --self-contained --runtime $(DOTNETRUNTIME) \
+		"-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none" Veso.Server
 
 override_dh_auto_clean:
-	dotnet clean -maxcpucount:1 --configuration $(CONFIG) Jellyfin.Server || true
+	dotnet clean -maxcpucount:1 --configuration $(CONFIG) Veso.Server || true
 	rm -rf '$(CURDIR)/usr'
 
-# Force the service name to jellyfin even if we're building jellyfin-nightly
+# Force the service name to veso even if we're building veso-nightly
 override_dh_installinit:
-	dh_installinit --name=jellyfin
+	dh_installinit --name=veso
