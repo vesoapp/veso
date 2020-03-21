@@ -7,6 +7,7 @@ Veso is an open source media server. An emby/jellyfin fork that will move to a j
 Docker
 
 ```bash
+docker run -d \
  --volume /path/to/config:/config \
  --volume /path/to/cache:/cache \
  --volume /path/to/media:/media \
