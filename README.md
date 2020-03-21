@@ -24,8 +24,8 @@ Docker compose
      image: vesotv/veso
      user: 1000:1000
      ports:
-       - 8095:8096
-       - 8925:8920
+       - 8096:8096
+       - 8920:8920
      volumes:
        - /path/to/config:/config
        - /path/to/cache:/cache
