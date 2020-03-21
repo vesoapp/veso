@@ -3,7 +3,7 @@ using MediaBrowser.Controller.Entities;
 namespace MediaBrowser.Controller.Providers
 {
     /// <summary>
-    /// Interface IImageProvider.
+    /// Interface IImageProvider
     /// </summary>
     public interface IImageProvider
     {
@@ -14,10 +14,10 @@ namespace MediaBrowser.Controller.Providers
         string Name { get; }
 
         /// <summary>
-        /// Supports the specified item.
+        /// Supportses the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <returns><c>true</c> if the provider supports the item.</returns>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise</returns>
         bool Supports(BaseItem item);
     }
 }

@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Querying;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api
 {
@@ -86,13 +84,7 @@ namespace MediaBrowser.Api
         private readonly ILibraryManager _libraryManager;
         private readonly IUserManager _userManager;
 
-        public FilterService(
-            ILogger<FilterService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            ILibraryManager libraryManager,
-            IUserManager userManager)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public FilterService(ILibraryManager libraryManager, IUserManager userManager)
         {
             _libraryManager = libraryManager;
             _userManager = userManager;

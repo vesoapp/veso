@@ -13,6 +13,7 @@ using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Providers;
 using MediaBrowser.Model.Serialization;
+using MediaBrowser.Providers.Movies;
 using MediaBrowser.Providers.Tmdb.Models.General;
 using MediaBrowser.Providers.Tmdb.Models.Movies;
 

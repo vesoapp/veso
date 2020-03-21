@@ -10,7 +10,7 @@ using MediaBrowser.Model.IO;
 
 namespace MediaBrowser.LocalMetadata.Images
 {
-    public class EpisodeLocalLocalImageProvider : ILocalImageProvider, IHasOrder
+    public class EpisodeLocalLocalImageProvider : ILocalImageFileProvider, IHasOrder
     {
         private readonly IFileSystem _fileSystem;
 

@@ -17,11 +17,12 @@ namespace MediaBrowser.Providers.Music
     {
         public AlbumMetadataService(
             IServerConfigurationManager serverConfigurationManager,
-            ILogger<AlbumMetadataService> logger,
+            ILogger logger,
             IProviderManager providerManager,
             IFileSystem fileSystem,
+            IUserDataManager userDataManager,
             ILibraryManager libraryManager)
-            : base(serverConfigurationManager, logger, providerManager, fileSystem, libraryManager)
+            : base(serverConfigurationManager, logger, providerManager, fileSystem, userDataManager, libraryManager)
         {
         }
 
@@ -36,7 +37,10 @@ namespace MediaBrowser.Providers.Music
 
         /// <inheritdoc />
         protected override IList<BaseItem> GetChildrenForMetadataUpdates(MusicAlbum item)
-            => item.GetRecursiveChildren(i => i is Audio);
+        {
+            return item.GetRecursiveChildren(i => i is Audio)
+                        .ToList();
+        }
 
         /// <inheritdoc />
         protected override ItemUpdateType UpdateMetadataFromChildren(MusicAlbum item, IList<BaseItem> children, bool isFullRefresh, ItemUpdateType currentUpdateType)
@@ -49,18 +53,20 @@ namespace MediaBrowser.Providers.Music
                 {
                     var name = children.Select(i => i.Album).FirstOrDefault(i => !string.IsNullOrEmpty(i));
 
-                    if (!string.IsNullOrEmpty(name)
-                        && !string.Equals(item.Name, name, StringComparison.Ordinal))
+                    if (!string.IsNullOrEmpty(name))
                     {
-                        item.Name = name;
-                        updateType |= ItemUpdateType.MetadataEdit;
+                        if (!string.Equals(item.Name, name, StringComparison.Ordinal))
+                        {
+                            item.Name = name;
+                            updateType = updateType | ItemUpdateType.MetadataEdit;
+                        }
                     }
                 }
 
                 var songs = children.Cast<Audio>().ToArray();
 
-                updateType |= SetAlbumArtistFromSongs(item, songs);
-                updateType |= SetArtistsFromSongs(item, songs);
+                updateType = updateType | SetAlbumArtistFromSongs(item, songs);
+                updateType = updateType | SetArtistsFromSongs(item, songs);
             }
 
             return updateType;

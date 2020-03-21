@@ -33,7 +33,7 @@ namespace Emby.Server.Implementations.SocketSharp
         }
 
         /// <summary>
-        /// Gets the state.
+        /// Gets or sets the state.
         /// </summary>
         /// <value>The state.</value>
         public WebSocketState State => _webSocket.State;

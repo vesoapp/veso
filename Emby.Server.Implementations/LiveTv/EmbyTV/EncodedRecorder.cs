@@ -1,10 +1,8 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +14,7 @@ using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.Diagnostics;
 using MediaBrowser.Model.Dto;
+using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Serialization;
 using Microsoft.Extensions.Logging;
@@ -25,6 +24,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
     public class EncodedRecorder : IRecorder
     {
         private readonly ILogger _logger;
+        private readonly IFileSystem _fileSystem;
         private readonly IMediaEncoder _mediaEncoder;
         private readonly IServerApplicationPaths _appPaths;
         private bool _hasExited;
@@ -38,6 +38,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
 
         public EncodedRecorder(
             ILogger logger,
+            IFileSystem fileSystem,
             IMediaEncoder mediaEncoder,
             IServerApplicationPaths appPaths,
             IJsonSerializer json,
@@ -45,6 +46,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
             IServerConfigurationManager config)
         {
             _logger = logger;
+            _fileSystem = fileSystem;
             _mediaEncoder = mediaEncoder;
             _appPaths = appPaths;
             _json = json;
@@ -105,7 +107,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
             Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
 
             // FFMpeg writes debug/error info to stderr. This is useful when debugging so let's put it in the log directory.
-            _logFileStream = new FileStream(logFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, IODefaults.FileStreamBufferSize, true);
+            _logFileStream = _fileSystem.GetFileStream(logFilePath, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read, true);
 
             var commandLineLogMessageBytes = Encoding.UTF8.GetBytes(_json.SerializeToString(mediaSource) + Environment.NewLine + Environment.NewLine + commandLineLogMessage + Environment.NewLine + Environment.NewLine);
             _logFileStream.Write(commandLineLogMessageBytes, 0, commandLineLogMessageBytes.Length);

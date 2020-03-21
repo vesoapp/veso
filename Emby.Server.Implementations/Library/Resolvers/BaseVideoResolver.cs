@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.IO;
 using System.Linq;
@@ -12,7 +10,7 @@ using MediaBrowser.Model.Entities;
 namespace Emby.Server.Implementations.Library.Resolvers
 {
     /// <summary>
-    /// Resolves a Path into a Video or Video subclass.
+    /// Resolves a Path into a Video or Video subclass
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class BaseVideoResolver<T> : MediaBrowser.Controller.Resolvers.ItemResolver<T>
@@ -79,7 +77,6 @@ namespace Emby.Server.Implementations.Library.Resolvers
                             };
                             break;
                         }
-
                         if (IsBluRayDirectory(child.FullName, filename, args.DirectoryService))
                         {
                             videoInfo = parser.ResolveDirectory(args.Path);
@@ -137,7 +134,7 @@ namespace Emby.Server.Implementations.Library.Resolvers
                     return null;
                 }
 
-                if (LibraryManager.IsVideoFile(args.Path) || videoInfo.IsStub)
+                if (LibraryManager.IsVideoFile(args.Path, args.GetLibraryOptions()) || videoInfo.IsStub)
                 {
                     var path = args.Path;
 

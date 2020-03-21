@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Xml.Serialization;
 using MediaBrowser.Model.Extensions;
@@ -124,7 +122,7 @@ namespace MediaBrowser.Model.Dlna
                     continue;
                 }
 
-                if (!string.Equals(container, i.Container, StringComparison.OrdinalIgnoreCase))
+                if (!StringHelper.EqualsIgnoreCase(container, i.Container))
                 {
                     continue;
                 }
@@ -150,7 +148,7 @@ namespace MediaBrowser.Model.Dlna
                     continue;
                 }
 
-                if (!string.Equals(container, i.Container, StringComparison.OrdinalIgnoreCase))
+                if (!StringHelper.EqualsIgnoreCase(container, i.Container))
                 {
                     continue;
                 }
@@ -160,7 +158,7 @@ namespace MediaBrowser.Model.Dlna
                     continue;
                 }
 
-                if (!string.Equals(videoCodec, i.VideoCodec ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+                if (!StringHelper.EqualsIgnoreCase(videoCodec, i.VideoCodec ?? string.Empty))
                 {
                     continue;
                 }

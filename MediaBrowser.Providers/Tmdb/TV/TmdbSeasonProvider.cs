@@ -14,6 +14,7 @@ using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Net;
 using MediaBrowser.Model.Providers;
 using MediaBrowser.Model.Serialization;
+using MediaBrowser.Providers.Movies;
 using MediaBrowser.Providers.Tmdb.Models.TV;
 using MediaBrowser.Providers.Tmdb.Movies;
 using Microsoft.Extensions.Logging;
@@ -31,8 +32,6 @@ namespace MediaBrowser.Providers.Tmdb.TV
         private readonly ILocalizationManager _localization;
         private readonly ILogger _logger;
 
-        internal static TmdbSeasonProvider Current { get; private set; }
-
         public TmdbSeasonProvider(IHttpClient httpClient, IServerConfigurationManager configurationManager, IFileSystem fileSystem, ILocalizationManager localization, IJsonSerializer jsonSerializer, ILoggerFactory loggerFactory)
         {
             _httpClient = httpClient;
@@ -41,7 +40,6 @@ namespace MediaBrowser.Providers.Tmdb.TV
             _localization = localization;
             _jsonSerializer = jsonSerializer;
             _logger = loggerFactory.CreateLogger(GetType().Name);
-            Current = this;
         }
 
         public async Task<MetadataResult<Season>> GetMetadata(SeasonInfo info, CancellationToken cancellationToken)

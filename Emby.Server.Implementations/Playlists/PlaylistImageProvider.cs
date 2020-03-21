@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Emby.Server.Implementations.Images;
@@ -61,6 +62,7 @@ namespace Emby.Server.Implementations.Playlists
                     return null;
                 })
                 .Where(i => i != null)
+                .OrderBy(i => Guid.NewGuid())
                 .GroupBy(x => x.Id)
                 .Select(x => x.First())
                 .ToList();
@@ -82,7 +84,7 @@ namespace Emby.Server.Implementations.Playlists
             {
                 Genres = new[] { item.Name },
                 IncludeItemTypes = new[] { typeof(MusicAlbum).Name, typeof(MusicVideo).Name, typeof(Audio).Name },
-                OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                OrderBy = new[] { new ValueTuple<string, SortOrder>(ItemSortBy.Random, SortOrder.Ascending) },
                 Limit = 4,
                 Recursive = true,
                 ImageTypes = new[] { ImageType.Primary },
@@ -106,7 +108,7 @@ namespace Emby.Server.Implementations.Playlists
             {
                 Genres = new[] { item.Name },
                 IncludeItemTypes = new[] { typeof(Series).Name, typeof(Movie).Name },
-                OrderBy = new[] { (ItemSortBy.Random, SortOrder.Ascending) },
+                OrderBy = new[] { new ValueTuple<string, SortOrder>(ItemSortBy.Random, SortOrder.Ascending) },
                 Limit = 4,
                 Recursive = true,
                 ImageTypes = new[] { ImageType.Primary },

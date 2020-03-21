@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,6 +16,7 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.Entities;
+using MediaBrowser.Model.Extensions;
 using MediaBrowser.Model.IO;
 using MediaBrowser.XbmcMetadata.Configuration;
 using Microsoft.Extensions.Logging;
@@ -29,9 +28,6 @@ namespace MediaBrowser.XbmcMetadata.Savers
         public const string DateAddedFormat = "yyyy-MM-dd HH:mm:ss";
 
         public const string YouTubeWatchUrl = "https://www.youtube.com/watch?v=";
-
-        // filters control characters but allows only properly-formed surrogate sequences
-        private const string _invalidXMLCharsRegex = @"(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\uFEFF\uFFFE\uFFFF]";
 
         private static readonly HashSet<string> _commonTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -98,6 +94,9 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
             "countrycode"
         };
+
+        // filters control characters but allows only properly-formed surrogate sequences
+        private const string _invalidXMLCharsRegex = @"(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\uFEFF\uFFFE\uFFFF]";
 
         protected BaseNfoSaver(
             IFileSystem fileSystem,
@@ -249,7 +248,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
                 if (baseItem != null)
                 {
-                    AddCommonNodes(baseItem, writer, LibraryManager, UserManager, UserDataManager, ConfigurationManager);
+                    AddCommonNodes(baseItem, writer, LibraryManager, UserManager, UserDataManager, FileSystem, ConfigurationManager);
                 }
 
                 WriteCustomElements(item, writer);
@@ -267,9 +266,11 @@ namespace MediaBrowser.XbmcMetadata.Savers
                 }
                 catch (FileNotFoundException)
                 {
+
                 }
                 catch (IOException)
                 {
+
                 }
                 catch (XmlException ex)
                 {
@@ -364,8 +365,8 @@ namespace MediaBrowser.XbmcMetadata.Savers
                     writer.WriteElementString("samplingrate", stream.SampleRate.Value.ToString(CultureInfo.InvariantCulture));
                 }
 
-                writer.WriteElementString("default", stream.IsDefault.ToString(CultureInfo.InvariantCulture));
-                writer.WriteElementString("forced", stream.IsForced.ToString(CultureInfo.InvariantCulture));
+                writer.WriteElementString("default", stream.IsDefault.ToString());
+                writer.WriteElementString("forced", stream.IsForced.ToString());
 
                 if (stream.Type == MediaStreamType.Video)
                 {
@@ -384,7 +385,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
                     if (item is Video video)
                     {
-                        // AddChapters(video, builder, itemRepository);
+                        //AddChapters(video, builder, itemRepository);
 
                         if (video.Video3DFormat.HasValue)
                         {
@@ -420,19 +421,21 @@ namespace MediaBrowser.XbmcMetadata.Savers
         /// <summary>
         /// Adds the common nodes.
         /// </summary>
+        /// <returns>Task.</returns>
         private void AddCommonNodes(
             BaseItem item,
             XmlWriter writer,
             ILibraryManager libraryManager,
             IUserManager userManager,
             IUserDataManager userDataRepo,
+            IFileSystem fileSystem,
             IServerConfigurationManager config)
         {
             var writtenProviderIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             var overview = (item.Overview ?? string.Empty)
                 .StripHtml()
-                .Replace("&quot;", "'", StringComparison.Ordinal);
+                .Replace("&quot;", "'");
 
             var options = config.GetNfoConfiguration();
 
@@ -453,7 +456,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
             {
                 var outline = (item.Tagline ?? string.Empty)
                     .StripHtml()
-                    .Replace("&quot;", "'", StringComparison.Ordinal);
+                    .Replace("&quot;", "'");
 
                 writer.WriteElementString("outline", outline);
             }
@@ -474,7 +477,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
                 writer.WriteElementString("lockedfields", string.Join("|", item.LockedFields));
             }
 
-            writer.WriteElementString("dateadded", item.DateCreated.ToLocalTime().ToString(DateAddedFormat, CultureInfo.InvariantCulture));
+            writer.WriteElementString("dateadded", item.DateCreated.ToLocalTime().ToString(DateAddedFormat));
 
             writer.WriteElementString("title", item.Name ?? string.Empty);
 
@@ -588,7 +591,6 @@ namespace MediaBrowser.XbmcMetadata.Savers
             {
                 writer.WriteElementString("language", item.PreferredMetadataLanguage);
             }
-
             if (!string.IsNullOrEmpty(item.PreferredMetadataCountryCode))
             {
                 writer.WriteElementString("countrycode", item.PreferredMetadataCountryCode);
@@ -602,16 +604,16 @@ namespace MediaBrowser.XbmcMetadata.Savers
                 {
                     writer.WriteElementString(
                         "formed",
-                        item.PremiereDate.Value.ToLocalTime().ToString(formatString, CultureInfo.InvariantCulture));
+                        item.PremiereDate.Value.ToLocalTime().ToString(formatString));
                 }
                 else
                 {
                     writer.WriteElementString(
                         "premiered",
-                        item.PremiereDate.Value.ToLocalTime().ToString(formatString, CultureInfo.InvariantCulture));
+                        item.PremiereDate.Value.ToLocalTime().ToString(formatString));
                     writer.WriteElementString(
                         "releasedate",
-                        item.PremiereDate.Value.ToLocalTime().ToString(formatString, CultureInfo.InvariantCulture));
+                        item.PremiereDate.Value.ToLocalTime().ToString(formatString));
                 }
             }
 
@@ -623,7 +625,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
                     writer.WriteElementString(
                         "enddate",
-                        item.EndDate.Value.ToLocalTime().ToString(formatString, CultureInfo.InvariantCulture));
+                        item.EndDate.Value.ToLocalTime().ToString(formatString));
                 }
             }
 
@@ -779,12 +781,12 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
             if (options.SaveImagePathsInNfo)
             {
-                AddImages(item, writer, libraryManager);
+                AddImages(item, writer, libraryManager, config);
             }
 
             AddUserData(item, writer, userManager, userDataRepo, options);
 
-            AddActors(people, writer, libraryManager, options.SaveImagePathsInNfo);
+            AddActors(people, writer, libraryManager, fileSystem, config, options.SaveImagePathsInNfo);
 
             if (item is BoxSet folder)
             {
@@ -827,7 +829,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
             return url.Replace(YouTubeWatchUrl, "plugin://plugin.video.youtube/?action=play_video&videoid=", StringComparison.OrdinalIgnoreCase);
         }
 
-        private void AddImages(BaseItem item, XmlWriter writer, ILibraryManager libraryManager)
+        private void AddImages(BaseItem item, XmlWriter writer, ILibraryManager libraryManager, IServerConfigurationManager config)
         {
             writer.WriteStartElement("art");
 
@@ -835,12 +837,12 @@ namespace MediaBrowser.XbmcMetadata.Savers
 
             if (image != null)
             {
-                writer.WriteElementString("poster", GetImagePathToSave(image, libraryManager));
+                writer.WriteElementString("poster", GetImagePathToSave(image, libraryManager, config));
             }
 
             foreach (var backdrop in item.GetImages(ImageType.Backdrop))
             {
-                writer.WriteElementString("fanart", GetImagePathToSave(backdrop, libraryManager));
+                writer.WriteElementString("fanart", GetImagePathToSave(backdrop, libraryManager, config));
             }
 
             writer.WriteEndElement();
@@ -854,7 +856,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
                 return;
             }
 
-            var user = userManager.GetUserById(Guid.Parse(userId));
+            var user = userManager.GetUserById(userId);
 
             if (user == null)
             {
@@ -892,7 +894,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
                 {
                     writer.WriteElementString(
                         "lastplayed",
-                        userdata.LastPlayedDate.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToLowerInvariant());
+                        userdata.LastPlayedDate.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss").ToLowerInvariant());
                 }
 
                 writer.WriteStartElement("resume");
@@ -910,7 +912,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
             writer.WriteEndElement();
         }
 
-        private void AddActors(List<PersonInfo> people, XmlWriter writer, ILibraryManager libraryManager, bool saveImagePath)
+        private void AddActors(List<PersonInfo> people, XmlWriter writer, ILibraryManager libraryManager, IFileSystem fileSystem, IServerConfigurationManager config, bool saveImagePath)
         {
             foreach (var person in people)
             {
@@ -952,7 +954,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
                     {
                         writer.WriteElementString(
                             "thumb",
-                            GetImagePathToSave(image, libraryManager));
+                            GetImagePathToSave(image, libraryManager, config));
                     }
                 }
 
@@ -960,7 +962,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
             }
         }
 
-        private string GetImagePathToSave(ItemImageInfo image, ILibraryManager libraryManager)
+        private string GetImagePathToSave(ItemImageInfo image, ILibraryManager libraryManager, IServerConfigurationManager config)
         {
             if (!image.IsLocalFile)
             {

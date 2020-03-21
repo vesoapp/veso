@@ -13,7 +13,7 @@ using MediaBrowser.Model.IO;
 
 namespace MediaBrowser.LocalMetadata.Images
 {
-    public class LocalImageProvider : ILocalImageProvider, IHasOrder
+    public class LocalImageProvider : ILocalImageFileProvider, IHasOrder
     {
         private readonly IFileSystem _fileSystem;
 
@@ -30,7 +30,7 @@ namespace MediaBrowser.LocalMetadata.Images
         {
             if (item.SupportsLocalMetadata)
             {
-                // Episode has its own provider
+                // Episode has it's own provider
                 if (item is Episode || item is Audio || item is Photo)
                 {
                     return false;

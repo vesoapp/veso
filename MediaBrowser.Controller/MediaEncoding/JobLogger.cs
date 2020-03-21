@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MediaBrowser.Model.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Controller.MediaEncoding
@@ -89,15 +90,6 @@ namespace MediaBrowser.Controller.MediaEncoding
                         framerate = val;
                     }
                 }
-                else if (part.StartsWith("fps=", StringComparison.OrdinalIgnoreCase))
-                {
-                    var rate = part.Split(new[] { '=' }, 2)[^1];
-
-                    if (float.TryParse(rate, NumberStyles.Any, _usCulture, out var val))
-                    {
-                        framerate = val;
-                    }
-                }
                 else if (state.RunTimeTicks.HasValue &&
                     part.StartsWith("time=", StringComparison.OrdinalIgnoreCase))
                 {
@@ -154,7 +146,7 @@ namespace MediaBrowser.Controller.MediaEncoding
 
             if (framerate.HasValue || percent.HasValue)
             {
-                state.ReportTranscodingProgress(transcodingPosition, framerate, percent, bytesTranscoded, bitRate);
+                state.ReportTranscodingProgress(transcodingPosition, 0, percent, 0, bitRate);
             }
         }
     }

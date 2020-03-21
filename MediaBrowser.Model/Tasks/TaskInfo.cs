@@ -1,9 +1,7 @@
-using System;
-
 namespace MediaBrowser.Model.Tasks
 {
     /// <summary>
-    /// Class TaskInfo.
+    /// Class TaskInfo
     /// </summary>
     public class TaskInfo
     {
@@ -72,7 +70,7 @@ namespace MediaBrowser.Model.Tasks
         /// </summary>
         public TaskInfo()
         {
-            Triggers = Array.Empty<TaskTriggerInfo>();
+            Triggers = new TaskTriggerInfo[] { };
         }
     }
 }

@@ -450,16 +450,14 @@ namespace MediaBrowser.Controller.Entities
             return SortAndPage(items, totalRecordLimit, query, libraryManager, true);
         }
 
-        public static QueryResult<BaseItem> SortAndPage(
-            IEnumerable<BaseItem> items,
+        public static QueryResult<BaseItem> SortAndPage(IEnumerable<BaseItem> items,
             int? totalRecordLimit,
             InternalItemsQuery query,
-            ILibraryManager libraryManager,
-            bool enableSorting)
+            ILibraryManager libraryManager, bool enableSorting)
         {
             if (enableSorting)
             {
-                if (query.OrderBy.Count > 0)
+                if (query.OrderBy.Length > 0)
                 {
                     items = libraryManager.Sort(items, query.User, query.OrderBy);
                 }

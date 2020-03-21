@@ -11,7 +11,7 @@ WORKDIR="$( pwd )"
 package_temporary_dir="${WORKDIR}/pkg-dist-tmp"
 output_dir="${WORKDIR}/pkg-dist"
 current_user="$( whoami )"
-image_name="veso-windows-x86-build"
+image_name="jellyfin-windows-x86-build"
 
 # Determine if sudo should be used for Docker
 if [[ ! -z $(id -Gn | grep -q 'docker') ]] \

@@ -1,6 +1,3 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Common;
@@ -16,6 +12,7 @@ using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
+using MediaBrowser.Model.Extensions;
 using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.Net;
 using MediaBrowser.Model.Serialization;
@@ -33,11 +30,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
 
         private const string ApiUrl = "https://json.schedulesdirect.org/20141201";
 
-        public SchedulesDirect(
-            ILogger<SchedulesDirect> logger,
-            IJsonSerializer jsonSerializer,
-            IHttpClient httpClient,
-            IApplicationHost appHost)
+        public SchedulesDirect(ILogger logger, IJsonSerializer jsonSerializer, IHttpClient httpClient, IApplicationHost appHost)
         {
             _logger = logger;
             _jsonSerializer = jsonSerializer;
@@ -508,7 +501,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
 
         public async Task<List<NameIdPair>> GetHeadends(ListingsProviderInfo info, string country, string location, CancellationToken cancellationToken)
         {
-            var token = await GetToken(info, cancellationToken).ConfigureAwait(false);
+            var token = await GetToken(info, cancellationToken);
 
             var lineups = new List<NameIdPair>();
 
@@ -670,7 +663,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
 
             try
             {
-                return await _httpClient.SendAsync(options, HttpMethod.Get).ConfigureAwait(false);
+                return await _httpClient.SendAsync(options, "GET").ConfigureAwait(false);
             }
             catch (HttpException ex)
             {
@@ -720,7 +713,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
 
         private async Task AddLineupToAccount(ListingsProviderInfo info, CancellationToken cancellationToken)
         {
-            var token = await GetToken(info, cancellationToken).ConfigureAwait(false);
+            var token = await GetToken(info, cancellationToken);
 
             if (string.IsNullOrEmpty(token))
             {
@@ -745,7 +738,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
 
             httpOptions.RequestHeaders["token"] = token;
 
-            using (await _httpClient.SendAsync(httpOptions, HttpMethod.Put).ConfigureAwait(false))
+            using (await _httpClient.SendAsync(httpOptions, "PUT"))
             {
             }
         }
@@ -757,7 +750,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
                 throw new ArgumentException("Listings Id required");
             }
 
-            var token = await GetToken(info, cancellationToken).ConfigureAwait(false);
+            var token = await GetToken(info, cancellationToken);
 
             if (string.IsNullOrEmpty(token))
             {
@@ -840,7 +833,7 @@ namespace Emby.Server.Implementations.LiveTv.Listings
                 throw new Exception("ListingsId required");
             }
 
-            var token = await GetToken(info, cancellationToken).ConfigureAwait(false);
+            var token = await GetToken(info, cancellationToken);
 
             if (string.IsNullOrEmpty(token))
             {

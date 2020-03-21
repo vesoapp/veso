@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +12,7 @@ namespace Emby.Server.Implementations.Data
         private readonly ILibraryManager _libraryManager;
         private readonly ILogger _logger;
 
-        public CleanDatabaseScheduledTask(ILibraryManager libraryManager, ILogger<CleanDatabaseScheduledTask> logger)
+        public CleanDatabaseScheduledTask(ILibraryManager libraryManager, ILogger logger)
         {
             _libraryManager = libraryManager;
             _logger = logger;

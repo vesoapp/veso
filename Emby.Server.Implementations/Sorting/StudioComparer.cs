@@ -17,15 +17,10 @@ namespace Emby.Server.Implementations.Sorting
         public int Compare(BaseItem x, BaseItem y)
         {
             if (x == null)
-            {
                 throw new ArgumentNullException(nameof(x));
-            }
 
             if (y == null)
-            {
                 throw new ArgumentNullException(nameof(y));
-            }
-
             return AlphanumComparator.CompareValues(x.Studios.FirstOrDefault() ?? string.Empty, y.Studios.FirstOrDefault() ?? string.Empty);
         }
 

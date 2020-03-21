@@ -1,7 +1,3 @@
-#pragma warning disable CS1591
-
-using System.Threading.Tasks;
-
 namespace Emby.Dlna
 {
     public interface IUpnpService
@@ -17,6 +13,6 @@ namespace Emby.Dlna
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>ControlResponse.</returns>
-        Task<ControlResponse> ProcessControlRequestAsync(ControlRequest request);
+        ControlResponse ProcessControlRequest(ControlRequest request);
     }
 }

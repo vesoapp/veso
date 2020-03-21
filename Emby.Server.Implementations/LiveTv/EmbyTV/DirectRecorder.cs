@@ -1,9 +1,5 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1600
-
 using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Common.Net;
@@ -18,12 +14,14 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
     {
         private readonly ILogger _logger;
         private readonly IHttpClient _httpClient;
+        private readonly IFileSystem _fileSystem;
         private readonly IStreamHelper _streamHelper;
 
-        public DirectRecorder(ILogger logger, IHttpClient httpClient, IStreamHelper streamHelper)
+        public DirectRecorder(ILogger logger, IHttpClient httpClient, IFileSystem fileSystem, IStreamHelper streamHelper)
         {
             _logger = logger;
             _httpClient = httpClient;
+            _fileSystem = fileSystem;
             _streamHelper = streamHelper;
         }
 
@@ -46,7 +44,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
         {
             Directory.CreateDirectory(Path.GetDirectoryName(targetFile));
 
-            using (var output = new FileStream(targetFile, FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (var output = _fileSystem.GetFileStream(targetFile, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read))
             {
                 onStarted();
 
@@ -76,13 +74,13 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
                 DecompressionMethod = CompressionMethod.None
             };
 
-            using (var response = await _httpClient.SendAsync(httpRequestOptions, HttpMethod.Get).ConfigureAwait(false))
+            using (var response = await _httpClient.SendAsync(httpRequestOptions, "GET").ConfigureAwait(false))
             {
                 _logger.LogInformation("Opened recording stream from tuner provider");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(targetFile));
 
-                using (var output = new FileStream(targetFile, FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (var output = _fileSystem.GetFileStream(targetFile, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read))
                 {
                     onStarted();
 

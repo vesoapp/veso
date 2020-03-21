@@ -1,70 +1,88 @@
-using System.Threading;
+using System;
 using System.Threading.Tasks;
 using Emby.Server.Implementations.Udp;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
+using MediaBrowser.Model.Net;
+using MediaBrowser.Model.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Emby.Server.Implementations.EntryPoints
 {
     /// <summary>
-    /// Class UdpServerEntryPoint.
+    /// Class UdpServerEntryPoint
     /// </summary>
-    public sealed class UdpServerEntryPoint : IServerEntryPoint
+    public class UdpServerEntryPoint : IServerEntryPoint
     {
         /// <summary>
-        /// The port of the UDP server.
+        /// Gets or sets the UDP server.
         /// </summary>
-        public const int PortNumber = 7359;
+        /// <value>The UDP server.</value>
+        private UdpServer UdpServer { get; set; }
 
         /// <summary>
-        /// The logger.
+        /// The _logger
         /// </summary>
         private readonly ILogger _logger;
+        private readonly ISocketFactory _socketFactory;
         private readonly IServerApplicationHost _appHost;
+        private readonly IJsonSerializer _json;
 
-        /// <summary>
-        /// The UDP server.
-        /// </summary>
-        private UdpServer _udpServer;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private bool _disposed = false;
+        public const int PortNumber = 7359;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UdpServerEntryPoint" /> class.
         /// </summary>
-        public UdpServerEntryPoint(
-            ILogger<UdpServerEntryPoint> logger,
-            IServerApplicationHost appHost)
+        public UdpServerEntryPoint(ILogger logger, IServerApplicationHost appHost, IJsonSerializer json, ISocketFactory socketFactory)
         {
             _logger = logger;
             _appHost = appHost;
-
-
+            _json = json;
+            _socketFactory = socketFactory;
         }
 
-        /// <inheritdoc />
-        public async Task RunAsync()
+        /// <summary>
+        /// Runs this instance.
+        /// </summary>
+        public Task RunAsync()
         {
-            _udpServer = new UdpServer(_logger, _appHost);
-            _udpServer.Start(PortNumber, _cancellationTokenSource.Token);
-        }
+            var udpServer = new UdpServer(_logger, _appHost, _json, _socketFactory);
 
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            if (_disposed)
+            try
             {
-                return;
+                udpServer.Start(PortNumber);
+
+                UdpServer = udpServer;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to start UDP Server");
             }
 
-            _cancellationTokenSource.Cancel();
-            _udpServer.Dispose();
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
-            _udpServer = null;
+            return Task.CompletedTask;
+        }
 
-            _disposed = true;
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="dispose"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool dispose)
+        {
+            if (dispose)
+            {
+                if (UdpServer != null)
+                {
+                    UdpServer.Dispose();
+                }
+            }
         }
     }
 }

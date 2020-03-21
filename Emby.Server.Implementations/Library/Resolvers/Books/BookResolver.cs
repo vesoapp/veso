@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.IO;
 using System.Linq;
@@ -9,10 +7,18 @@ using MediaBrowser.Model.Entities;
 
 namespace Emby.Server.Implementations.Library.Resolvers.Books
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class BookResolver : MediaBrowser.Controller.Resolvers.ItemResolver<Book>
     {
         private readonly string[] _validExtensions = { ".pdf", ".epub", ".mobi", ".cbr", ".cbz", ".azw3" };
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         protected override Book Resolve(ItemResolveArgs args)
         {
             var collectionType = args.GetCollectionType();
@@ -41,6 +47,11 @@ namespace Emby.Server.Implementations.Library.Resolvers.Books
             return null;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private Book GetBook(ItemResolveArgs args)
         {
             var bookFiles = args.FileSystemChildren.Where(f =>

@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -9,13 +8,12 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MediaBrowser.Api")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("veso Project")]
-[assembly: AssemblyProduct("veso Server")]
-[assembly: AssemblyCopyright("Copyright ©  2019 veso Contributors. Code released under the GNU General Public License")]
+[assembly: AssemblyCompany("Jellyfin Project")]
+[assembly: AssemblyProduct("Jellyfin Server")]
+[assembly: AssemblyCopyright("Copyright ©  2019 Jellyfin Contributors. Code released under the GNU General Public License")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: InternalsVisibleTo("Veso.Api.Tests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

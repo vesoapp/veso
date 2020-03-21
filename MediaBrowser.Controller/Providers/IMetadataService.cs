@@ -12,9 +12,8 @@ namespace MediaBrowser.Controller.Providers
         /// Determines whether this instance can refresh the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
-        /// <returns><c>true</c> if this instance can refresh the specified item.</returns>
+        /// <returns><c>true</c> if this instance can refresh the specified item; otherwise, <c>false</c>.</returns>
         bool CanRefresh(BaseItem item);
-
         bool CanRefreshPrimary(Type type);
 
         /// <summary>

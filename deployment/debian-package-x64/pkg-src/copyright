@@ -1,9 +1,9 @@
 Format: http://dep.debian.net/deps/dep5
-Upstream-Name: veso
-Source: https://github.com/vesotv/veso
+Upstream-Name: jellyfin
+Source: https://github.com/jellyfin/jellyfin
 
 Files: *
-Copyright: 2018 veso Team
+Copyright: 2018 Jellyfin Team
 License: GPL-2.0+
 
 Files: debian/*

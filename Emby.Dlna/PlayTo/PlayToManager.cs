@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Globalization;
 using System.Linq;
@@ -23,7 +21,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Emby.Dlna.PlayTo
 {
-    public class PlayToManager : IDisposable
+    class PlayToManager : IDisposable
     {
         private readonly ILogger _logger;
         private readonly ISessionManager _sessionManager;
@@ -66,10 +64,10 @@ namespace Emby.Dlna.PlayTo
 
         public void Start()
         {
-            _deviceDiscovery.DeviceDiscovered += OnDeviceDiscoveryDeviceDiscovered;
+            _deviceDiscovery.DeviceDiscovered += _deviceDiscovery_DeviceDiscovered;
         }
 
-        private async void OnDeviceDiscoveryDeviceDiscovered(object sender, GenericEventArgs<UpnpDeviceInfo> e)
+        async void _deviceDiscovery_DeviceDiscovered(object sender, GenericEventArgs<UpnpDeviceInfo> e)
         {
             if (_disposed)
             {
@@ -162,7 +160,7 @@ namespace Emby.Dlna.PlayTo
                 uuid = location.GetMD5().ToString("N", CultureInfo.InvariantCulture);
             }
 
-            var sessionInfo = _sessionManager.LogSessionActivity("DLNA", _appHost.ApplicationVersionString, uuid, null, uri.OriginalString, null);
+            var sessionInfo = _sessionManager.LogSessionActivity("DLNA", _appHost.ApplicationVersion, uuid, null, uri.OriginalString, null);
 
             var controller = sessionInfo.SessionControllers.OfType<PlayToController>().FirstOrDefault();
 
@@ -233,7 +231,7 @@ namespace Emby.Dlna.PlayTo
 
         public void Dispose()
         {
-            _deviceDiscovery.DeviceDiscovered -= OnDeviceDiscoveryDeviceDiscovered;
+            _deviceDiscovery.DeviceDiscovered -= _deviceDiscovery_DeviceDiscovered;
 
             try
             {

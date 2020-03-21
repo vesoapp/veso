@@ -1,10 +1,7 @@
-#pragma warning disable CS1591
-
 using System;
 
 namespace MediaBrowser.Model.Extensions
 {
-    // TODO: @bond remove
     public static class ListHelper
     {
         public static bool ContainsIgnoreCase(string[] list, string value)

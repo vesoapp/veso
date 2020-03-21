@@ -77,10 +77,7 @@ namespace MediaBrowser.Common.Configuration
         /// <value>The temp directory.</value>
         string TempDirectory { get; }
 
-        /// <summary>
-        /// Gets the magic string used for virtual path manipulation.
-        /// </summary>
-        /// <value>The magic string used for virtual path manipulation.</value>
         string VirtualDataPath { get; }
     }
+
 }

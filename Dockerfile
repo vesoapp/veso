@@ -1,64 +1,42 @@
-ARG DOTNET_VERSION=3.1
+ARG DOTNET_VERSION=2.2
 ARG FFMPEG_VERSION=latest
 
 FROM node:alpine as web-builder
-ARG VESO_WEB_VERSION=master
-RUN apk add curl git \
- && curl -L https://github.com/vesotv/veso-web/archive/${VESO_WEB_VERSION}.tar.gz | tar zxf - \
- && cd veso-web-* \
+ARG JELLYFIN_WEB_VERSION=v10.4.1
+RUN apk add curl \
+ && curl -L https://www.dropbox.com/s/xavgzubfy7y7oar/veso-web.tar.gz | tar zxf - \
+ && cd veso-web \
  && yarn install \
  && yarn build \
  && mv dist /dist
 
-FROM mcr.microsoft.com/dotnet/core/sdk:${DOTNET_VERSION}-buster as builder
+FROM mcr.microsoft.com/dotnet/core/sdk:${DOTNET_VERSION} as builder
 WORKDIR /repo
 COPY . .
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-# because of changes in docker and systemd we need to not build in parallel at the moment
-# see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
-RUN dotnet publish Veso.Server --disable-parallel --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+RUN dotnet publish Jellyfin.Server --configuration Release --output="/jellyfin" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
 FROM jellyfin/ffmpeg:${FFMPEG_VERSION} as ffmpeg
-FROM debian:buster-slim
 
-# https://askubuntu.com/questions/972516/debian-frontend-environment-variable
-ARG DEBIAN_FRONTEND="noninteractive"
-# http://stackoverflow.com/questions/48162574/ddg#49462622
-ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
-# https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)
-ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
-
-COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
-COPY --from=builder /veso /veso
-COPY --from=web-builder /dist /veso/veso-web
+FROM mcr.microsoft.com/dotnet/core/runtime:${DOTNET_VERSION}
+COPY --from=ffmpeg / /
+COPY --from=builder /jellyfin /jellyfin
+COPY --from=web-builder /dist /jellyfin/jellyfin-web
 # Install dependencies:
 #   libfontconfig1: needed for Skia
-#   libgomp1: needed for ffmpeg
-#   libva-drm2: needed for ffmpeg
 #   mesa-va-drivers: needed for VAAPI
 RUN apt-get update \
  && apt-get install --no-install-recommends --no-install-suggests -y \
-   libfontconfig1 \
-   libgomp1 \
-   libva-drm2 \
-   mesa-va-drivers \
-   openssl \
-   ca-certificates \
-   vainfo \
-   i965-va-driver \
- && apt-get clean autoclean -y\
- && apt-get autoremove -y\
+   libfontconfig1 mesa-va-drivers \
+ && apt-get clean autoclean \
+ && apt-get autoremove \
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /cache /config /media \
- && chmod 777 /cache /config /media \
- && ln -s /opt/ffmpeg/bin/ffmpeg /usr/local/bin \
- && ln -s /opt/ffmpeg/bin/ffprobe /usr/local/bin
-
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+ && chmod 777 /cache /config /media
 
 EXPOSE 8096
 VOLUME /cache /config /media
-ENTRYPOINT ["./veso/veso", \
-    "--datadir", "/config", \
-    "--cachedir", "/cache", \
-    "--ffmpeg", "/usr/local/bin/ffmpeg"]
+ENTRYPOINT dotnet /jellyfin/jellyfin.dll \
+    --datadir /config \
+    --cachedir /cache \
+    --ffmpeg /usr/local/bin/ffmpeg

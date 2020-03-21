@@ -16,6 +16,7 @@ using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.Dlna;
 using MediaBrowser.Model.Entities;
+using MediaBrowser.Model.Extensions;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
@@ -93,37 +94,33 @@ namespace MediaBrowser.Api.Playback.Hls
     [Authenticated]
     public class DynamicHlsService : BaseHlsService
     {
+
         public DynamicHlsService(
-            ILogger logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
+            IServerConfigurationManager serverConfig,
             IUserManager userManager,
             ILibraryManager libraryManager,
             IIsoManager isoManager,
             IMediaEncoder mediaEncoder,
             IFileSystem fileSystem,
             IDlnaManager dlnaManager,
+            ISubtitleEncoder subtitleEncoder,
             IDeviceManager deviceManager,
             IMediaSourceManager mediaSourceManager,
             IJsonSerializer jsonSerializer,
             IAuthorizationContext authorizationContext,
-            INetworkManager networkManager,
-            EncodingHelper encodingHelper)
-            : base(
-                logger,
-                serverConfigurationManager,
-                httpResultFactory,
+            INetworkManager networkManager)
+            : base(serverConfig,
                 userManager,
                 libraryManager,
                 isoManager,
                 mediaEncoder,
                 fileSystem,
                 dlnaManager,
+                subtitleEncoder,
                 deviceManager,
                 mediaSourceManager,
                 jsonSerializer,
-                authorizationContext,
-                encodingHelper)
+                authorizationContext)
         {
             NetworkManager = networkManager;
         }
@@ -536,7 +533,7 @@ namespace MediaBrowser.Api.Playback.Hls
             return ResultFactory.GetStaticFileResult(Request, new StaticFileResultOptions
             {
                 Path = segmentPath,
-                FileShare = FileShare.ReadWrite,
+                FileShare = FileShareMode.ReadWrite,
                 OnComplete = () =>
                 {
                     Logger.LogDebug("finished serving {0}", segmentPath);
@@ -946,40 +943,30 @@ namespace MediaBrowser.Api.Playback.Hls
                     );
                 }
 
-                args += " " + EncodingHelper.GetVideoQualityParam(state, codec, encodingOptions, GetDefaultEncoderPreset());
+                var hasGraphicalSubs = state.SubtitleStream != null && !state.SubtitleStream.IsTextSubtitleStream && state.SubtitleDeliveryMethod == SubtitleDeliveryMethod.Encode;
 
-                // Unable to force key frames to h264_qsv transcode
-                if (string.Equals(codec, "h264_qsv", StringComparison.OrdinalIgnoreCase))
-                {
-                    Logger.LogInformation("Bug Workaround: Disabling force_key_frames for h264_qsv");
-                }
-                else
-                {
-                    args += " " + keyFrameArg;
-                }
+                args += " " + EncodingHelper.GetVideoQualityParam(state, codec, encodingOptions, GetDefaultEncoderPreset()) + keyFrameArg;
 
                 //args += " -mixed-refs 0 -refs 3 -x264opts b_pyramid=0:weightb=0:weightp=0";
-
-                var hasGraphicalSubs = state.SubtitleStream != null && !state.SubtitleStream.IsTextSubtitleStream && state.SubtitleDeliveryMethod == SubtitleDeliveryMethod.Encode;
 
                 // Add resolution params, if specified
                 if (!hasGraphicalSubs)
                 {
-                    args += EncodingHelper.GetOutputSizeParam(state, encodingOptions, codec);
+                    args += EncodingHelper.GetOutputSizeParam(state, encodingOptions, codec, true);
                 }
 
-                // This is for graphical subs
+                // This is for internal graphical subs
                 if (hasGraphicalSubs)
                 {
                     args += EncodingHelper.GetGraphicalSubtitleParam(state, encodingOptions, codec);
                 }
 
-                if (!(state.SubtitleStream != null && state.SubtitleStream.IsExternal && !state.SubtitleStream.IsTextSubtitleStream))
-                {
-                    args += " -start_at_zero";
-                }
-
                 //args += " -flags -global_header";
+            }
+
+            if (args.IndexOf("-copyts", StringComparison.OrdinalIgnoreCase) == -1)
+            {
+                args += " -copyts";
             }
 
             if (!string.IsNullOrEmpty(state.OutputVideoSync))
@@ -1007,7 +994,6 @@ namespace MediaBrowser.Api.Playback.Hls
                 Logger.LogInformation("Current HLS implementation doesn't support non-keyframe breaks but one is requested, ignoring that request");
                 state.BaseRequest.BreakOnNonKeyFrames = false;
             }
-
             var inputModifier = EncodingHelper.GetInputModifier(state, encodingOptions);
 
             // If isEncoding is true we're actually starting ffmpeg
@@ -1025,7 +1011,7 @@ namespace MediaBrowser.Api.Playback.Hls
             }
 
             return string.Format(
-                "{0} {1} -map_metadata -1 -map_chapters -1 -threads {2} {3} {4} {5} -copyts -avoid_negative_ts disabled -f hls -max_delay 5000000 -hls_time {6} -individual_header_trailer 0 -hls_segment_type {7} -start_number {8} -hls_segment_filename \"{9}\" -hls_playlist_type vod -hls_list_size 0 -y \"{10}\"",
+                "{0} {1} -map_metadata -1 -map_chapters -1 -threads {2} {3} {4} {5} -f hls -max_delay 5000000 -avoid_negative_ts disabled -start_at_zero -hls_time {6} -individual_header_trailer 0 -hls_segment_type {7} -start_number {8} -hls_segment_filename \"{9}\" -hls_playlist_type vod -hls_list_size 0 -y \"{10}\"",
                 inputModifier,
                 EncodingHelper.GetInputArgument(state, encodingOptions),
                 threads,

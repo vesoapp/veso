@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 namespace MediaBrowser.Common.Net
 {
     public static class CustomHeaderNames

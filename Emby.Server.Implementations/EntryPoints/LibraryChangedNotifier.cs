@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,6 +13,7 @@ using MediaBrowser.Controller.Providers;
 using MediaBrowser.Controller.Session;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Events;
+using MediaBrowser.Model.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Emby.Server.Implementations.EntryPoints
@@ -22,7 +21,7 @@ namespace Emby.Server.Implementations.EntryPoints
     public class LibraryChangedNotifier : IServerEntryPoint
     {
         /// <summary>
-        /// The library manager.
+        /// The _library manager
         /// </summary>
         private readonly ILibraryManager _libraryManager;
 
@@ -31,7 +30,7 @@ namespace Emby.Server.Implementations.EntryPoints
         private readonly ILogger _logger;
 
         /// <summary>
-        /// The library changed sync lock.
+        /// The _library changed sync lock
         /// </summary>
         private readonly object _libraryChangedSyncLock = new object();
 
@@ -49,18 +48,13 @@ namespace Emby.Server.Implementations.EntryPoints
         private Timer LibraryUpdateTimer { get; set; }
 
         /// <summary>
-        /// The library update duration.
+        /// The library update duration
         /// </summary>
         private const int LibraryUpdateDuration = 30000;
 
         private readonly IProviderManager _providerManager;
 
-        public LibraryChangedNotifier(
-            ILibraryManager libraryManager,
-            ISessionManager sessionManager,
-            IUserManager userManager,
-            ILogger<LibraryChangedNotifier> logger,
-            IProviderManager providerManager)
+        public LibraryChangedNotifier(ILibraryManager libraryManager, ISessionManager sessionManager, IUserManager userManager, ILogger logger, IProviderManager providerManager)
         {
             _libraryManager = libraryManager;
             _sessionManager = sessionManager;
@@ -194,11 +188,8 @@ namespace Emby.Server.Implementations.EntryPoints
             {
                 if (LibraryUpdateTimer == null)
                 {
-                    LibraryUpdateTimer = new Timer(
-                        LibraryUpdateTimerCallback,
-                        null,
-                        LibraryUpdateDuration,
-                        Timeout.Infinite);
+                    LibraryUpdateTimer = new Timer(LibraryUpdateTimerCallback, null, LibraryUpdateDuration,
+                                                   Timeout.Infinite);
                 }
                 else
                 {
@@ -461,7 +452,7 @@ namespace Emby.Server.Implementations.EntryPoints
                 return new[] { item };
             }
 
-            return Array.Empty<T>();
+            return new T[] { };
         }
 
         /// <summary>

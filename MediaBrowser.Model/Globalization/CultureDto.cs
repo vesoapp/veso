@@ -1,11 +1,9 @@
-#pragma warning disable CS1591
-
-using System;
+using global::System;
 
 namespace MediaBrowser.Model.Globalization
 {
     /// <summary>
-    /// Class CultureDto.
+    /// Class CultureDto
     /// </summary>
     public class CultureDto
     {

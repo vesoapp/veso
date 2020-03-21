@@ -36,19 +36,19 @@ namespace Emby.Server.Implementations.ScheduledTasks
         /// Gets or sets the json serializer.
         /// </summary>
         /// <value>The json serializer.</value>
-        private readonly IJsonSerializer _jsonSerializer;
+        private IJsonSerializer JsonSerializer { get; set; }
 
         /// <summary>
         /// Gets or sets the application paths.
         /// </summary>
         /// <value>The application paths.</value>
-        private readonly IApplicationPaths _applicationPaths;
+        private IApplicationPaths ApplicationPaths { get; set; }
 
         /// <summary>
         /// Gets the logger.
         /// </summary>
         /// <value>The logger.</value>
-        private readonly ILogger _logger;
+        private ILogger Logger { get; set; }
         private readonly IFileSystem _fileSystem;
 
         /// <summary>
@@ -57,19 +57,19 @@ namespace Emby.Server.Implementations.ScheduledTasks
         /// <param name="applicationPaths">The application paths.</param>
         /// <param name="jsonSerializer">The json serializer.</param>
         /// <param name="loggerFactory">The logger factory.</param>
-        /// <param name="fileSystem">The filesystem manager.</param>
+        /// <exception cref="System.ArgumentException">kernel</exception>
         public TaskManager(
             IApplicationPaths applicationPaths,
             IJsonSerializer jsonSerializer,
             ILoggerFactory loggerFactory,
             IFileSystem fileSystem)
         {
-            _applicationPaths = applicationPaths;
-            _jsonSerializer = jsonSerializer;
-            _logger = loggerFactory.CreateLogger(nameof(TaskManager));
+            ApplicationPaths = applicationPaths;
+            JsonSerializer = jsonSerializer;
+            Logger = loggerFactory.CreateLogger(nameof(TaskManager));
             _fileSystem = fileSystem;
 
-            ScheduledTasks = Array.Empty<IScheduledTaskWorker>();
+            ScheduledTasks = new IScheduledTaskWorker[] { };
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
         /// <typeparam name="T"></typeparam>
         /// <param name="options">Task options.</param>
         public void CancelIfRunningAndQueue<T>(TaskOptions options)
-            where T : IScheduledTask
+                 where T : IScheduledTask
         {
             var task = ScheduledTasks.First(t => t.ScheduledTask.GetType() == typeof(T));
             ((ScheduledTaskWorker)task).CancelIfRunning();
@@ -115,7 +115,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
 
             if (scheduledTask == null)
             {
-                _logger.LogError("Unable to find scheduled task of type {0} in QueueScheduledTask.", typeof(T).Name);
+                Logger.LogError("Unable to find scheduled task of type {0} in QueueScheduledTask.", typeof(T).Name);
             }
             else
             {
@@ -147,13 +147,13 @@ namespace Emby.Server.Implementations.ScheduledTasks
 
             if (scheduledTask == null)
             {
-                _logger.LogError("Unable to find scheduled task of type {0} in Execute.", typeof(T).Name);
+                Logger.LogError("Unable to find scheduled task of type {0} in Execute.", typeof(T).Name);
             }
             else
             {
                 var type = scheduledTask.ScheduledTask.GetType();
 
-                _logger.LogInformation("Queueing task {0}", type.Name);
+                Logger.LogInformation("Queueing task {0}", type.Name);
 
                 lock (_taskQueue)
                 {
@@ -176,7 +176,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
 
             if (scheduledTask == null)
             {
-                _logger.LogError("Unable to find scheduled task of type {0} in QueueScheduledTask.", task.GetType().Name);
+                Logger.LogError("Unable to find scheduled task of type {0} in QueueScheduledTask.", task.GetType().Name);
             }
             else
             {
@@ -193,7 +193,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
         {
             var type = task.ScheduledTask.GetType();
 
-            _logger.LogInformation("Queueing task {0}", type.Name);
+            Logger.LogInformation("Queueing task {0}", type.Name);
 
             lock (_taskQueue)
             {
@@ -213,7 +213,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
         /// <param name="tasks">The tasks.</param>
         public void AddTasks(IEnumerable<IScheduledTask> tasks)
         {
-            var list = tasks.Select(t => new ScheduledTaskWorker(t, _applicationPaths, this, _jsonSerializer, _logger, _fileSystem));
+            var list = tasks.Select(t => new ScheduledTaskWorker(t, ApplicationPaths, this, JsonSerializer, Logger, _fileSystem));
 
             ScheduledTasks = ScheduledTasks.Concat(list).ToArray();
         }
@@ -281,7 +281,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
         /// </summary>
         private void ExecuteQueuedTasks()
         {
-            _logger.LogInformation("ExecuteQueuedTasks");
+            Logger.LogInformation("ExecuteQueuedTasks");
 
             // Execute queued tasks
             lock (_taskQueue)

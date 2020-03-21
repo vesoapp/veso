@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.LocalMetadata.Images
 {
-    public class InternalMetadataFolderImageProvider : ILocalImageProvider, IHasOrder
+    public class InternalMetadataFolderImageProvider : ILocalImageFileProvider, IHasOrder
     {
         private readonly IServerConfigurationManager _config;
         private readonly IFileSystem _fileSystem;

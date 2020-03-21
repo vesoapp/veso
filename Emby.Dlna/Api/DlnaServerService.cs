@@ -1,12 +1,11 @@
-#pragma warning disable CS1591
-
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Emby.Dlna.Main;
 using MediaBrowser.Common.Extensions;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dlna;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Services;
@@ -109,13 +108,12 @@ namespace Emby.Dlna.Api
 
     public class DlnaServerService : IService, IRequiresRequest
     {
+        private readonly IDlnaManager _dlnaManager;
+
         private const string XMLContentType = "text/xml; charset=UTF-8";
 
-        private readonly IDlnaManager _dlnaManager;
-        private readonly IHttpResultFactory _resultFactory;
-        private readonly IServerConfigurationManager _configurationManager;
-
         public IRequest Request { get; set; }
+        private IHttpResultFactory _resultFactory;
 
         private IContentDirectory ContentDirectory => DlnaEntryPoint.Current.ContentDirectory;
 
@@ -123,14 +121,10 @@ namespace Emby.Dlna.Api
 
         private IMediaReceiverRegistrar MediaReceiverRegistrar => DlnaEntryPoint.Current.MediaReceiverRegistrar;
 
-        public DlnaServerService(
-            IDlnaManager dlnaManager,
-            IHttpResultFactory httpResultFactory,
-            IServerConfigurationManager configurationManager)
+        public DlnaServerService(IDlnaManager dlnaManager, IHttpResultFactory httpResultFactory)
         {
             _dlnaManager = dlnaManager;
             _resultFactory = httpResultFactory;
-            _configurationManager = configurationManager;
         }
 
         private string GetHeader(string name)
@@ -172,32 +166,32 @@ namespace Emby.Dlna.Api
             return _resultFactory.GetResult(Request, xml, XMLContentType);
         }
 
-        public async Task<object> Post(ProcessMediaReceiverRegistrarControlRequest request)
+        public object Post(ProcessMediaReceiverRegistrarControlRequest request)
         {
-            var response = await PostAsync(request.RequestStream, MediaReceiverRegistrar).ConfigureAwait(false);
+            var response = PostAsync(request.RequestStream, MediaReceiverRegistrar);
 
             return _resultFactory.GetResult(Request, response.Xml, XMLContentType);
         }
 
-        public async Task<object> Post(ProcessContentDirectoryControlRequest request)
+        public object Post(ProcessContentDirectoryControlRequest request)
         {
-            var response = await PostAsync(request.RequestStream, ContentDirectory).ConfigureAwait(false);
+            var response = PostAsync(request.RequestStream, ContentDirectory);
 
             return _resultFactory.GetResult(Request, response.Xml, XMLContentType);
         }
 
-        public async Task<object> Post(ProcessConnectionManagerControlRequest request)
+        public object Post(ProcessConnectionManagerControlRequest request)
         {
-            var response = await PostAsync(request.RequestStream, ConnectionManager).ConfigureAwait(false);
+            var response = PostAsync(request.RequestStream, ConnectionManager);
 
             return _resultFactory.GetResult(Request, response.Xml, XMLContentType);
         }
 
-        private Task<ControlResponse> PostAsync(Stream requestStream, IUpnpService service)
+        private ControlResponse PostAsync(Stream requestStream, IUpnpService service)
         {
-            var id = GetPathValue(2).ToString();
+            var id = GetPathValue(2);
 
-            return service.ProcessControlRequestAsync(new ControlRequest
+            return service.ProcessControlRequest(new ControlRequest
             {
                 Headers = Request.Headers,
                 InputXml = requestStream,
@@ -206,99 +200,38 @@ namespace Emby.Dlna.Api
             });
         }
 
-        // Copied from MediaBrowser.Api/BaseApiService.cs
-        // TODO: Remove code duplication
-        /// <summary>
-        /// Gets the path segment at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the path segment.</param>
-        /// <returns>The path segment at the specified index.</returns>
-        /// <exception cref="IndexOutOfRangeException" >Path doesn't contain enough segments.</exception>
-        /// <exception cref="InvalidDataException" >Path doesn't start with the base url.</exception>
-        protected internal ReadOnlySpan<char> GetPathValue(int index)
+        protected string GetPathValue(int index)
         {
-            static void ThrowIndexOutOfRangeException()
-                => throw new IndexOutOfRangeException("Path doesn't contain enough segments.");
+            var pathInfo = Parse(Request.PathInfo);
+            var first = pathInfo[0];
 
-            static void ThrowInvalidDataException()
-                => throw new InvalidDataException("Path doesn't start with the base url.");
-
-            ReadOnlySpan<char> path = Request.PathInfo;
-
-            // Remove the protocol part from the url
-            int pos = path.LastIndexOf("://");
-            if (pos != -1)
+            // backwards compatibility
+            // TODO: Work out what this is doing.
+            if (string.Equals(first, "mediabrowser", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(first, "emby", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(first, "jellyfin", StringComparison.OrdinalIgnoreCase))
             {
-                path = path.Slice(pos + 3);
+                index++;
             }
 
-            // Remove the query string
-            pos = path.LastIndexOf('?');
-            if (pos != -1)
+            return pathInfo[index];
+        }
+
+        private List<string> Parse(string pathUri)
+        {
+            var actionParts = pathUri.Split(new[] { "://" }, StringSplitOptions.None);
+
+            var pathInfo = actionParts[actionParts.Length - 1];
+
+            var optionsPos = pathInfo.LastIndexOf('?');
+            if (optionsPos != -1)
             {
-                path = path.Slice(0, pos);
+                pathInfo = pathInfo.Substring(0, optionsPos);
             }
 
-            // Remove the domain
-            pos = path.IndexOf('/');
-            if (pos != -1)
-            {
-                path = path.Slice(pos);
-            }
+            var args = pathInfo.Split('/');
 
-            // Remove base url
-            string baseUrl = _configurationManager.Configuration.BaseUrl;
-            int baseUrlLen = baseUrl.Length;
-            if (baseUrlLen != 0)
-            {
-                if (path.StartsWith(baseUrl, StringComparison.OrdinalIgnoreCase))
-                {
-                    path = path.Slice(baseUrlLen);
-                }
-                else
-                {
-                    // The path doesn't start with the base url,
-                    // how did we get here?
-                    ThrowInvalidDataException();
-                }
-            }
-
-            // Remove leading /
-            path = path.Slice(1);
-
-            // Backwards compatibility
-            const string Emby = "emby/";
-            if (path.StartsWith(Emby, StringComparison.OrdinalIgnoreCase))
-            {
-                path = path.Slice(Emby.Length);
-            }
-
-            const string MediaBrowser = "mediabrowser/";
-            if (path.StartsWith(MediaBrowser, StringComparison.OrdinalIgnoreCase))
-            {
-                path = path.Slice(MediaBrowser.Length);
-            }
-
-            // Skip segments until we are at the right index
-            for (int i = 0; i < index; i++)
-            {
-                pos = path.IndexOf('/');
-                if (pos == -1)
-                {
-                    ThrowIndexOutOfRangeException();
-                }
-
-                path = path.Slice(pos + 1);
-            }
-
-            // Remove the rest
-            pos = path.IndexOf('/');
-            if (pos != -1)
-            {
-                path = path.Slice(0, pos);
-            }
-
-            return path;
+            return args.Skip(1).ToList();
         }
 
         public object Get(GetIcon request)

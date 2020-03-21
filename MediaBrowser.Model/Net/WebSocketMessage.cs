@@ -1,9 +1,7 @@
-#pragma warning disable CS1591
-
 namespace MediaBrowser.Model.Net
 {
     /// <summary>
-    /// Class WebSocketMessage.
+    /// Class WebSocketMessage
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class WebSocketMessage<T>
@@ -15,7 +13,6 @@ namespace MediaBrowser.Model.Net
         public string MessageType { get; set; }
         public string MessageId { get; set; }
         public string ServerId { get; set; }
-
         /// <summary>
         /// Gets or sets the data.
         /// </summary>

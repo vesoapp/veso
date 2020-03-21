@@ -6,9 +6,6 @@ using static MediaBrowser.Common.Cryptography.Constants;
 
 namespace Emby.Server.Implementations.Cryptography
 {
-    /// <summary>
-    /// Class providing abstractions over cryptographic functions.
-    /// </summary>
     public class CryptographyProvider : ICryptoProvider, IDisposable
     {
         private static readonly HashSet<string> _supportedHashMethods = new HashSet<string>()
@@ -33,9 +30,6 @@ namespace Emby.Server.Implementations.Cryptography
 
         private bool _disposed = false;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CryptographyProvider"/> class.
-        /// </summary>
         public CryptographyProvider()
         {
             // FIXME: When we get DotNet Standard 2.1 we need to revisit how we do the crypto
@@ -45,10 +39,8 @@ namespace Emby.Server.Implementations.Cryptography
             _randomNumberGenerator = RandomNumberGenerator.Create();
         }
 
-        /// <inheritdoc />
         public string DefaultHashMethod => "PBKDF2";
 
-        /// <inheritdoc />
         public IEnumerable<string> GetSupportedHashMethods()
             => _supportedHashMethods;
 
@@ -67,7 +59,12 @@ namespace Emby.Server.Implementations.Cryptography
             throw new CryptographicException($"Cannot currently use PBKDF2 with requested hash method: {method}");
         }
 
-        /// <inheritdoc />
+        public byte[] ComputeHash(string hashMethod, byte[] bytes)
+            => ComputeHash(hashMethod, bytes, Array.Empty<byte>());
+
+        public byte[] ComputeHashWithDefaultMethod(byte[] bytes)
+            => ComputeHash(DefaultHashMethod, bytes);
+
         public byte[] ComputeHash(string hashMethod, byte[] bytes, byte[] salt)
         {
             if (hashMethod == DefaultHashMethod)
@@ -93,17 +90,15 @@ namespace Emby.Server.Implementations.Cryptography
             }
 
             throw new CryptographicException($"Requested hash method is not supported: {hashMethod}");
+
         }
 
-        /// <inheritdoc />
         public byte[] ComputeHashWithDefaultMethod(byte[] bytes, byte[] salt)
             => PBKDF2(DefaultHashMethod, bytes, salt, DefaultIterations);
 
-        /// <inheritdoc />
         public byte[] GenerateSalt()
             => GenerateSalt(DefaultSaltLength);
 
-        /// <inheritdoc />
         public byte[] GenerateSalt(int length)
         {
             byte[] salt = new byte[length];
@@ -118,10 +113,6 @@ namespace Emby.Server.Implementations.Cryptography
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)

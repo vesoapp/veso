@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Collections.Generic;
 
 namespace MediaBrowser.Model.Cryptography
@@ -9,6 +7,10 @@ namespace MediaBrowser.Model.Cryptography
         string DefaultHashMethod { get; }
 
         IEnumerable<string> GetSupportedHashMethods();
+
+        byte[] ComputeHash(string HashMethod, byte[] bytes);
+
+        byte[] ComputeHashWithDefaultMethod(byte[] bytes);
 
         byte[] ComputeHash(string HashMethod, byte[] bytes, byte[] salt);
 

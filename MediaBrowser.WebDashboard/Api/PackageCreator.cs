@@ -1,7 +1,4 @@
-#pragma warning disable CS1591
-
 using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,7 +44,10 @@ namespace MediaBrowser.WebDashboard.Api
             return string.Equals(Path.GetExtension(path), ".html", StringComparison.OrdinalIgnoreCase);
         }
 
-        // Modifies the HTML by adding common meta tags, css and js.
+        /// <summary>
+        /// Modifies the HTML by adding common meta tags, css and js.
+        /// </summary>
+        /// <returns>Task{Stream}.</returns>
         public async Task<Stream> ModifyHtml(
             string path,
             Stream sourceStream,
@@ -67,29 +67,30 @@ namespace MediaBrowser.WebDashboard.Api
             {
                 var lang = localizationCulture.Split('-')[0];
 
-                html = html.Replace("<html", "<html data-culture=\"" + localizationCulture + "\" lang=\"" + lang + "\"", StringComparison.Ordinal);
+                html = html.Replace("<html", "<html data-culture=\"" + localizationCulture + "\" lang=\"" + lang + "\"");
             }
 
             if (isMainIndexPage)
             {
-                html = html.Replace("<head>", "<head>" + GetMetaTags(mode), StringComparison.Ordinal);
+                html = html.Replace("<head>", "<head>" + GetMetaTags(mode));
             }
 
             // Disable embedded scripts from plugins. We'll run them later once resources have loaded
             if (html.IndexOf("<script", StringComparison.OrdinalIgnoreCase) != -1)
             {
-                html = html.Replace("<script", "<!--<script", StringComparison.Ordinal);
-                html = html.Replace("</script>", "</script>-->", StringComparison.Ordinal);
+                html = html.Replace("<script", "<!--<script");
+                html = html.Replace("</script>", "</script>-->");
             }
 
             if (isMainIndexPage)
             {
-                html = html.Replace("</body>", GetCommonJavascript(mode, appVersion) + "</body>", StringComparison.Ordinal);
+                html = html.Replace("</body>", GetCommonJavascript(mode, appVersion) + "</body>");
             }
 
             var bytes = Encoding.UTF8.GetBytes(html);
 
             return new MemoryStream(bytes);
+
         }
 
         /// <summary>
@@ -122,11 +123,11 @@ namespace MediaBrowser.WebDashboard.Api
             builder.Append("<script>");
             if (!string.IsNullOrWhiteSpace(mode))
             {
-                builder.AppendFormat(CultureInfo.InvariantCulture, "window.appMode='{0}';", mode);
+                builder.AppendFormat("window.appMode='{0}';", mode);
             }
             else
             {
-                builder.AppendFormat(CultureInfo.InvariantCulture, "window.dashboardVersion='{0}';", version);
+                builder.AppendFormat("window.dashboardVersion='{0}';", version);
             }
 
             builder.Append("</script>");

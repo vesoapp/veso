@@ -1,10 +1,8 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using Emby.Dlna.Didl;
 using MediaBrowser.Controller.Configuration;
@@ -17,34 +15,44 @@ namespace Emby.Dlna.Service
     {
         private const string NS_SOAPENV = "http://schemas.xmlsoap.org/soap/envelope/";
 
-        protected IServerConfigurationManager Config { get; }
-        protected ILogger Logger { get; }
+        protected readonly IServerConfigurationManager Config;
+        protected readonly ILogger _logger;
 
         protected BaseControlHandler(IServerConfigurationManager config, ILogger logger)
         {
             Config = config;
-            Logger = logger;
+            _logger = logger;
         }
 
-        public async Task<ControlResponse> ProcessControlRequestAsync(ControlRequest request)
+        public ControlResponse ProcessControlRequest(ControlRequest request)
         {
             try
             {
-                LogRequest(request);
+                var enableDebugLogging = Config.GetDlnaConfiguration().EnableDebugLog;
 
-                var response = await ProcessControlRequestInternalAsync(request).ConfigureAwait(false);
-                LogResponse(response);
+                if (enableDebugLogging)
+                {
+                    LogRequest(request);
+                }
+
+                var response = ProcessControlRequestInternal(request);
+
+                if (enableDebugLogging)
+                {
+                    LogResponse(response);
+                }
+
                 return response;
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error processing control request");
+                _logger.LogError(ex, "Error processing control request");
 
-                return ControlErrorHandler.GetResponse(ex);
+                return new ControlErrorHandler().GetResponse(ex);
             }
         }
 
-        private async Task<ControlResponse> ProcessControlRequestInternalAsync(ControlRequest request)
+        private ControlResponse ProcessControlRequestInternal(ControlRequest request)
         {
             ControlRequestInfo requestInfo = null;
 
@@ -55,17 +63,18 @@ namespace Emby.Dlna.Service
                     ValidationType = ValidationType.None,
                     CheckCharacters = false,
                     IgnoreProcessingInstructions = true,
-                    IgnoreComments = true,
-                    Async = true
+                    IgnoreComments = true
                 };
 
                 using (var reader = XmlReader.Create(streamReader, readerSettings))
                 {
-                    requestInfo = await ParseRequestAsync(reader).ConfigureAwait(false);
+                    requestInfo = ParseRequest(reader);
                 }
             }
 
-            Logger.LogDebug("Received control request {0}", requestInfo.LocalName);
+            _logger.LogDebug("Received control request {0}", requestInfo.LocalName);
+
+            var result = GetResult(requestInfo.LocalName, requestInfo.Headers);
 
             var settings = new XmlWriterSettings
             {
@@ -84,9 +93,12 @@ namespace Emby.Dlna.Service
 
                 writer.WriteStartElement("SOAP-ENV", "Body", NS_SOAPENV);
                 writer.WriteStartElement("u", requestInfo.LocalName + "Response", requestInfo.NamespaceURI);
-
-                WriteResult(requestInfo.LocalName, requestInfo.Headers, writer);
-
+                foreach (var i in result)
+                {
+                    writer.WriteStartElement(i.Key);
+                    writer.WriteString(i.Value);
+                    writer.WriteFullEndElement();
+                }
                 writer.WriteFullEndElement();
                 writer.WriteFullEndElement();
 
@@ -94,7 +106,7 @@ namespace Emby.Dlna.Service
                 writer.WriteEndDocument();
             }
 
-            var xml = builder.ToString().Replace("xmlns:m=", "xmlns:u=", StringComparison.Ordinal);
+            var xml = builder.ToString().Replace("xmlns:m=", "xmlns:u=");
 
             var controlResponse = new ControlResponse
             {
@@ -102,15 +114,17 @@ namespace Emby.Dlna.Service
                 IsSuccessful = true
             };
 
+            //logger.LogDebug(xml);
+
             controlResponse.Headers.Add("EXT", string.Empty);
 
             return controlResponse;
         }
 
-        private async Task<ControlRequestInfo> ParseRequestAsync(XmlReader reader)
+        private ControlRequestInfo ParseRequest(XmlReader reader)
         {
-            await reader.MoveToContentAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            reader.MoveToContent();
+            reader.Read();
 
             // Loop through each element
             while (!reader.EOF && reader.ReadState == ReadState.Interactive)
@@ -125,38 +139,37 @@ namespace Emby.Dlna.Service
                                 {
                                     using (var subReader = reader.ReadSubtree())
                                     {
-                                        return await ParseBodyTagAsync(subReader).ConfigureAwait(false);
+                                        return ParseBodyTag(subReader);
                                     }
                                 }
                                 else
                                 {
-                                    await reader.ReadAsync().ConfigureAwait(false);
+                                    reader.Read();
                                 }
-
                                 break;
                             }
                         default:
                             {
-                                await reader.SkipAsync().ConfigureAwait(false);
+                                reader.Skip();
                                 break;
                             }
                     }
                 }
                 else
                 {
-                    await reader.ReadAsync().ConfigureAwait(false);
+                    reader.Read();
                 }
             }
 
             return new ControlRequestInfo();
         }
 
-        private async Task<ControlRequestInfo> ParseBodyTagAsync(XmlReader reader)
+        private ControlRequestInfo ParseBodyTag(XmlReader reader)
         {
             var result = new ControlRequestInfo();
 
-            await reader.MoveToContentAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            reader.MoveToContent();
+            reader.Read();
 
             // Loop through each element
             while (!reader.EOF && reader.ReadState == ReadState.Interactive)
@@ -170,28 +183,28 @@ namespace Emby.Dlna.Service
                     {
                         using (var subReader = reader.ReadSubtree())
                         {
-                            await ParseFirstBodyChildAsync(subReader, result.Headers).ConfigureAwait(false);
+                            ParseFirstBodyChild(subReader, result.Headers);
                             return result;
                         }
                     }
                     else
                     {
-                        await reader.ReadAsync().ConfigureAwait(false);
+                        reader.Read();
                     }
                 }
                 else
                 {
-                    await reader.ReadAsync().ConfigureAwait(false);
+                    reader.Read();
                 }
             }
 
             return result;
         }
 
-        private async Task ParseFirstBodyChildAsync(XmlReader reader, IDictionary<string, string> headers)
+        private void ParseFirstBodyChild(XmlReader reader, IDictionary<string, string> headers)
         {
-            await reader.MoveToContentAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            reader.MoveToContent();
+            reader.Read();
 
             // Loop through each element
             while (!reader.EOF && reader.ReadState == ReadState.Interactive)
@@ -199,23 +212,23 @@ namespace Emby.Dlna.Service
                 if (reader.NodeType == XmlNodeType.Element)
                 {
                     // TODO: Should we be doing this here, or should it be handled earlier when decoding the request?
-                    headers[reader.LocalName.RemoveDiacritics()] = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    headers[reader.LocalName.RemoveDiacritics()] = reader.ReadElementContentAsString();
                 }
                 else
                 {
-                    await reader.ReadAsync().ConfigureAwait(false);
+                    reader.Read();
                 }
             }
         }
 
         private class ControlRequestInfo
         {
-            public string LocalName { get; set; }
-            public string NamespaceURI { get; set; }
-            public Dictionary<string, string> Headers { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            public string LocalName;
+            public string NamespaceURI;
+            public IDictionary<string, string> Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        protected abstract void WriteResult(string methodName, IDictionary<string, string> methodParams, XmlWriter xmlWriter);
+        protected abstract IEnumerable<KeyValuePair<string, string>> GetResult(string methodName, IDictionary<string, string> methodParams);
 
         private void LogRequest(ControlRequest request)
         {
@@ -224,7 +237,10 @@ namespace Emby.Dlna.Service
                 return;
             }
 
-            Logger.LogDebug("Control request. Headers: {@Headers}", request.Headers);
+            var originalHeaders = request.Headers;
+            var headers = string.Join(", ", originalHeaders.Select(i => string.Format("{0}={1}", i.Key, i.Value)).ToArray());
+
+            _logger.LogDebug("Control request. Headers: {0}", headers);
         }
 
         private void LogResponse(ControlResponse response)
@@ -234,7 +250,11 @@ namespace Emby.Dlna.Service
                 return;
             }
 
-            Logger.LogDebug("Control response. Headers: {@Headers}\n{Xml}", response.Headers, response.Xml);
+            var originalHeaders = response.Headers;
+            var headers = string.Join(", ", originalHeaders.Select(i => string.Format("{0}={1}", i.Key, i.Value)).ToArray());
+            //builder.Append(response.Xml);
+
+            _logger.LogDebug("Control response. Headers: {0}", headers);
         }
     }
 }

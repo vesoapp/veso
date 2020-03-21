@@ -1,4 +1,3 @@
-#pragma warning disable CS1591
 
 namespace Emby.Dlna.Common
 {
@@ -14,8 +13,9 @@ namespace Emby.Dlna.Common
 
         public string EventSubUrl { get; set; }
 
-        /// <inheritdoc />
         public override string ToString()
-            => ServiceId;
+        {
+            return string.Format("{0}", ServiceId);
+        }
     }
 }

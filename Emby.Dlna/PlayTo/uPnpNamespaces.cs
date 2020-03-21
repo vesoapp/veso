@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Xml.Linq;
 
 namespace Emby.Dlna.PlayTo

@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Model.Net;
+using MediaBrowser.Model.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace MediaBrowser.Controller.Net

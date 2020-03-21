@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Threading;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
@@ -6,12 +7,12 @@ using Microsoft.Extensions.Logging;
 namespace Emby.Server.Implementations.ScheduledTasks
 {
     /// <summary>
-    /// Represents a task trigger that fires everyday.
+    /// Represents a task trigger that fires everyday
     /// </summary>
     public class DailyTrigger : ITaskTrigger
     {
         /// <summary>
-        /// Get the time of day to trigger the task to run.
+        /// Get the time of day to trigger the task to run
         /// </summary>
         /// <value>The time of day.</value>
         public TimeSpan TimeOfDay { get; set; }

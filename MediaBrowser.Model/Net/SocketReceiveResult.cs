@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Net;
 
 namespace MediaBrowser.Model.Net
@@ -20,7 +18,7 @@ namespace MediaBrowser.Model.Net
         public int ReceivedBytes { get; set; }
 
         /// <summary>
-        /// The <see cref="IPEndPoint"/> the data was received from.
+        /// The <see cref="IpEndPointInfo"/> the data was received from.
         /// </summary>
         public IPEndPoint RemoteEndPoint { get; set; }
         public IPAddress LocalIPAddress { get; set; }

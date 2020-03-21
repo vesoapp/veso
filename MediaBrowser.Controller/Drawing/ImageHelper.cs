@@ -19,6 +19,8 @@ namespace MediaBrowser.Controller.Drawing
             return GetSizeEstimate(options);
         }
 
+        public static IImageProcessor ImageProcessor { get; set; }
+
         private static ImageDimensions GetSizeEstimate(ImageProcessingOptions options)
         {
             if (options.Width.HasValue && options.Height.HasValue)

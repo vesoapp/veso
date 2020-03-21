@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
@@ -9,7 +8,6 @@ using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.Music
 {
@@ -43,17 +41,7 @@ namespace MediaBrowser.Api.Music
         private readonly IDtoService _dtoService;
         private readonly IAuthorizationContext _authContext;
 
-        public AlbumsService(
-            ILogger<AlbumsService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            IUserManager userManager,
-            IUserDataManager userDataRepository,
-            ILibraryManager libraryManager,
-            IItemRepository itemRepo,
-            IDtoService dtoService,
-            IAuthorizationContext authContext)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public AlbumsService(IUserManager userManager, IUserDataManager userDataRepository, ILibraryManager libraryManager, IItemRepository itemRepo, IDtoService dtoService, IAuthorizationContext authContext)
         {
             _userManager = userManager;
             _userDataRepository = userDataRepository;

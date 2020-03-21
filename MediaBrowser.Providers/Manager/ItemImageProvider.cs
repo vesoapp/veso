@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Library;
@@ -24,12 +25,14 @@ namespace MediaBrowser.Providers.Manager
     {
         private readonly ILogger _logger;
         private readonly IProviderManager _providerManager;
+        private readonly IServerConfigurationManager _config;
         private readonly IFileSystem _fileSystem;
 
-        public ItemImageProvider(ILogger logger, IProviderManager providerManager, IFileSystem fileSystem)
+        public ItemImageProvider(ILogger logger, IProviderManager providerManager, IServerConfigurationManager config, IFileSystem fileSystem)
         {
             _logger = logger;
             _providerManager = providerManager;
+            _config = config;
             _fileSystem = fileSystem;
         }
 
@@ -39,7 +42,7 @@ namespace MediaBrowser.Providers.Manager
 
             if (!(item is Photo))
             {
-                var images = providers.OfType<ILocalImageProvider>()
+                var images = providers.OfType<ILocalImageFileProvider>()
                     .SelectMany(i => i.GetImages(item, directoryService))
                     .ToList();
 
@@ -138,7 +141,7 @@ namespace MediaBrowser.Providers.Manager
                                 {
                                     var mimeType = MimeTypes.GetMimeType(response.Path);
 
-                                    var stream = new FileStream(response.Path, FileMode.Open, FileAccess.Read, FileShare.Read, IODefaults.FileStreamBufferSize, true);
+                                    var stream = _fileSystem.GetFileStream(response.Path, FileOpenMode.Open, FileAccessMode.Read, FileShareMode.Read, true);
 
                                     await _providerManager.SaveImage(item, stream, mimeType, imageType, null, cancellationToken).ConfigureAwait(false);
                                 }
@@ -337,7 +340,7 @@ namespace MediaBrowser.Providers.Manager
 
             if (deleted)
             {
-                item.ValidateImages(new DirectoryService(_fileSystem));
+                item.ValidateImages(new DirectoryService(_logger, _fileSystem));
             }
         }
 

@@ -7,6 +7,7 @@ using Emby.Server.Implementations.Net;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Net;
 using MediaBrowser.Model.Serialization;
+using MediaBrowser.Model.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using UtfUnknown;
@@ -14,73 +15,31 @@ using UtfUnknown;
 namespace Emby.Server.Implementations.HttpServer
 {
     /// <summary>
-    /// Class WebSocketConnection.
+    /// Class WebSocketConnection
     /// </summary>
     public class WebSocketConnection : IWebSocketConnection
     {
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly ILogger _logger;
+        public event EventHandler<EventArgs> Closed;
 
         /// <summary>
-        /// The json serializer.
-        /// </summary>
-        private readonly IJsonSerializer _jsonSerializer;
-
-        /// <summary>
-        /// The socket.
+        /// The _socket
         /// </summary>
         private readonly IWebSocket _socket;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebSocketConnection" /> class.
-        /// </summary>
-        /// <param name="socket">The socket.</param>
-        /// <param name="remoteEndPoint">The remote end point.</param>
-        /// <param name="jsonSerializer">The json serializer.</param>
-        /// <param name="logger">The logger.</param>
-        /// <exception cref="ArgumentNullException">socket</exception>
-        public WebSocketConnection(IWebSocket socket, string remoteEndPoint, IJsonSerializer jsonSerializer, ILogger logger)
-        {
-            if (socket == null)
-            {
-                throw new ArgumentNullException(nameof(socket));
-            }
-
-            if (string.IsNullOrEmpty(remoteEndPoint))
-            {
-                throw new ArgumentNullException(nameof(remoteEndPoint));
-            }
-
-            if (jsonSerializer == null)
-            {
-                throw new ArgumentNullException(nameof(jsonSerializer));
-            }
-
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            Id = Guid.NewGuid();
-            _jsonSerializer = jsonSerializer;
-            _socket = socket;
-            _socket.OnReceiveBytes = OnReceiveInternal;
-
-            RemoteEndPoint = remoteEndPoint;
-            _logger = logger;
-
-            socket.Closed += OnSocketClosed;
-        }
-
-        /// <inheritdoc />
-        public event EventHandler<EventArgs> Closed;
-
-        /// <summary>
-        /// Gets or sets the remote end point.
+        /// The _remote end point
         /// </summary>
         public string RemoteEndPoint { get; private set; }
+
+        /// <summary>
+        /// The logger
+        /// </summary>
+        private readonly ILogger _logger;
+
+        /// <summary>
+        /// The _json serializer
+        /// </summary>
+        private readonly IJsonSerializer _jsonSerializer;
 
         /// <summary>
         /// Gets or sets the receive action.
@@ -105,7 +64,6 @@ namespace Emby.Server.Implementations.HttpServer
         /// </summary>
         /// <value>The URL.</value>
         public string Url { get; set; }
-
         /// <summary>
         /// Gets or sets the query string.
         /// </summary>
@@ -113,12 +71,44 @@ namespace Emby.Server.Implementations.HttpServer
         public IQueryCollection QueryString { get; set; }
 
         /// <summary>
-        /// Gets the state.
+        /// Initializes a new instance of the <see cref="WebSocketConnection" /> class.
         /// </summary>
-        /// <value>The state.</value>
-        public WebSocketState State => _socket.State;
+        /// <param name="socket">The socket.</param>
+        /// <param name="remoteEndPoint">The remote end point.</param>
+        /// <param name="jsonSerializer">The json serializer.</param>
+        /// <param name="logger">The logger.</param>
+        /// <exception cref="ArgumentNullException">socket</exception>
+        public WebSocketConnection(IWebSocket socket, string remoteEndPoint, IJsonSerializer jsonSerializer, ILogger logger)
+        {
+            if (socket == null)
+            {
+                throw new ArgumentNullException(nameof(socket));
+            }
+            if (string.IsNullOrEmpty(remoteEndPoint))
+            {
+                throw new ArgumentNullException(nameof(remoteEndPoint));
+            }
+            if (jsonSerializer == null)
+            {
+                throw new ArgumentNullException(nameof(jsonSerializer));
+            }
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
 
-        void OnSocketClosed(object sender, EventArgs e)
+            Id = Guid.NewGuid();
+            _jsonSerializer = jsonSerializer;
+            _socket = socket;
+            _socket.OnReceiveBytes = OnReceiveInternal;
+
+            RemoteEndPoint = remoteEndPoint;
+            _logger = logger;
+
+            socket.Closed += socket_Closed;
+        }
+
+        void socket_Closed(object sender, EventArgs e)
         {
             Closed?.Invoke(this, EventArgs.Empty);
         }
@@ -220,7 +210,6 @@ namespace Emby.Server.Implementations.HttpServer
             return _socket.SendAsync(buffer, true, cancellationToken);
         }
 
-        /// <inheritdoc />
         public Task SendAsync(string text, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(text))
@@ -233,11 +222,18 @@ namespace Emby.Server.Implementations.HttpServer
             return _socket.SendAsync(text, true, cancellationToken);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the state.
+        /// </summary>
+        /// <value>The state.</value>
+        public WebSocketState State => _socket.State;
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Devices;
@@ -32,6 +31,12 @@ namespace MediaBrowser.Api.Playback
     public abstract class BaseStreamingService : BaseApiService
     {
         protected virtual bool EnableOutputInSubFolder => false;
+
+        /// <summary>
+        /// Gets or sets the application paths.
+        /// </summary>
+        /// <value>The application paths.</value>
+        protected IServerConfigurationManager ServerConfigurationManager { get; private set; }
 
         /// <summary>
         /// Gets or sets the user manager.
@@ -63,6 +68,8 @@ namespace MediaBrowser.Api.Playback
 
         protected IDeviceManager DeviceManager { get; private set; }
 
+        protected ISubtitleEncoder SubtitleEncoder { get; private set; }
+
         protected IMediaSourceManager MediaSourceManager { get; private set; }
 
         protected IJsonSerializer JsonSerializer { get; private set; }
@@ -81,34 +88,33 @@ namespace MediaBrowser.Api.Playback
         /// Initializes a new instance of the <see cref="BaseStreamingService" /> class.
         /// </summary>
         protected BaseStreamingService(
-            ILogger logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
+            IServerConfigurationManager serverConfig,
             IUserManager userManager,
             ILibraryManager libraryManager,
             IIsoManager isoManager,
             IMediaEncoder mediaEncoder,
             IFileSystem fileSystem,
             IDlnaManager dlnaManager,
+            ISubtitleEncoder subtitleEncoder,
             IDeviceManager deviceManager,
             IMediaSourceManager mediaSourceManager,
             IJsonSerializer jsonSerializer,
-            IAuthorizationContext authorizationContext,
-            EncodingHelper encodingHelper)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+            IAuthorizationContext authorizationContext)
         {
+            ServerConfigurationManager = serverConfig;
             UserManager = userManager;
             LibraryManager = libraryManager;
             IsoManager = isoManager;
             MediaEncoder = mediaEncoder;
             FileSystem = fileSystem;
             DlnaManager = dlnaManager;
+            SubtitleEncoder = subtitleEncoder;
             DeviceManager = deviceManager;
             MediaSourceManager = mediaSourceManager;
             JsonSerializer = jsonSerializer;
             AuthorizationContext = authorizationContext;
 
-            EncodingHelper = encodingHelper;
+            EncodingHelper = new EncodingHelper(MediaEncoder, FileSystem, SubtitleEncoder);
         }
 
         /// <summary>
@@ -135,7 +141,7 @@ namespace MediaBrowser.Api.Playback
 
             var filename = data.GetMD5().ToString("N", CultureInfo.InvariantCulture);
             var ext = outputFileExtension.ToLowerInvariant();
-            var folder = ServerConfigurationManager.GetTranscodePath();
+            var folder = ServerConfigurationManager.ApplicationPaths.TranscodingTempPath;
 
             if (EnableOutputInSubFolder)
             {
@@ -144,6 +150,8 @@ namespace MediaBrowser.Api.Playback
 
             return Path.Combine(folder, filename + ext);
         }
+
+        protected readonly CultureInfo UsCulture = new CultureInfo("en-US");
 
         protected virtual string GetDefaultEncoderPreset()
         {
@@ -207,7 +215,7 @@ namespace MediaBrowser.Api.Playback
                 }
             }
 
-            var encodingOptions = ServerConfigurationManager.GetEncodingOptions();
+            var encodingOptions = ApiEntryPoint.Instance.GetEncodingOptions();
 
             var process = new Process()
             {
@@ -250,18 +258,18 @@ namespace MediaBrowser.Api.Playback
             {
                 if (string.Equals(state.OutputAudioCodec, "copy", StringComparison.OrdinalIgnoreCase))
                 {
-                    logFilePrefix = "ffmpeg-remux";
+                    logFilePrefix = "ffmpeg-directstream";
                 }
                 else
                 {
-                    logFilePrefix = "ffmpeg-directstream";
+                    logFilePrefix = "ffmpeg-remux";
                 }
             }
 
             var logFilePath = Path.Combine(ServerConfigurationManager.ApplicationPaths.LogDirectoryPath, logFilePrefix + "-" + Guid.NewGuid() + ".txt");
 
             // FFMpeg writes debug/error info to stderr. This is useful when debugging so let's put it in the log directory.
-            Stream logStream = new FileStream(logFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, IODefaults.FileStreamBufferSize, true);
+            Stream logStream = FileSystem.GetFileStream(logFilePath, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read, true);
 
             var commandLineLogMessageBytes = Encoding.UTF8.GetBytes(Request.AbsoluteUri + Environment.NewLine + Environment.NewLine + JsonSerializer.SerializeToString(state.MediaSource) + Environment.NewLine + Environment.NewLine + commandLineLogMessage + Environment.NewLine + Environment.NewLine);
             await logStream.WriteAsync(commandLineLogMessageBytes, 0, commandLineLogMessageBytes.Length, cancellationTokenSource.Token).ConfigureAwait(false);
@@ -327,19 +335,15 @@ namespace MediaBrowser.Api.Playback
 
         private bool EnableThrottling(StreamState state)
         {
-            var encodingOptions = ServerConfigurationManager.GetEncodingOptions();
-
-            // enable throttling when NOT using hardware acceleration
-            if (encodingOptions.HardwareAccelerationType == string.Empty)
-            {
-                return state.InputProtocol == MediaProtocol.File &&
-                       state.RunTimeTicks.HasValue &&
-                       state.RunTimeTicks.Value >= TimeSpan.FromMinutes(5).Ticks &&
-                       state.IsInputVideo &&
-                       state.VideoType == VideoType.VideoFile &&
-                       !string.Equals(state.OutputVideoCodec, "copy", StringComparison.OrdinalIgnoreCase);
-            }
             return false;
+            //// do not use throttling with hardware encoders
+            //return state.InputProtocol == MediaProtocol.File &&
+            //    state.RunTimeTicks.HasValue &&
+            //    state.RunTimeTicks.Value >= TimeSpan.FromMinutes(5).Ticks &&
+            //    state.IsInputVideo &&
+            //    state.VideoType == VideoType.VideoFile &&
+            //    !string.Equals(state.OutputVideoCodec, "copy", StringComparison.OrdinalIgnoreCase) &&
+            //    string.Equals(GetVideoEncoder(state), "libx264", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -583,8 +587,8 @@ namespace MediaBrowser.Api.Playback
         }
 
         /// <summary>
-        /// Parses query parameters as StreamOptions.
-        /// </summary>
+        /// Parses query parameters as StreamOptions
+        /// <summary>
         /// <param name="request">The stream request.</param>
         private void ParseStreamOptions(StreamRequest request)
         {
@@ -763,13 +767,13 @@ namespace MediaBrowser.Api.Playback
 
                 if (mediaSource == null)
                 {
-                    var mediaSources = await MediaSourceManager.GetPlaybackMediaSources(LibraryManager.GetItemById(request.Id), null, false, false, cancellationToken).ConfigureAwait(false);
+                    var mediaSources = (await MediaSourceManager.GetPlayackMediaSources(LibraryManager.GetItemById(request.Id), null, false, false, cancellationToken).ConfigureAwait(false)).ToList();
 
                     mediaSource = string.IsNullOrEmpty(request.MediaSourceId)
                        ? mediaSources[0]
                        : mediaSources.Find(i => string.Equals(i.Id, request.MediaSourceId));
 
-                    if (mediaSource == null && Guid.Parse(request.MediaSourceId) == request.Id)
+                    if (mediaSource == null && request.MediaSourceId.Equals(request.Id))
                     {
                         mediaSource = mediaSources[0];
                     }
@@ -841,7 +845,7 @@ namespace MediaBrowser.Api.Playback
                 ? GetOutputFileExtension(state)
                 : ('.' + state.OutputContainer);
 
-            var encodingOptions = ServerConfigurationManager.GetEncodingOptions();
+            var encodingOptions = ApiEntryPoint.Instance.GetEncodingOptions();
 
             state.OutputFilePath = GetOutputFilePath(state, encodingOptions, ext);
 

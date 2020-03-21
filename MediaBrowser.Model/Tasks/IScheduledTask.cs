@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -41,9 +39,9 @@ namespace MediaBrowser.Model.Tasks
         Task Execute(CancellationToken cancellationToken, IProgress<double> progress);
 
         /// <summary>
-        /// Gets the default triggers that define when the task will run.
+        /// Gets the default triggers.
         /// </summary>
-        /// <returns>The default triggers that define when the task will run.</returns>
+        /// <returns>IEnumerable{BaseTaskTrigger}.</returns>
         IEnumerable<TaskTriggerInfo> GetDefaultTriggers();
     }
 }

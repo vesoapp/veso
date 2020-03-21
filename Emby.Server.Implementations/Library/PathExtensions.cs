@@ -3,9 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace Emby.Server.Implementations.Library
 {
-    /// <summary>
-    /// Class providing extension methods for working with paths.
-    /// </summary>
     public static class PathExtensions
     {
         /// <summary>
@@ -35,7 +32,6 @@ namespace Emby.Server.Implementations.Library
                 int end = str.IndexOf(']', start);
                 return str.Substring(start, end - start);
             }
-
             // for imdbid we also accept pattern matching
             if (string.Equals(attrib, "imdbid", StringComparison.OrdinalIgnoreCase))
             {

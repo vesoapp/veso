@@ -23,7 +23,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
         public event EventHandler<GenericEventArgs<double>> TaskProgress;
 
         /// <summary>
-        /// Gets the scheduled task.
+        /// Gets or sets the scheduled task.
         /// </summary>
         /// <value>The scheduled task.</value>
         public IScheduledTask ScheduledTask { get; private set; }
@@ -215,12 +215,11 @@ namespace Emby.Server.Implementations.ScheduledTasks
         public double? CurrentProgress { get; private set; }
 
         /// <summary>
-        /// The _triggers.
+        /// The _triggers
         /// </summary>
         private Tuple<TaskTriggerInfo, ITaskTrigger>[] _triggers;
-
         /// <summary>
-        /// Gets the triggers that define when the task will run.
+        /// Gets the triggers that define when the task will run
         /// </summary>
         /// <value>The triggers.</value>
         private Tuple<TaskTriggerInfo, ITaskTrigger>[] InternalTriggers
@@ -246,7 +245,7 @@ namespace Emby.Server.Implementations.ScheduledTasks
         }
 
         /// <summary>
-        /// Gets the triggers that define when the task will run.
+        /// Gets the triggers that define when the task will run
         /// </summary>
         /// <value>The triggers.</value>
         /// <exception cref="ArgumentNullException">value</exception>

@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -472,10 +470,10 @@ namespace Emby.Server.Implementations.Channels
                 _libraryManager.CreateItem(item, null);
             }
 
-            await item.RefreshMetadata(new MetadataRefreshOptions(new DirectoryService(_fileSystem))
+            await item.RefreshMetadata(new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem))
             {
                 ForceSave = !isNew && forceUpdate
-            }, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken);
 
             return item;
         }
@@ -512,7 +510,7 @@ namespace Emby.Server.Implementations.Channels
             return _libraryManager.GetItemIds(new InternalItemsQuery
             {
                 IncludeItemTypes = new[] { typeof(Channel).Name },
-                OrderBy = new[] { (ItemSortBy.SortName, SortOrder.Ascending) }
+                OrderBy = new ValueTuple<string, SortOrder>[] { new ValueTuple<string, SortOrder>(ItemSortBy.SortName, SortOrder.Ascending) }
 
             }).Select(i => GetChannelFeatures(i.ToString("N", CultureInfo.InvariantCulture))).ToArray();
         }
@@ -620,16 +618,16 @@ namespace Emby.Server.Implementations.Channels
             {
                 query.OrderBy = new[]
                 {
-                    (ItemSortBy.PremiereDate, SortOrder.Descending),
-                    (ItemSortBy.ProductionYear, SortOrder.Descending),
-                    (ItemSortBy.DateCreated, SortOrder.Descending)
+                    new ValueTuple<string, SortOrder>(ItemSortBy.PremiereDate, SortOrder.Descending),
+                    new ValueTuple<string, SortOrder>(ItemSortBy.ProductionYear, SortOrder.Descending),
+                    new ValueTuple<string, SortOrder>(ItemSortBy.DateCreated, SortOrder.Descending)
                 };
             }
             else
             {
                 query.OrderBy = new[]
                 {
-                    (ItemSortBy.DateCreated, SortOrder.Descending)
+                    new ValueTuple<string, SortOrder>(ItemSortBy.DateCreated, SortOrder.Descending)
                 };
             }
 
@@ -638,7 +636,7 @@ namespace Emby.Server.Implementations.Channels
 
         private async Task RefreshLatestChannelItems(IChannel channel, CancellationToken cancellationToken)
         {
-            var internalChannel = await GetChannel(channel, cancellationToken).ConfigureAwait(false);
+            var internalChannel = await GetChannel(channel, cancellationToken);
 
             var query = new InternalItemsQuery();
             query.Parent = internalChannel;
@@ -1158,7 +1156,7 @@ namespace Emby.Server.Implementations.Channels
 
             if (isNew || forceUpdate || item.DateLastRefreshed == default(DateTime))
             {
-                _providerManager.QueueRefresh(item.Id, new MetadataRefreshOptions(new DirectoryService(_fileSystem)), RefreshPriority.Normal);
+                _providerManager.QueueRefresh(item.Id, new MetadataRefreshOptions(new DirectoryService(_logger, _fileSystem)), RefreshPriority.Normal);
             }
 
             return item;

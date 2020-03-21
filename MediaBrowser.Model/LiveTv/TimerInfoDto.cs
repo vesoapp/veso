@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using MediaBrowser.Model.Dto;
 
 namespace MediaBrowser.Model.LiveTv

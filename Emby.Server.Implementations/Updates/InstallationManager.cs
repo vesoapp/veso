@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,18 +19,52 @@ using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Updates;
 using Microsoft.Extensions.Logging;
+using static MediaBrowser.Common.HexHelper;
 
 namespace Emby.Server.Implementations.Updates
 {
     /// <summary>
-    /// Manages all install, uninstall and update operations (both plugins and system).
+    /// Manages all install, uninstall and update operations (both plugins and system)
     /// </summary>
     public class InstallationManager : IInstallationManager
     {
+        public event EventHandler<InstallationEventArgs> PackageInstalling;
+        public event EventHandler<InstallationEventArgs> PackageInstallationCompleted;
+        public event EventHandler<InstallationFailedEventArgs> PackageInstallationFailed;
+        public event EventHandler<InstallationEventArgs> PackageInstallationCancelled;
+
         /// <summary>
-        /// The _logger.
+        /// The current installations
+        /// </summary>
+        private List<(InstallationInfo info, CancellationTokenSource token)> _currentInstallations { get; set; }
+
+        /// <summary>
+        /// The completed installations
+        /// </summary>
+        private ConcurrentBag<InstallationInfo> _completedInstallationsInternal;
+
+        public IEnumerable<InstallationInfo> CompletedInstallations => _completedInstallationsInternal;
+
+        /// <summary>
+        /// Occurs when [plugin uninstalled].
+        /// </summary>
+        public event EventHandler<GenericEventArgs<IPlugin>> PluginUninstalled;
+
+        /// <summary>
+        /// Occurs when [plugin updated].
+        /// </summary>
+        public event EventHandler<GenericEventArgs<(IPlugin, PackageVersionInfo)>> PluginUpdated;
+
+        /// <summary>
+        /// Occurs when [plugin updated].
+        /// </summary>
+        public event EventHandler<GenericEventArgs<PackageVersionInfo>> PluginInstalled;
+
+        /// <summary>
+        /// The _logger
         /// </summary>
         private readonly ILogger _logger;
+
         private readonly IApplicationPaths _appPaths;
         private readonly IHttpClient _httpClient;
         private readonly IJsonSerializer _jsonSerializer;
@@ -44,18 +78,6 @@ namespace Emby.Server.Implementations.Updates
         private readonly IApplicationHost _applicationHost;
 
         private readonly IZipClient _zipClient;
-
-        private readonly object _currentInstallationsLock = new object();
-
-        /// <summary>
-        /// The current installations.
-        /// </summary>
-        private readonly List<(InstallationInfo info, CancellationTokenSource token)> _currentInstallations;
-
-        /// <summary>
-        /// The completed installations.
-        /// </summary>
-        private readonly ConcurrentBag<InstallationInfo> _completedInstallationsInternal;
 
         public InstallationManager(
             ILogger<InstallationManager> logger,
@@ -85,127 +107,205 @@ namespace Emby.Server.Implementations.Updates
             _zipClient = zipClient;
         }
 
-        /// <inheritdoc />
-        public event EventHandler<InstallationEventArgs> PackageInstalling;
+        /// <summary>
+        /// Gets all available packages.
+        /// </summary>
+        /// <returns>Task{List{PackageInfo}}.</returns>
+        public async Task<List<PackageInfo>> GetAvailablePackages(
+            CancellationToken cancellationToken,
+            bool withRegistration = true,
+            string packageType = null,
+            Version applicationVersion = null)
+        {
+            var packages = await GetAvailablePackagesWithoutRegistrationInfo(cancellationToken).ConfigureAwait(false);
+            return FilterPackages(packages, packageType, applicationVersion);
+        }
 
-        /// <inheritdoc />
-        public event EventHandler<InstallationEventArgs> PackageInstallationCompleted;
-
-        /// <inheritdoc />
-        public event EventHandler<InstallationFailedEventArgs> PackageInstallationFailed;
-
-        /// <inheritdoc />
-        public event EventHandler<InstallationEventArgs> PackageInstallationCancelled;
-
-        /// <inheritdoc />
-        public event EventHandler<GenericEventArgs<IPlugin>> PluginUninstalled;
-
-        /// <inheritdoc />
-        public event EventHandler<GenericEventArgs<(IPlugin, PackageVersionInfo)>> PluginUpdated;
-
-        /// <inheritdoc />
-        public event EventHandler<GenericEventArgs<PackageVersionInfo>> PluginInstalled;
-
-        /// <inheritdoc />
-        public IEnumerable<InstallationInfo> CompletedInstallations => _completedInstallationsInternal;
-
-        /// <inheritdoc />
-        public async Task<IReadOnlyList<PackageInfo>> GetAvailablePackages(CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Gets all available packages.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task{List{PackageInfo}}.</returns>
+        public async Task<List<PackageInfo>> GetAvailablePackagesWithoutRegistrationInfo(CancellationToken cancellationToken)
         {
             using (var response = await _httpClient.SendAsync(
                 new HttpRequestOptions
                 {
-                    Url = "https://repo.veso.org/releases/plugin/manifest.json",
+                    Url = "https://repo.jellyfin.org/releases/plugin/manifest.json",
                     CancellationToken = cancellationToken,
                     CacheMode = CacheMode.Unconditional,
-                    CacheLength = TimeSpan.FromMinutes(3)
+                    CacheLength = GetCacheLength()
                 },
                 HttpMethod.Get).ConfigureAwait(false))
             using (Stream stream = response.Content)
             {
-                return await _jsonSerializer.DeserializeFromStreamAsync<IReadOnlyList<PackageInfo>>(
-                    stream).ConfigureAwait(false);
+                return FilterPackages(await _jsonSerializer.DeserializeFromStreamAsync<PackageInfo[]>(stream).ConfigureAwait(false));
             }
         }
 
-        /// <inheritdoc />
-        public IEnumerable<PackageInfo> FilterPackages(
-            IEnumerable<PackageInfo> availablePackages,
-            string name = null,
-            Guid guid = default)
+        private static TimeSpan GetCacheLength()
         {
-            if (name != null)
-            {
-                availablePackages = availablePackages.Where(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (guid != Guid.Empty)
-            {
-                availablePackages = availablePackages.Where(x => Guid.Parse(x.guid) == guid);
-            }
-
-            return availablePackages;
+            return TimeSpan.FromMinutes(3);
         }
 
-        /// <inheritdoc />
-        public IEnumerable<PackageVersionInfo> GetCompatibleVersions(
-            IEnumerable<PackageVersionInfo> availableVersions,
-            Version minVersion = null,
-            PackageVersionClass classification = PackageVersionClass.Release)
+        protected List<PackageInfo> FilterPackages(IEnumerable<PackageInfo> packages)
         {
-            var appVer = _applicationHost.ApplicationVersion;
-            availableVersions = availableVersions
-                .Where(x => x.classification == classification
-                    && Version.Parse(x.requiredVersionStr) <= appVer);
+            var list = new List<PackageInfo>();
 
-            if (minVersion != null)
+            foreach (var package in packages)
             {
-                availableVersions = availableVersions.Where(x => x.Version >= minVersion);
+                var versions = new List<PackageVersionInfo>();
+                foreach (var version in package.versions)
+                {
+                    if (string.IsNullOrEmpty(version.sourceUrl))
+                    {
+                        continue;
+                    }
+
+                    versions.Add(version);
+                }
+
+                package.versions = versions
+                    .OrderByDescending(x => x.Version)
+                    .ToArray();
+
+                if (package.versions.Length == 0)
+                {
+                    continue;
+                }
+
+                list.Add(package);
             }
 
-            return availableVersions.OrderByDescending(x => x.Version);
+            // Remove packages with no versions
+            return list;
         }
 
-        /// <inheritdoc />
-        public IEnumerable<PackageVersionInfo> GetCompatibleVersions(
-            IEnumerable<PackageInfo> availablePackages,
-            string name = null,
-            Guid guid = default,
-            Version minVersion = null,
-            PackageVersionClass classification = PackageVersionClass.Release)
+        protected List<PackageInfo> FilterPackages(IEnumerable<PackageInfo> packages, string packageType, Version applicationVersion)
         {
-            var package = FilterPackages(availablePackages, name, guid).FirstOrDefault();
+            var packagesList = FilterPackages(packages);
 
-            // Package not found.
+            var returnList = new List<PackageInfo>();
+
+            var filterOnPackageType = !string.IsNullOrEmpty(packageType);
+
+            foreach (var p in packagesList)
+            {
+                if (filterOnPackageType && !string.Equals(p.type, packageType, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                // If an app version was supplied, filter the versions for each package to only include supported versions
+                if (applicationVersion != null)
+                {
+                    p.versions = p.versions.Where(v => IsPackageVersionUpToDate(v, applicationVersion)).ToArray();
+                }
+
+                if (p.versions.Length == 0)
+                {
+                    continue;
+                }
+
+                returnList.Add(p);
+            }
+
+            return returnList;
+        }
+
+        /// <summary>
+        /// Determines whether [is package version up to date] [the specified package version info].
+        /// </summary>
+        /// <param name="packageVersionInfo">The package version info.</param>
+        /// <param name="currentServerVersion">The current server version.</param>
+        /// <returns><c>true</c> if [is package version up to date] [the specified package version info]; otherwise, <c>false</c>.</returns>
+        private static bool IsPackageVersionUpToDate(PackageVersionInfo packageVersionInfo, Version currentServerVersion)
+        {
+            if (string.IsNullOrEmpty(packageVersionInfo.requiredVersionStr))
+            {
+                return true;
+            }
+
+            return Version.TryParse(packageVersionInfo.requiredVersionStr, out var requiredVersion) && currentServerVersion >= requiredVersion;
+        }
+
+        /// <summary>
+        /// Gets the package.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="guid">The assembly guid</param>
+        /// <param name="classification">The classification.</param>
+        /// <param name="version">The version.</param>
+        /// <returns>Task{PackageVersionInfo}.</returns>
+        public async Task<PackageVersionInfo> GetPackage(string name, string guid, PackageVersionClass classification, Version version)
+        {
+            var packages = await GetAvailablePackages(CancellationToken.None, false).ConfigureAwait(false);
+
+            var package = packages.FirstOrDefault(p => string.Equals(p.guid, guid ?? "none", StringComparison.OrdinalIgnoreCase))
+                            ?? packages.FirstOrDefault(p => p.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
             if (package == null)
             {
-                return Enumerable.Empty<PackageVersionInfo>();
+                return null;
             }
 
-            return GetCompatibleVersions(
-                package.versions,
-                minVersion,
-                classification);
+            return package.versions.FirstOrDefault(v => v.Version == version && v.classification == classification);
         }
 
-        /// <inheritdoc />
-        public async IAsyncEnumerable<PackageVersionInfo> GetAvailablePluginUpdates([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Gets the latest compatible version.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="guid">The assembly guid if this is a plug-in</param>
+        /// <param name="currentServerVersion">The current server version.</param>
+        /// <param name="classification">The classification.</param>
+        /// <returns>Task{PackageVersionInfo}.</returns>
+        public async Task<PackageVersionInfo> GetLatestCompatibleVersion(string name, string guid, Version currentServerVersion, PackageVersionClass classification = PackageVersionClass.Release)
         {
-            var catalog = await GetAvailablePackages(cancellationToken).ConfigureAwait(false);
+            var packages = await GetAvailablePackages(CancellationToken.None, false).ConfigureAwait(false);
+
+            return GetLatestCompatibleVersion(packages, name, guid, currentServerVersion, classification);
+        }
+
+        /// <summary>
+        /// Gets the latest compatible version.
+        /// </summary>
+        /// <param name="availablePackages">The available packages.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="currentServerVersion">The current server version.</param>
+        /// <param name="classification">The classification.</param>
+        /// <returns>PackageVersionInfo.</returns>
+        public PackageVersionInfo GetLatestCompatibleVersion(IEnumerable<PackageInfo> availablePackages, string name, string guid, Version currentServerVersion, PackageVersionClass classification = PackageVersionClass.Release)
+        {
+            var package = availablePackages.FirstOrDefault(p => string.Equals(p.guid, guid ?? "none", StringComparison.OrdinalIgnoreCase))
+                            ?? availablePackages.FirstOrDefault(p => p.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+            return package?.versions
+                .OrderByDescending(x => x.Version)
+                .FirstOrDefault(v => v.classification <= classification && IsPackageVersionUpToDate(v, currentServerVersion));
+        }
+
+        /// <summary>
+        /// Gets the available plugin updates.
+        /// </summary>
+        /// <param name="applicationVersion">The current server version.</param>
+        /// <param name="withAutoUpdateEnabled">if set to <c>true</c> [with auto update enabled].</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task{IEnumerable{PackageVersionInfo}}.</returns>
+        public async Task<IEnumerable<PackageVersionInfo>> GetAvailablePluginUpdates(Version applicationVersion, bool withAutoUpdateEnabled, CancellationToken cancellationToken)
+        {
+            var catalog = await GetAvailablePackagesWithoutRegistrationInfo(cancellationToken).ConfigureAwait(false);
 
             var systemUpdateLevel = _applicationHost.SystemUpdateLevel;
 
             // Figure out what needs to be installed
-            foreach (var plugin in _applicationHost.Plugins)
+            return _applicationHost.Plugins.Select(p =>
             {
-                var compatibleversions = GetCompatibleVersions(catalog, plugin.Name, plugin.Id, plugin.Version, systemUpdateLevel);
-                var version = compatibleversions.FirstOrDefault(y => y.Version > plugin.Version);
-                if (version != null
-                    && !CompletedInstallations.Any(x => string.Equals(x.AssemblyGuid, version.guid, StringComparison.OrdinalIgnoreCase)))
-                {
-                    yield return version;
-                }
-            }
+                var latestPluginInfo = GetLatestCompatibleVersion(catalog, p.Name, p.Id.ToString(), applicationVersion, systemUpdateLevel);
+
+                return latestPluginInfo != null && latestPluginInfo.Version > p.Version ? latestPluginInfo : null;
+            }).Where(i => i != null)
+            .Where(p => !string.IsNullOrEmpty(p.sourceUrl) && !CompletedInstallations.Any(i => string.Equals(i.AssemblyGuid, p.guid, StringComparison.OrdinalIgnoreCase)));
         }
 
         /// <inheritdoc />
@@ -230,7 +330,7 @@ namespace Emby.Server.Implementations.Updates
             var tuple = (installationInfo, innerCancellationTokenSource);
 
             // Add it to the in-progress list
-            lock (_currentInstallationsLock)
+            lock (_currentInstallations)
             {
                 _currentInstallations.Add(tuple);
             }
@@ -249,7 +349,7 @@ namespace Emby.Server.Implementations.Updates
             {
                 await InstallPackageInternal(package, linkedToken).ConfigureAwait(false);
 
-                lock (_currentInstallationsLock)
+                lock (_currentInstallations)
                 {
                     _currentInstallations.Remove(tuple);
                 }
@@ -260,7 +360,7 @@ namespace Emby.Server.Implementations.Updates
             }
             catch (OperationCanceledException)
             {
-                lock (_currentInstallationsLock)
+                lock (_currentInstallations)
                 {
                     _currentInstallations.Remove(tuple);
                 }
@@ -275,7 +375,7 @@ namespace Emby.Server.Implementations.Updates
             {
                 _logger.LogError(ex, "Package installation failed");
 
-                lock (_currentInstallationsLock)
+                lock (_currentInstallations)
                 {
                     _currentInstallations.Remove(tuple);
                 }
@@ -291,7 +391,7 @@ namespace Emby.Server.Implementations.Updates
             finally
             {
                 // Dispose the progress object and remove the installation from the in-progress list
-                tuple.innerCancellationTokenSource.Dispose();
+                tuple.Item2.Dispose();
             }
         }
 
@@ -339,7 +439,7 @@ namespace Emby.Server.Implementations.Updates
             // Always override the passed-in target (which is a file) and figure it out again
             string targetDir = Path.Combine(_appPaths.PluginsPath, package.name);
 
-            // CA5351: Do Not Use Broken Cryptographic Algorithms
+// CA5351: Do Not Use Broken Cryptographic Algorithms
 #pragma warning disable CA5351
             using (var res = await _httpClient.SendAsync(
                 new HttpRequestOptions
@@ -355,7 +455,7 @@ namespace Emby.Server.Implementations.Updates
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var hash = Hex.Encode(md5.ComputeHash(stream));
+                var hash = ToHexString(md5.ComputeHash(stream));
                 if (!string.Equals(package.checksum, hash, StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.LogError(
@@ -435,21 +535,20 @@ namespace Emby.Server.Implementations.Updates
         /// <inheritdoc/>
         public bool CancelInstallation(Guid id)
         {
-            lock (_currentInstallationsLock)
+            lock (_currentInstallations)
             {
-                var install = _currentInstallations.Find(x => x.info.Id == id);
+                var install = _currentInstallations.Find(x => x.Item1.Id == id);
                 if (install == default((InstallationInfo, CancellationTokenSource)))
                 {
                     return false;
                 }
 
-                install.token.Cancel();
+                install.Item2.Cancel();
                 _currentInstallations.Remove(install);
                 return true;
             }
         }
 
-        /// <inheritdoc />
         public void Dispose()
         {
             Dispose(true);
@@ -464,11 +563,11 @@ namespace Emby.Server.Implementations.Updates
         {
             if (dispose)
             {
-                lock (_currentInstallationsLock)
+                lock (_currentInstallations)
                 {
                     foreach (var tuple in _currentInstallations)
                     {
-                        tuple.token.Dispose();
+                        tuple.Item2.Dispose();
                     }
 
                     _currentInstallations.Clear();

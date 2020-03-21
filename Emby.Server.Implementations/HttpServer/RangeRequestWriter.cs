@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -50,14 +48,12 @@ namespace Emby.Server.Implementations.HttpServer
         public IDictionary<string, string> Headers => _options;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RangeRequestWriter" /> class.
+        /// Initializes a new instance of the <see cref="StreamWriter" /> class.
         /// </summary>
         /// <param name="rangeHeader">The range header.</param>
-        /// <param name="contentLength">The content length.</param>
         /// <param name="source">The source.</param>
         /// <param name="contentType">Type of the content.</param>
         /// <param name="isHeadRequest">if set to <c>true</c> [is head request].</param>
-        /// <param name="logger">The logger instance.</param>
         public RangeRequestWriter(string rangeHeader, long contentLength, Stream source, string contentType, bool isHeadRequest, ILogger logger)
         {
             if (string.IsNullOrEmpty(contentType))

@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Linq;
 using MediaBrowser.Controller.Dlna;
 using MediaBrowser.Controller.Net;

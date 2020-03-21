@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -71,7 +69,7 @@ namespace Emby.Server.Implementations.HttpServer
                 SetRangeValues();
             }
 
-            FileShare = FileShare.Read;
+            FileShare = FileShareMode.Read;
             Cookies = new List<Cookie>();
         }
 
@@ -93,7 +91,7 @@ namespace Emby.Server.Implementations.HttpServer
 
         public List<Cookie> Cookies { get; private set; }
 
-        public FileShare FileShare { get; set; }
+        public FileShareMode FileShare { get; set; }
 
         /// <summary>
         /// Gets the options.
@@ -221,17 +219,17 @@ namespace Emby.Server.Implementations.HttpServer
             }
         }
 
-        public async Task TransmitFile(Stream stream, string path, long offset, long count, FileShare fileShare, CancellationToken cancellationToken)
+        public async Task TransmitFile(Stream stream, string path, long offset, long count, FileShareMode fileShareMode, CancellationToken cancellationToken)
         {
-            var fileOptions = FileOptions.SequentialScan;
+            var fileOpenOptions = FileOpenOptions.SequentialScan;
 
             // use non-async filestream along with read due to https://github.com/dotnet/corefx/issues/6039
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                fileOptions |= FileOptions.Asynchronous;
+                fileOpenOptions |= FileOpenOptions.Asynchronous;
             }
 
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, fileShare, IODefaults.FileStreamBufferSize, fileOptions))
+            using (var fs = _fileSystem.GetFileStream(path, FileOpenMode.Open, FileAccessMode.Read, fileShareMode, fileOpenOptions))
             {
                 if (offset > 0)
                 {
@@ -244,7 +242,7 @@ namespace Emby.Server.Implementations.HttpServer
                 }
                 else
                 {
-                    await fs.CopyToAsync(stream, IODefaults.CopyToBufferSize, cancellationToken).ConfigureAwait(false);
+                    await fs.CopyToAsync(stream, StreamDefaults.DefaultCopyToBufferSize, cancellationToken).ConfigureAwait(false);
                 }
             }
         }

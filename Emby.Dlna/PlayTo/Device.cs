@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -223,7 +221,7 @@ namespace Emby.Dlna.PlayTo
             _logger.LogDebug("Setting mute");
             var value = mute ? 1 : 0;
 
-            await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType, value))
+            await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType, value))
                 .ConfigureAwait(false);
 
             IsMuted = mute;
@@ -253,7 +251,7 @@ namespace Emby.Dlna.PlayTo
             // Remote control will perform better
             Volume = value;
 
-            await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType, value))
+            await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType, value))
                 .ConfigureAwait(false);
         }
 
@@ -272,7 +270,7 @@ namespace Emby.Dlna.PlayTo
                 throw new InvalidOperationException("Unable to find service");
             }
 
-            await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, string.Format("{0:hh}:{0:mm}:{0:ss}", value), "REL_TIME"))
+            await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, string.Format("{0:hh}:{0:mm}:{0:ss}", value), "REL_TIME"))
                 .ConfigureAwait(false);
 
             RestartTimer(true);
@@ -304,7 +302,7 @@ namespace Emby.Dlna.PlayTo
             }
 
             var post = avCommands.BuildPost(command, service.ServiceType, url, dictionary);
-            await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, post, header: header)
+            await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, post, header: header)
                 .ConfigureAwait(false);
 
             await Task.Delay(50).ConfigureAwait(false);
@@ -346,7 +344,7 @@ namespace Emby.Dlna.PlayTo
                 throw new InvalidOperationException("Unable to find service");
             }
 
-            return new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, 1));
+            return new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, 1));
         }
 
         public async Task SetPlay(CancellationToken cancellationToken)
@@ -370,7 +368,7 @@ namespace Emby.Dlna.PlayTo
 
             var service = GetAvTransportService();
 
-            await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, 1))
+            await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, 1))
                 .ConfigureAwait(false);
 
             RestartTimer(true);
@@ -388,7 +386,7 @@ namespace Emby.Dlna.PlayTo
 
             var service = GetAvTransportService();
 
-            await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, 1))
+            await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType, 1))
                 .ConfigureAwait(false);
 
             TransportState = TRANSPORTSTATE.PAUSED;
@@ -515,7 +513,7 @@ namespace Emby.Dlna.PlayTo
                 return;
             }
 
-            var result = await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), true)
+            var result = await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), true)
                 .ConfigureAwait(false);
 
             if (result == null || result.Document == null)
@@ -561,7 +559,7 @@ namespace Emby.Dlna.PlayTo
                 return;
             }
 
-            var result = await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), true)
+            var result = await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), true)
                 .ConfigureAwait(false);
 
             if (result == null || result.Document == null)
@@ -588,7 +586,7 @@ namespace Emby.Dlna.PlayTo
                 return null;
             }
 
-            var result = await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType), false)
+            var result = await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, avCommands.BuildPost(command, service.ServiceType), false)
                 .ConfigureAwait(false);
 
             if (result == null || result.Document == null)
@@ -626,7 +624,7 @@ namespace Emby.Dlna.PlayTo
 
             var rendererCommands = await GetRenderingProtocolAsync(cancellationToken).ConfigureAwait(false);
 
-            var result = await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), false)
+            var result = await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), false)
                 .ConfigureAwait(false);
 
             if (result == null || result.Document == null)
@@ -689,7 +687,7 @@ namespace Emby.Dlna.PlayTo
 
             var rendererCommands = await GetRenderingProtocolAsync(cancellationToken).ConfigureAwait(false);
 
-            var result = await new SsdpHttpClient(_httpClient).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), false)
+            var result = await new SsdpHttpClient(_httpClient, _config).SendCommandAsync(Properties.BaseUrl, service, command.Name, rendererCommands.BuildPost(command, service.ServiceType), false)
                 .ConfigureAwait(false);
 
             if (result == null || result.Document == null)
@@ -870,7 +868,7 @@ namespace Emby.Dlna.PlayTo
 
             string url = NormalizeUrl(Properties.BaseUrl, avService.ScpdUrl);
 
-            var httpClient = new SsdpHttpClient(_httpClient);
+            var httpClient = new SsdpHttpClient(_httpClient, _config);
 
             var document = await httpClient.GetDataAsync(url, cancellationToken).ConfigureAwait(false);
 
@@ -898,7 +896,7 @@ namespace Emby.Dlna.PlayTo
 
             string url = NormalizeUrl(Properties.BaseUrl, avService.ScpdUrl);
 
-            var httpClient = new SsdpHttpClient(_httpClient);
+            var httpClient = new SsdpHttpClient(_httpClient, _config);
             _logger.LogDebug("Dlna Device.GetRenderingProtocolAsync");
             var document = await httpClient.GetDataAsync(url, cancellationToken).ConfigureAwait(false);
 
@@ -933,7 +931,7 @@ namespace Emby.Dlna.PlayTo
 
         public static async Task<Device> CreateuPnpDeviceAsync(Uri url, IHttpClient httpClient, IServerConfigurationManager config, ILogger logger, CancellationToken cancellationToken)
         {
-            var ssdpHttpClient = new SsdpHttpClient(httpClient);
+            var ssdpHttpClient = new SsdpHttpClient(httpClient, config);
 
             var document = await ssdpHttpClient.GetDataAsync(url.ToString(), cancellationToken).ConfigureAwait(false);
 

@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 namespace Emby.Naming.Video
 {
     public enum ExtraRuleType
@@ -8,12 +6,10 @@ namespace Emby.Naming.Video
         /// The suffix
         /// </summary>
         Suffix = 0,
-
         /// <summary>
         /// The filename
         /// </summary>
         Filename = 1,
-
         /// <summary>
         /// The regex
         /// </summary>

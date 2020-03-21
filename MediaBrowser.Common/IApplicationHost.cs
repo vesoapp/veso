@@ -2,22 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediaBrowser.Common.Plugins;
+using MediaBrowser.Model.Events;
 using MediaBrowser.Model.Updates;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediaBrowser.Common
 {
     /// <summary>
-    /// An interface to be implemented by the applications hosting a kernel.
+    /// An interface to be implemented by the applications hosting a kernel
     /// </summary>
     public interface IApplicationHost
     {
-        /// <summary>
-        /// Occurs when [has pending restart changed].
-        /// </summary>
-        event EventHandler HasPendingRestartChanged;
-
         /// <summary>
         /// Gets the name.
         /// </summary>
@@ -31,15 +26,11 @@ namespace MediaBrowser.Common
         string SystemId { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance has pending kernel reload.
+        /// Gets or sets a value indicating whether this instance has pending kernel reload.
         /// </summary>
         /// <value><c>true</c> if this instance has pending kernel reload; otherwise, <c>false</c>.</value>
         bool HasPendingRestart { get; }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is currently shutting down.
-        /// </summary>
-        /// <value><c>true</c> if this instance is shutting down; otherwise, <c>false</c>.</value>
         bool IsShuttingDown { get; }
 
         /// <summary>
@@ -49,22 +40,25 @@ namespace MediaBrowser.Common
         bool CanSelfRestart { get; }
 
         /// <summary>
-        /// Gets the version class of the system.
+        /// Occurs when [has pending restart changed].
         /// </summary>
-        /// <value><see cref="PackageVersionClass.Release" /> or <see cref="PackageVersionClass.Beta" />.</value>
-        PackageVersionClass SystemUpdateLevel { get; }
+        event EventHandler HasPendingRestartChanged;
+
+        /// <summary>
+        /// Notifies the pending restart.
+        /// </summary>
+        void NotifyPendingRestart();
+
+        /// <summary>
+        /// Restarts this instance.
+        /// </summary>
+        void Restart();
 
         /// <summary>
         /// Gets the application version.
         /// </summary>
         /// <value>The application version.</value>
-        Version ApplicationVersion { get; }
-
-        /// <summary>
-        /// Gets the application version.
-        /// </summary>
-        /// <value>The application version.</value>
-        string ApplicationVersionString { get; }
+        string ApplicationVersion { get; }
 
         /// <summary>
         /// Gets the application user agent.
@@ -79,22 +73,6 @@ namespace MediaBrowser.Common
         string ApplicationUserAgentAddress { get; }
 
         /// <summary>
-        /// Gets the plugins.
-        /// </summary>
-        /// <value>The plugins.</value>
-        IReadOnlyList<IPlugin> Plugins { get; }
-
-        /// <summary>
-        /// Notifies the pending restart.
-        /// </summary>
-        void NotifyPendingRestart();
-
-        /// <summary>
-        /// Restarts this instance.
-        /// </summary>
-        void Restart();
-
-        /// <summary>
         /// Gets the exports.
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
@@ -105,15 +83,20 @@ namespace MediaBrowser.Common
         /// <summary>
         /// Resolves this instance.
         /// </summary>
-        /// <typeparam name="T">The <c>Type</c>.</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <returns>``0.</returns>
         T Resolve<T>();
 
         /// <summary>
         /// Shuts down.
         /// </summary>
-        /// <returns>A task.</returns>
         Task Shutdown();
+
+        /// <summary>
+        /// Gets the plugins.
+        /// </summary>
+        /// <value>The plugins.</value>
+        IPlugin[] Plugins { get; }
 
         /// <summary>
         /// Removes the plugin.
@@ -122,12 +105,9 @@ namespace MediaBrowser.Common
         void RemovePlugin(IPlugin plugin);
 
         /// <summary>
-        /// Initializes this instance.
+        /// Inits this instance.
         /// </summary>
-        /// <param name="serviceCollection">The service collection.</param>
-        /// <param name="startupConfig">The configuration to use for initialization.</param>
-        /// <returns>A task.</returns>
-        Task InitAsync(IServiceCollection serviceCollection, IConfiguration startupConfig);
+        Task InitAsync(IServiceCollection serviceCollection);
 
         /// <summary>
         /// Creates the instance.
@@ -135,5 +115,7 @@ namespace MediaBrowser.Common
         /// <param name="type">The type.</param>
         /// <returns>System.Object.</returns>
         object CreateInstance(Type type);
+
+        PackageVersionClass SystemUpdateLevel { get; }
     }
 }

@@ -1,11 +1,9 @@
 using System;
 using System.Globalization;
-using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Activity;
 using MediaBrowser.Model.Querying;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.System
 {
@@ -37,12 +35,7 @@ namespace MediaBrowser.Api.System
     {
         private readonly IActivityManager _activityManager;
 
-        public ActivityLogService(
-            ILogger<ActivityLogService> logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
-            IActivityManager activityManager)
-            : base(logger, serverConfigurationManager, httpResultFactory)
+        public ActivityLogService(IActivityManager activityManager)
         {
             _activityManager = activityManager;
         }

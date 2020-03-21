@@ -1,8 +1,6 @@
-#pragma warning disable CS1591
-
 namespace MediaBrowser.Model.Dlna
 {
-    public static class DlnaMaps
+    public class DlnaMaps
     {
         private static readonly string DefaultStreaming =
              FlagsToString(DlnaFlags.StreamingTransferMode |

@@ -1,8 +1,6 @@
-#pragma warning disable CS1591
-
 using System;
-using System.Globalization;
 using System.Net.Sockets;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Emby.Dlna.PlayTo;
@@ -26,7 +24,7 @@ using MediaBrowser.Model.System;
 using Microsoft.Extensions.Logging;
 using Rssdp;
 using Rssdp.Infrastructure;
-using OperatingSystem = MediaBrowser.Common.System.OperatingSystem;
+using OperatingSystem =  MediaBrowser.Common.System.OperatingSystem;
 
 namespace Emby.Dlna.Main
 {
@@ -58,9 +56,7 @@ namespace Emby.Dlna.Main
         private ISsdpCommunicationsServer _communicationsServer;
 
         internal IContentDirectory ContentDirectory { get; private set; }
-
         internal IConnectionManager ConnectionManager { get; private set; }
-
         internal IMediaReceiverRegistrar MediaReceiverRegistrar { get; private set; }
 
         public static DlnaEntryPoint Current;
@@ -108,7 +104,7 @@ namespace Emby.Dlna.Main
                 libraryManager,
                 config,
                 userManager,
-                loggerFactory.CreateLogger<ContentDirectory.ContentDirectory>(),
+                _logger,
                 httpClient,
                 localizationManager,
                 mediaSourceManager,
@@ -116,16 +112,9 @@ namespace Emby.Dlna.Main
                 mediaEncoder,
                 tvSeriesManager);
 
-            ConnectionManager = new ConnectionManager.ConnectionManager(
-                dlnaManager,
-                config,
-                loggerFactory.CreateLogger<ConnectionManager.ConnectionManager>(),
-                httpClient);
+            ConnectionManager = new ConnectionManager.ConnectionManager(dlnaManager, config, _logger, httpClient);
 
-            MediaReceiverRegistrar = new MediaReceiverRegistrar.MediaReceiverRegistrar(
-                loggerFactory.CreateLogger<MediaReceiverRegistrar.MediaReceiverRegistrar>(),
-                httpClient,
-                config);
+            MediaReceiverRegistrar = new MediaReceiverRegistrar.MediaReceiverRegistrar(_logger, httpClient, config);
             Current = this;
         }
 
@@ -279,9 +268,9 @@ namespace Emby.Dlna.Main
                     Location = uri, // Must point to the URL that serves your devices UPnP description document.
                     Address = address,
                     SubnetMask = _networkManager.GetLocalIpSubnetMask(address),
-                    FriendlyName = "veso",
-                    Manufacturer = "veso",
-                    ModelName = "veso Server",
+                    FriendlyName = "Jellyfin",
+                    Manufacturer = "Jellyfin",
+                    ModelName = "Jellyfin Server",
                     Uuid = udn
                     // This must be a globally unique value that survives reboots etc. Get from storage or embedded hardware etc.
                 };

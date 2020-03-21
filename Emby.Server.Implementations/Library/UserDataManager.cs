@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace Emby.Server.Implementations.Library
 {
     /// <summary>
-    /// Class UserDataManager.
+    /// Class UserDataManager
     /// </summary>
     public class UserDataManager : IUserDataManager
     {
@@ -57,7 +55,6 @@ namespace Emby.Server.Implementations.Library
             {
                 throw new ArgumentNullException(nameof(userData));
             }
-
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
@@ -163,6 +160,11 @@ namespace Emby.Server.Implementations.Library
             return GetUserData(user, item.Id, item.GetUserDataKeys());
         }
 
+        public UserItemData GetUserData(string userId, BaseItem item)
+        {
+            return GetUserData(new Guid(userId), item);
+        }
+
         public UserItemData GetUserData(Guid userId, BaseItem item)
         {
             return GetUserData(userId, item.Id, item.GetUserDataKeys());
@@ -226,21 +228,24 @@ namespace Emby.Server.Implementations.Library
             {
                 var pctIn = decimal.Divide(positionTicks, runtimeTicks) * 100;
 
+                // Don't track in very beginning
                 if (pctIn < _config.Configuration.MinResumePct)
                 {
-                    // ignore progress during the beginning
                     positionTicks = 0;
                 }
+
+                // If we're at the end, assume completed
                 else if (pctIn > _config.Configuration.MaxResumePct || positionTicks >= runtimeTicks)
                 {
-                    // mark as completed close to the end
                     positionTicks = 0;
                     data.Played = playedToCompletion = true;
                 }
+
                 else
                 {
                     // Enforce MinResumeDuration
                     var durationSeconds = TimeSpan.FromTicks(runtimeTicks).TotalSeconds;
+
                     if (durationSeconds < _config.Configuration.MinResumeDurationSeconds)
                     {
                         positionTicks = 0;
@@ -260,7 +265,6 @@ namespace Emby.Server.Implementations.Library
                 positionTicks = 0;
                 data.Played = false;
             }
-
             if (!item.SupportsPositionTicksResume)
             {
                 positionTicks = 0;

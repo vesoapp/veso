@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System.Net;
 
 namespace MediaBrowser.Model.Services

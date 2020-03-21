@@ -1,10 +1,5 @@
-#pragma warning disable CS1591
-#pragma warning disable SA1402
-#pragma warning disable SA1649
-
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,16 +9,18 @@ using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Controller.Plugins;
+using MediaBrowser.Model.Globalization;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Net;
 using MediaBrowser.Model.Plugins;
+using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
 using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.WebDashboard.Api
 {
     /// <summary>
-    /// Class GetDashboardConfigurationPages.
+    /// Class GetDashboardConfigurationPages
     /// </summary>
     [Route("/web/ConfigurationPages", "GET")]
     public class GetDashboardConfigurationPages : IReturn<List<ConfigurationPageInfo>>
@@ -33,12 +30,11 @@ namespace MediaBrowser.WebDashboard.Api
         /// </summary>
         /// <value>The type of the page.</value>
         public ConfigurationPageType? PageType { get; set; }
-
         public bool? EnableInMainMenu { get; set; }
     }
 
     /// <summary>
-    /// Class GetDashboardConfigurationPage.
+    /// Class GetDashboardConfigurationPage
     /// </summary>
     [Route("/web/ConfigurationPage", "GET")]
     public class GetDashboardConfigurationPage
@@ -62,7 +58,7 @@ namespace MediaBrowser.WebDashboard.Api
     }
 
     /// <summary>
-    /// Class GetDashboardResource.
+    /// Class GetDashboardResource
     /// </summary>
     [Route("/web/{ResourceName*}", "GET", IsHidden = true)]
     public class GetDashboardResource
@@ -72,7 +68,6 @@ namespace MediaBrowser.WebDashboard.Api
         /// </summary>
         /// <value>The name.</value>
         public string ResourceName { get; set; }
-
         /// <summary>
         /// Gets or sets the V.
         /// </summary>
@@ -86,7 +81,7 @@ namespace MediaBrowser.WebDashboard.Api
     }
 
     /// <summary>
-    /// Class DashboardService.
+    /// Class DashboardService
     /// </summary>
     public class DashboardService : IService, IRequiresRequest
     {
@@ -101,41 +96,44 @@ namespace MediaBrowser.WebDashboard.Api
         /// </summary>
         /// <value>The HTTP result factory.</value>
         private readonly IHttpResultFactory _resultFactory;
-        private readonly IServerApplicationHost _appHost;
-        private readonly IServerConfigurationManager _serverConfigurationManager;
-        private readonly IFileSystem _fileSystem;
-        private readonly IResourceFileManager _resourceFileManager;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DashboardService" /> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        /// <param name="appHost">The application host.</param>
-        /// <param name="resourceFileManager">The resource file manager.</param>
-        /// <param name="serverConfigurationManager">The server configuration manager.</param>
-        /// <param name="fileSystem">The file system.</param>
-        /// <param name="resultFactory">The result factory.</param>
-        public DashboardService(
-            ILogger<DashboardService> logger,
-            IServerApplicationHost appHost,
-            IResourceFileManager resourceFileManager,
-            IServerConfigurationManager serverConfigurationManager,
-            IFileSystem fileSystem,
-            IHttpResultFactory resultFactory)
-        {
-            _logger = logger;
-            _appHost = appHost;
-            _resourceFileManager = resourceFileManager;
-            _serverConfigurationManager = serverConfigurationManager;
-            _fileSystem = fileSystem;
-            _resultFactory = resultFactory;
-        }
 
         /// <summary>
         /// Gets or sets the request context.
         /// </summary>
         /// <value>The request context.</value>
         public IRequest Request { get; set; }
+
+        /// <summary>
+        /// The _app host
+        /// </summary>
+        private readonly IServerApplicationHost _appHost;
+
+        /// <summary>
+        /// The _server configuration manager
+        /// </summary>
+        private readonly IServerConfigurationManager _serverConfigurationManager;
+
+        private readonly IFileSystem _fileSystem;
+        private IResourceFileManager _resourceFileManager;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DashboardService" /> class.
+        /// </summary>
+        public DashboardService(
+            IServerApplicationHost appHost,
+            IResourceFileManager resourceFileManager,
+            IServerConfigurationManager serverConfigurationManager,
+            IFileSystem fileSystem,
+            ILogger logger,
+            IHttpResultFactory resultFactory)
+        {
+            _appHost = appHost;
+            _serverConfigurationManager = serverConfigurationManager;
+            _fileSystem = fileSystem;
+            _logger = logger;
+            _resultFactory = resultFactory;
+            _resourceFileManager = resourceFileManager;
+        }
 
         /// <summary>
         /// Gets the path for the web interface.
@@ -154,7 +152,6 @@ namespace MediaBrowser.WebDashboard.Api
             }
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1801:ReviewUnusedParameters", MessageId = "request", Justification = "Required for ServiceStack")]
         public object Get(GetFavIcon request)
         {
             return Get(new GetDashboardResource
@@ -168,7 +165,6 @@ namespace MediaBrowser.WebDashboard.Api
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>System.Object.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1801:ReviewUnusedParameters", MessageId = "request", Justification = "Required for ServiceStack")]
         public Task<object> Get(GetDashboardConfigurationPage request)
         {
             IPlugin plugin = null;
@@ -193,7 +189,7 @@ namespace MediaBrowser.WebDashboard.Api
                     stream = plugin.GetType().Assembly.GetManifestResourceStream(altPage.Item1.EmbeddedResourcePath);
 
                     isJs = string.Equals(Path.GetExtension(altPage.Item1.EmbeddedResourcePath), ".js", StringComparison.OrdinalIgnoreCase);
-                    isTemplate = altPage.Item1.EmbeddedResourcePath.EndsWith(".template.html", StringComparison.Ordinal);
+                    isTemplate = altPage.Item1.EmbeddedResourcePath.EndsWith(".template.html");
                 }
             }
 
@@ -209,7 +205,7 @@ namespace MediaBrowser.WebDashboard.Api
                     return _resultFactory.GetStaticResult(Request, plugin.Version.ToString().GetMD5(), null, null, MimeTypes.GetMimeType("page.html"), () => Task.FromResult(stream));
                 }
 
-                return _resultFactory.GetStaticResult(Request, plugin.Version.ToString().GetMD5(), null, null, MimeTypes.GetMimeType("page.html"), () => GetPackageCreator(DashboardUIPath).ModifyHtml("dummy.html", stream, null, _appHost.ApplicationVersionString, null));
+                return _resultFactory.GetStaticResult(Request, plugin.Version.ToString().GetMD5(), null, null, MimeTypes.GetMimeType("page.html"), () => GetPackageCreator(DashboardUIPath).ModifyHtml("dummy.html", stream, null, _appHost.ApplicationVersion, null));
             }
 
             throw new ResourceNotFoundException();
@@ -241,6 +237,7 @@ namespace MediaBrowser.WebDashboard.Api
             // Don't allow a failing plugin to fail them all
             var configPages = pages.Select(p =>
             {
+
                 try
                 {
                     return new ConfigurationPageInfo(p);
@@ -291,7 +288,6 @@ namespace MediaBrowser.WebDashboard.Api
             return GetPluginPages(plugin).Select(i => new ConfigurationPageInfo(plugin, i.Item1));
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1801:ReviewUnusedParameters", MessageId = "request", Justification = "Required for ServiceStack")]
         public object Get(GetRobotsTxt request)
         {
             return Get(new GetDashboardResource
@@ -346,7 +342,7 @@ namespace MediaBrowser.WebDashboard.Api
                 cacheDuration = TimeSpan.FromDays(365);
             }
 
-            var cacheKey = (_appHost.ApplicationVersionString + (localizationCulture ?? string.Empty) + path).GetMD5();
+            var cacheKey = (_appHost.ApplicationVersion + (localizationCulture ?? string.Empty) + path).GetMD5();
 
             // html gets modified on the fly
             if (contentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
@@ -354,7 +350,7 @@ namespace MediaBrowser.WebDashboard.Api
                 return await _resultFactory.GetStaticResult(Request, cacheKey, null, cacheDuration, contentType, () => GetResourceStream(basePath, path, localizationCulture)).ConfigureAwait(false);
             }
 
-            return await _resultFactory.GetStaticFileResult(Request, _resourceFileManager.GetResourcePath(basePath, path)).ConfigureAwait(false);
+            return await _resultFactory.GetStaticFileResult(Request, _resourceFileManager.GetResourcePath(basePath, path));
         }
 
         private string GetLocalizationCulture()
@@ -368,7 +364,7 @@ namespace MediaBrowser.WebDashboard.Api
         private Task<Stream> GetResourceStream(string basePath, string virtualPath, string localizationCulture)
         {
             return GetPackageCreator(basePath)
-                .GetResource(virtualPath, null, localizationCulture, _appHost.ApplicationVersionString);
+                .GetResource(virtualPath, null, localizationCulture, _appHost.ApplicationVersion);
         }
 
         private PackageCreator GetPackageCreator(string basePath)
@@ -396,19 +392,19 @@ namespace MediaBrowser.WebDashboard.Api
                 {
                     Directory.Delete(targetPath, true);
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
-                    _logger.LogError(ex, "Error deleting {Path}", targetPath);
+
                 }
 
                 CopyDirectory(inputPath, targetPath);
             }
 
-            var appVersion = _appHost.ApplicationVersionString;
+            var appVersion = _appHost.ApplicationVersion;
 
-            await DumpHtml(packageCreator, inputPath, targetPath, mode, appVersion).ConfigureAwait(false);
+            await DumpHtml(packageCreator, inputPath, targetPath, mode, appVersion);
 
-            return string.Empty;
+            return "";
         }
 
         private async Task DumpHtml(PackageCreator packageCreator, string source, string destination, string mode, string appVersion)
@@ -429,9 +425,9 @@ namespace MediaBrowser.WebDashboard.Api
         private async Task DumpFile(PackageCreator packageCreator, string resourceVirtualPath, string destinationFilePath, string mode, string appVersion)
         {
             using (var stream = await packageCreator.GetResource(resourceVirtualPath, mode, null, appVersion).ConfigureAwait(false))
-            using (var fs = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (var fs = _fileSystem.GetFileStream(destinationFilePath, FileOpenMode.Create, FileAccessMode.Write, FileShareMode.Read))
             {
-                await stream.CopyToAsync(fs).ConfigureAwait(false);
+                await stream.CopyToAsync(fs);
             }
         }
 
@@ -439,17 +435,14 @@ namespace MediaBrowser.WebDashboard.Api
         {
             Directory.CreateDirectory(destination);
 
-            // Now Create all of the directories
+            //Now Create all of the directories
             foreach (var dirPath in _fileSystem.GetDirectories(source, true))
-            {
-                Directory.CreateDirectory(dirPath.FullName.Replace(source, destination, StringComparison.Ordinal));
-            }
+                Directory.CreateDirectory(dirPath.FullName.Replace(source, destination));
 
-            // Copy all the files & Replaces any files with the same name
+            //Copy all the files & Replaces any files with the same name
             foreach (var newPath in _fileSystem.GetFiles(source, true))
-            {
-                File.Copy(newPath.FullName, newPath.FullName.Replace(source, destination, StringComparison.Ordinal), true);
-            }
+                File.Copy(newPath.FullName, newPath.FullName.Replace(source, destination), true);
         }
     }
+
 }

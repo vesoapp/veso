@@ -1,5 +1,3 @@
-#pragma warning disable CS1591
-
 using System;
 using System.IO;
 using System.Linq;
@@ -22,7 +20,7 @@ namespace Emby.Naming.Video
         {
             return _options.VideoExtraRules
                 .Select(i => GetExtraInfo(path, i))
-                .FirstOrDefault(i => i.ExtraType != null) ?? new ExtraResult();
+                .FirstOrDefault(i => !string.IsNullOrEmpty(i.ExtraType)) ?? new ExtraResult();
         }
 
         private ExtraResult GetExtraInfo(string path, ExtraRule rule)
@@ -31,7 +29,7 @@ namespace Emby.Naming.Video
 
             if (rule.MediaType == MediaType.Audio)
             {
-                if (!AudioFileParser.IsAudioFile(path, _options))
+                if (!new AudioFileParser(_options).IsAudioFile(path))
                 {
                     return result;
                 }

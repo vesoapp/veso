@@ -1,9 +1,8 @@
-#pragma warning disable CS1591
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MediaBrowser.Model.Extensions;
 
 namespace MediaBrowser.Model.Net
 {
@@ -64,7 +63,6 @@ namespace MediaBrowser.Model.Net
             { ".m3u8", "application/x-mpegURL" },
             { ".mobi", "application/x-mobipocket-ebook" },
             { ".xml", "application/xml" },
-            { ".wasm", "application/wasm" },
 
             // Type image
             { ".jpg", "image/jpeg" },
@@ -167,20 +165,20 @@ namespace MediaBrowser.Model.Net
             }
 
             // Type text
-            if (string.Equals(ext, ".html", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(ext, ".htm", StringComparison.OrdinalIgnoreCase))
+            if (StringHelper.EqualsIgnoreCase(ext, ".html")
+                || StringHelper.EqualsIgnoreCase(ext, ".htm"))
             {
                 return "text/html; charset=UTF-8";
             }
 
-            if (string.Equals(ext, ".log", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(ext, ".srt", StringComparison.OrdinalIgnoreCase))
+            if (StringHelper.EqualsIgnoreCase(ext, ".log")
+                || StringHelper.EqualsIgnoreCase(ext, ".srt"))
             {
                 return "text/plain";
             }
 
             // Misc
-            if (string.Equals(ext, ".dll", StringComparison.OrdinalIgnoreCase))
+            if (StringHelper.EqualsIgnoreCase(ext, ".dll"))
             {
                 return "application/octet-stream";
             }

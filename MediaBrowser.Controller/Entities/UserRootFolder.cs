@@ -60,7 +60,14 @@ namespace MediaBrowser.Controller.Entities
                 PresetViews = query.PresetViews
             });
 
-            return UserViewBuilder.SortAndPage(result, null, query, LibraryManager, true);
+            var itemsArray = result;
+            var totalCount = itemsArray.Length;
+
+            return new QueryResult<BaseItem>
+            {
+                TotalRecordCount = totalCount,
+                Items = itemsArray //TODO Fix The co-variant conversion between Folder[] and BaseItem[], this can generate runtime issues.
+            };
         }
 
         public override int GetChildCount(User user)

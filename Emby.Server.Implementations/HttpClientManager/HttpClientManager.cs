@@ -78,7 +78,7 @@ namespace Emby.Server.Implementations.HttpClientManager
             if (!string.IsNullOrWhiteSpace(userInfo))
             {
                 _logger.LogWarning("Found userInfo in url: {0} ... url: {1}", userInfo, url);
-                url = url.Replace(userInfo + '@', string.Empty, StringComparison.Ordinal);
+                url = url.Replace(userInfo + '@', string.Empty);
             }
 
             var request = new HttpRequestMessage(method, url);
@@ -197,7 +197,7 @@ namespace Emby.Server.Implementations.HttpClientManager
             if (File.Exists(responseCachePath)
                 && _fileSystem.GetLastWriteTimeUtc(responseCachePath).Add(cacheLength) > DateTime.UtcNow)
             {
-                var stream = new FileStream(responseCachePath, FileMode.Open, FileAccess.Read, FileShare.Read, IODefaults.FileStreamBufferSize, true);
+                var stream = _fileSystem.GetFileStream(responseCachePath, FileOpenMode.Open, FileAccessMode.Read, FileShareMode.Read, true);
 
                 return new HttpResponseInfo
                 {
@@ -220,7 +220,7 @@ namespace Emby.Server.Implementations.HttpClientManager
                 FileMode.Create,
                 FileAccess.Write,
                 FileShare.None,
-                IODefaults.FileStreamBufferSize,
+                StreamDefaults.DefaultFileStreamBufferSize,
                 true))
             {
                 await response.Content.CopyToAsync(fileStream).ConfigureAwait(false);
@@ -282,7 +282,6 @@ namespace Emby.Server.Implementations.HttpClientManager
             };
         }
 
-        /// <inheritdoc />
         public Task<HttpResponseInfo> Post(HttpRequestOptions options)
             => SendAsync(options, HttpMethod.Post);
 
@@ -326,7 +325,7 @@ namespace Emby.Server.Implementations.HttpClientManager
 
             if (options.LogErrorResponseBody)
             {
-                string msg = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var msg = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 _logger.LogError("HTTP request failed with message: {Message}", msg);
             }
 

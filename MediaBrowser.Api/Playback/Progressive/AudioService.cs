@@ -10,7 +10,6 @@ using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
-using Microsoft.Extensions.Logging;
 
 namespace MediaBrowser.Api.Playback.Progressive
 {
@@ -33,37 +32,32 @@ namespace MediaBrowser.Api.Playback.Progressive
     public class AudioService : BaseProgressiveStreamingService
     {
         public AudioService(
-            ILogger logger,
-            IServerConfigurationManager serverConfigurationManager,
-            IHttpResultFactory httpResultFactory,
             IHttpClient httpClient,
+            IServerConfigurationManager serverConfig,
             IUserManager userManager,
             ILibraryManager libraryManager,
             IIsoManager isoManager,
             IMediaEncoder mediaEncoder,
             IFileSystem fileSystem,
             IDlnaManager dlnaManager,
+            ISubtitleEncoder subtitleEncoder,
             IDeviceManager deviceManager,
             IMediaSourceManager mediaSourceManager,
             IJsonSerializer jsonSerializer,
-            IAuthorizationContext authorizationContext,
-            EncodingHelper encodingHelper)
-            : base(
-                logger,
-                serverConfigurationManager,
-                httpResultFactory,
-                httpClient,
-                userManager,
-                libraryManager,
-                isoManager,
-                mediaEncoder,
-                fileSystem,
-                dlnaManager,
-                deviceManager,
-                mediaSourceManager,
-                jsonSerializer,
-                authorizationContext,
-                encodingHelper)
+            IAuthorizationContext authorizationContext)
+                : base(httpClient,
+                    serverConfig,
+                    userManager,
+                    libraryManager,
+                    isoManager,
+                    mediaEncoder,
+                    fileSystem,
+                    dlnaManager,
+                    subtitleEncoder,
+                    deviceManager,
+                    mediaSourceManager,
+                    jsonSerializer,
+                    authorizationContext)
         {
         }
 
