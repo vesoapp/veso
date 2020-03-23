@@ -183,12 +183,11 @@ namespace MediaBrowser.MediaEncoding.Subtitles
 
         private async Task<Stream> GetSubtitleStream(string path, MediaProtocol protocol, bool requiresCharset, CancellationToken cancellationToken)
         {
-            using (var stream = await GetStream(path, protocol, cancellationToken).ConfigureAwait(false))
+            if (requiresCharset)
             {
-                if (requiresCharset)
+                using (var stream = await GetStream(path, protocol, cancellationToken).ConfigureAwait(false))
                 {
                     var result = CharsetDetector.DetectFromStream(stream).Detected;
-                    stream.Position = 0;
 
                     if (result != null)
                     {
@@ -200,9 +199,9 @@ namespace MediaBrowser.MediaEncoding.Subtitles
                         return new MemoryStream(Encoding.UTF8.GetBytes(text));
                     }
                 }
-
-                return stream;
             }
+
+            return File.OpenRead(path);
         }
 
         private async Task<SubtitleInfo> GetReadableFile(
@@ -746,8 +745,6 @@ namespace MediaBrowser.MediaEncoding.Subtitles
                     {
                         Url = path,
                         CancellationToken = cancellationToken,
-
-                        // Needed for seeking
                         BufferContent = true
                     };
 
