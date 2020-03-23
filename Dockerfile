@@ -30,7 +30,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
 COPY --from=builder /jellyfin /jellyfin
-COPY --from=web-builder /dist /veso/veso-web
+COPY --from=web-builder /dist /jellyfin/jellyfin-web
 # Install dependencies:
 #   libfontconfig1: needed for Skia
 #   libgomp1: needed for ffmpeg
