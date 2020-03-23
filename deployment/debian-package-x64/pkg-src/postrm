@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-NAME=veso
+NAME=jellyfin
 DEFAULT_FILE=/etc/default/${NAME}
 
-# Source Veso default configuration
+# Source Jellyfin default configuration
 if [[ -f $DEFAULT_FILE ]]; then
   . $DEFAULT_FILE
 fi
@@ -25,18 +25,18 @@ case "$1" in
   purge)
     echo PURGE | debconf-communicate $NAME > /dev/null 2>&1 || true
 
-    if [[ -x "/etc/init.d/veso" ]] || [[ -e "/etc/init/veso.connf" ]]; then
-      update-rc.d veso remove >/dev/null 2>&1 || true
+    if [[ -x "/etc/init.d/jellyfin" ]] || [[ -e "/etc/init/jellyfin.connf" ]]; then
+      update-rc.d jellyfin remove >/dev/null 2>&1 || true
     fi
 
     if [[ -x "/usr/bin/deb-systemd-helper" ]]; then
-      deb-systemd-helper purge veso.service >/dev/null
-      deb-systemd-helper unmask veso.service >/dev/null
+      deb-systemd-helper purge jellyfin.service >/dev/null
+      deb-systemd-helper unmask jellyfin.service >/dev/null
     fi
 
     # Remove user and group
-    userdel veso > /dev/null 2>&1 || true
-    delgroup --quiet veso > /dev/null 2>&1 || true
+    userdel jellyfin > /dev/null 2>&1 || true
+    delgroup --quiet jellyfin > /dev/null 2>&1 || true
     # Remove config dir
     if [[ -d $CONFIGDATA ]]; then
       rm -rf $CONFIGDATA
@@ -54,18 +54,18 @@ case "$1" in
       rm -rf $PROGRAMDATA
     fi
     # Remove binary symlink
-    [[ -f /usr/bin/veso ]] && rm /usr/bin/veso
+    [[ -f /usr/bin/jellyfin ]] && rm /usr/bin/jellyfin
     # Remove sudoers config
-    [[ -f /etc/sudoers.d/veso-sudoers ]] && rm /etc/sudoers.d/veso-sudoers
+    [[ -f /etc/sudoers.d/jellyfin-sudoers ]] && rm /etc/sudoers.d/jellyfin-sudoers
     # Remove anything at the default locations; catches situations where the user moved the defaults
-    [[ -e /etc/veso ]] && rm -rf /etc/veso
-    [[ -e /var/log/veso ]] && rm -rf /var/log/veso
-    [[ -e /var/cache/veso ]] && rm -rf /var/cache/veso
-    [[ -e /var/lib/veso ]] && rm -rf /var/lib/veso
+    [[ -e /etc/jellyfin ]] && rm -rf /etc/jellyfin
+    [[ -e /var/log/jellyfin ]] && rm -rf /var/log/jellyfin
+    [[ -e /var/cache/jellyfin ]] && rm -rf /var/cache/jellyfin
+    [[ -e /var/lib/jellyfin ]] && rm -rf /var/lib/jellyfin
     ;;
   remove)
     if [[ -x "/usr/bin/deb-systemd-helper" ]]; then
-      deb-systemd-helper mask veso.service >/dev/null
+      deb-systemd-helper mask jellyfin.service >/dev/null
     fi
     ;;
   upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

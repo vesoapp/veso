@@ -1,3 +1,6 @@
+#pragma warning disable CS1591
+#pragma warning disable SA1600
+
 using System;
 using System.Net.Sockets;
 using System.Globalization;
@@ -268,9 +271,9 @@ namespace Emby.Dlna.Main
                     Location = uri, // Must point to the URL that serves your devices UPnP description document.
                     Address = address,
                     SubnetMask = _networkManager.GetLocalIpSubnetMask(address),
-                    FriendlyName = "Veso",
-                    Manufacturer = "Veso",
-                    ModelName = "Veso Server",
+                    FriendlyName = "Jellyfin",
+                    Manufacturer = "Jellyfin",
+                    ModelName = "Jellyfin Server",
                     Uuid = udn
                     // This must be a globally unique value that survives reboots etc. Get from storage or embedded hardware etc.
                 };

@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: veso-server\n"
-"Report-Msgid-Bugs-To: veso-server@packages.debian.org\n"
+"Project-Id-Version: jellyfin-server\n"
+"Report-Msgid-Bugs-To: jellyfin-server@packages.debian.org\n"
 "POT-Creation-Date: 2015-06-12 20:51-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -20,38 +20,38 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../templates:1001
-msgid "Veso permission info:"
+msgid "Jellyfin permission info:"
 msgstr ""
 
 #. Type: note
 #. Description
 #: ../templates:1001
 msgid ""
-"Veso by default runs under a user named \"veso\".  Please ensure that the "
-"user veso has read and write access to any folders you wish to add to your "
-"library. Otherwise please run veso under a different user."
+"Jellyfin by default runs under a user named \"jellyfin\".  Please ensure that the "
+"user jellyfin has read and write access to any folders you wish to add to your "
+"library. Otherwise please run jellyfin under a different user."
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Username to run Veso as:"
+msgid "Username to run Jellyfin as:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "The user that veso will run as."
+msgid "The user that jellyfin will run as."
 msgstr ""
 
 #. Type: note
 #. Description
 #: ../templates:3001
-msgid "Veso still running"
+msgid "Jellyfin still running"
 msgstr ""
 
 #. Type: note
 #. Description
 #: ../templates:3001
-msgid "Veso is currently running. Please close it and try again."
+msgid "Jellyfin is currently running. Please close it and try again."
 msgstr ""

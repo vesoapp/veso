@@ -1,6 +1,6 @@
-# Veso Packaging
+# Jellyfin Packaging
 
-This directory contains the packaging configuration of Veso for multiple platforms. The specification is below; all package platforms must follow the specification to be compatable with the central `build` script.
+This directory contains the packaging configuration of Jellyfin for multiple platforms. The specification is below; all package platforms must follow the specification to be compatable with the central `build` script.
 
 ## Package List
 
@@ -59,4 +59,4 @@ These builds are not necessarily run from the `build` script, but are present fo
 
 * Upon completion of the defined actions, at least one output file must be created in the `<platform>/pkg-dist` directory.
 
-* Output files will be moved to the directory `veso-build/<platform>` one directory above the repository root upon completion.
+* Output files will be moved to the directory `jellyfin-build/<platform>` one directory above the repository root upon completion.

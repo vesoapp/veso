@@ -3,36 +3,32 @@ using Emby.Server.Implementations.Browser;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Plugins;
-using Microsoft.Extensions.Logging;
 
 namespace Emby.Server.Implementations.EntryPoints
 {
     /// <summary>
-    /// Class StartupWizard
+    /// Class StartupWizard.
     /// </summary>
-    public class StartupWizard : IServerEntryPoint
+    public sealed class StartupWizard : IServerEntryPoint
     {
         /// <summary>
-        /// The _app host
+        /// The app host.
         /// </summary>
         private readonly IServerApplicationHost _appHost;
+        private readonly IServerConfigurationManager _config;
+
         /// <summary>
-        /// The _user manager
+        /// Initializes a new instance of the <see cref="StartupWizard"/> class.
         /// </summary>
-        private readonly ILogger _logger;
-
-        private IServerConfigurationManager _config;
-
-        public StartupWizard(IServerApplicationHost appHost, ILogger logger, IServerConfigurationManager config)
+        /// <param name="appHost">The application host.</param>
+        /// <param name="config">The configuration manager.</param>
+        public StartupWizard(IServerApplicationHost appHost, IServerConfigurationManager config)
         {
             _appHost = appHost;
-            _logger = logger;
             _config = config;
         }
 
-        /// <summary>
-        /// Runs this instance.
-        /// </summary>
+        /// <inheritdoc />
         public Task RunAsync()
         {
             if (!_appHost.CanLaunchWebBrowser)
@@ -57,9 +53,7 @@ namespace Emby.Server.Implementations.EntryPoints
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
+        /// <inheritdoc />
         public void Dispose()
         {
         }

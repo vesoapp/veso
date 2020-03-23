@@ -1,3 +1,6 @@
+#pragma warning disable CS1591
+#pragma warning disable SA1600
+
 using System;
 
 namespace MediaBrowser.Common.Progress
@@ -25,16 +28,9 @@ namespace MediaBrowser.Common.Progress
 
         public void Report(T value)
         {
-            if (ProgressChanged != null)
-            {
-                ProgressChanged(this, value);
-            }
+            ProgressChanged?.Invoke(this, value);
 
-            var action = _action;
-            if (action != null)
-            {
-                action(value);
-            }
+            _action?.Invoke(value);
         }
     }
 
@@ -44,10 +40,7 @@ namespace MediaBrowser.Common.Progress
 
         public void Report(T value)
         {
-            if (ProgressChanged != null)
-            {
-                ProgressChanged(this, value);
-            }
+            ProgressChanged?.Invoke(this, value);
         }
     }
 }

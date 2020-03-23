@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Emby.Server.Implementations.Library.Resolvers.Audio
 {
     /// <summary>
-    /// Class MusicArtistResolver
+    /// Class MusicArtistResolver.
     /// </summary>
     public class MusicArtistResolver : ItemResolver<MusicArtist>
     {
@@ -20,6 +20,13 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
         private readonly ILibraryManager _libraryManager;
         private readonly IServerConfigurationManager _config;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MusicArtistResolver"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="fileSystem">The file system.</param>
+        /// <param name="libraryManager">The library manager.</param>
+        /// <param name="config">The configuration manager.</param>
         public MusicArtistResolver(ILogger logger, IFileSystem fileSystem, ILibraryManager libraryManager, IServerConfigurationManager config)
         {
             _logger = logger;
@@ -41,7 +48,10 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
         /// <returns>MusicArtist.</returns>
         protected override MusicArtist Resolve(ItemResolveArgs args)
         {
-            if (!args.IsDirectory) return null;
+            if (!args.IsDirectory)
+            {
+                return null;
+            }
 
             // Don't allow nested artists
             if (args.HasParent<MusicArtist>() || args.HasParent<MusicAlbum>())
@@ -70,15 +80,17 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
             }
 
             // Avoid mis-identifying top folders
-            if (args.Parent.IsRoot) return null;
+            if (args.Parent.IsRoot)
+            {
+                return null;
+            }
 
             var directoryService = args.DirectoryService;
 
             var albumResolver = new MusicAlbumResolver(_logger, _fileSystem, _libraryManager);
 
             // If we contain an album assume we are an artist folder
-            return args.FileSystemChildren.Where(i => i.IsDirectory).Any(i => albumResolver.IsMusicAlbum(i.FullName, directoryService, args.GetLibraryOptions())) ? new MusicArtist() : null;
+            return args.FileSystemChildren.Where(i => i.IsDirectory).Any(i => albumResolver.IsMusicAlbum(i.FullName, directoryService)) ? new MusicArtist() : null;
         }
-
     }
 }

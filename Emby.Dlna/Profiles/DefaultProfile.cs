@@ -1,3 +1,6 @@
+#pragma warning disable CS1591
+#pragma warning disable SA1600
+
 using System.Linq;
 using MediaBrowser.Model.Dlna;
 
@@ -12,12 +15,12 @@ namespace Emby.Dlna.Profiles
 
             ProtocolInfo = "http-get:*:video/mpeg:*,http-get:*:video/mp4:*,http-get:*:video/vnd.dlna.mpeg-tts:*,http-get:*:video/avi:*,http-get:*:video/x-matroska:*,http-get:*:video/x-ms-wmv:*,http-get:*:video/wtv:*,http-get:*:audio/mpeg:*,http-get:*:audio/mp3:*,http-get:*:audio/mp4:*,http-get:*:audio/x-ms-wma*,http-get:*:audio/wav:*,http-get:*:audio/L16:*,http-get:*image/jpeg:*,http-get:*image/png:*,http-get:*image/gif:*,http-get:*image/tiff:*";
 
-            Manufacturer = "Veso";
+            Manufacturer = "Jellyfin";
             ModelDescription = "UPnP/AV 1.0 Compliant Media Server";
-            ModelName = "Veso Server";
+            ModelName = "Jellyfin Server";
             ModelNumber = "01";
-            ModelUrl = "https://github.com/veso/veso";
-            ManufacturerUrl = "https://github.com/veso/veso";
+            ModelUrl = "https://github.com/jellyfin/jellyfin";
+            ManufacturerUrl = "https://github.com/jellyfin/jellyfin";
 
             AlbumArtPn = "JPEG_SM";
 

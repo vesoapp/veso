@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# build - build Veso binaries or packages
+# build - build Jellyfin binaries or packages
 
 set -o errexit
 set -o pipefail
@@ -18,7 +18,7 @@ declare -a platforms=( $(
 declare -a dependencies=( 'tar' 'zip' )
 
 usage() {
-    echo -e "build - build Veso binaries or packages"
+    echo -e "build - build Jellyfin binaries or packages"
     echo -e ""
     echo -e "Usage:"
     echo -e " $ build --list-platforms"

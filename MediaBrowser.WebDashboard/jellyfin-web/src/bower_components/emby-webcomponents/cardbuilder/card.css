@@ -1,0 +1,816 @@
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+button {
+    -webkit-border-fit: border !important;
+}
+
+.card {
+    border: 0;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    text-transform: none;
+    background-color: transparent !important;
+    background: none !important;
+    margin: 0;
+    padding: 0;
+    display: block;
+    color: inherit !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    outline: none !important;
+    cursor: pointer;
+    contain: layout style;
+    flex-shrink: 0;
+    font-weight: inherit !important;
+}
+
+.card-nofocustransform {
+    contain: layout style paint;
+}
+
+.itemsContainer {
+    display: flex;
+}
+
+.vertical-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.vertical-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+    .vertical-wrap.centered {
+        justify-content: center;
+    }
+
+.cardScalable {
+    position: relative;
+    contain: layout style;
+}
+
+.cardPadder-backdrop, .cardPadder-mixedBackdrop, .cardPadder-smallBackdrop, .cardPadder-overflowBackdrop, .cardPadder-overflowSmallBackdrop {
+    padding-bottom: 56.25%;
+    contain: strict;
+}
+
+.cardPadder-square, .cardPadder-mixedSquare, .cardPadder-overflowSquare, .overflowSquareCard-textCardPadder {
+    padding-bottom: 100%;
+    contain: strict;
+}
+
+.cardPadder-portrait, .cardPadder-mixedPortrait, .cardPadder-overflowPortrait, .overflowPortraitCard-textCardPadder {
+    padding-bottom: 150%;
+    contain: strict;
+}
+
+.cardPadder-banner {
+    padding-bottom: 18.5%;
+    contain: strict;
+}
+
+.cardBox {
+    padding: 0 !important;
+    margin: .42em;
+    transition: none;
+    border: 0 solid transparent;
+    /* These both are needed in case cardBox is a button */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    outline: none !important;
+    contain: layout style;
+}
+
+/*.cardBox-withfocuscontent {
+    margin: .68em;
+}*/
+
+@media (min-width: 50em) {
+
+    .cardBox {
+        margin: .9em;
+    }
+}
+
+.cardBox-withfocuscontent-large {
+    margin: .4em;
+}
+
+/*.card-focuscontent {
+    border: .12em solid transparent;
+}*/
+
+.card-focuscontent-large {
+    border: .5em solid transparent;
+}
+
+.cardBox-focustransform {
+    will-change: transform;
+    transition: transform 200ms ease-out;
+}
+
+.card:focus > .cardBox-focustransform {
+    transform: scale(1.18, 1.18);
+}
+
+.cardBox-bottompadded {
+    margin-bottom: 1.8em !important;
+}
+
+@media (max-width: 50em) {
+
+    .cardBox-bottompadded {
+        margin-bottom: 1.2em !important;
+    }
+}
+
+.card:focus {
+    position: relative !important;
+    z-index: 10 !important;
+    font-weight: inherit !important;
+}
+
+.btnCardOptions {
+    position: absolute;
+    bottom: .25em;
+    right: 0;
+    margin: 0 !important;
+    z-index: 1;
+}
+
+.mediaSourceIndicator {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    top: .3em;
+    left: .3em;
+    text-align: center;
+    vertical-align: middle;
+    width: 1.6em;
+    height: 1.6em;
+    border-radius: 50%;
+    color: #fff;
+    background: rgb(51, 136, 204);
+}
+
+.cardImageContainer {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-clip: content-box !important;
+    color: inherit;
+    /* This is only needed for scalable cards */
+    height: 100%;
+    contain: strict;
+}
+
+.chapterCardImageContainer {
+    background-color: #000;
+    border-radius: 0;
+}
+
+.textCardImageContainer {
+    background-color: #333;
+}
+
+.cardContent {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Needed in case this is a button */
+    display: block;
+    /* Needed in case this is a button */
+    margin: 0 !important;
+    /* Needed in safari */
+    height: 100%;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    outline: none !important;
+    contain: strict;
+}
+
+.cardContent-button {
+    border: 0 !important;
+    padding: 0 !important;
+    cursor: pointer;
+    color: inherit;
+    width: 100%;
+    vertical-align: middle;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+    .cardContent-button:not(.defaultCardBackground) {
+        background-color: transparent;
+    }
+
+.visualCardBox .cardContent {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.cardContent-shadow {
+    box-shadow: 0 0.0725em 0.29em 0 rgba(0, 0, 0, 0.37);
+}
+
+/*.card:focus .cardContent-shadow {
+    box-shadow: 0 .63em 1.26em rgba(0, 0, 0, 0.37);
+}*/
+
+.cardImageContainer {
+    display: flex;
+}
+
+.cardImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.cardImage-img {
+    max-height: 100%;
+    max-width: 100%;
+    /* This is simply for lazy image purposes, to ensure the image is visible sooner when scrolling */
+    min-height: 70%;
+    min-width: 70%;
+    margin: auto;
+}
+
+.coveredImage-img {
+    width: 100%;
+    height: 100%;
+}
+
+.coveredImage-noscale-img {
+    max-height: none;
+    max-width: none;
+}
+
+.coveredImage {
+    background-size: 100% 100%;
+    background-position: center center;
+}
+
+.coveredImage-noScale {
+    background-size: cover;
+}
+
+.cardFooter {
+    padding: .3em .3em .5em .3em;
+    position: relative;
+}
+
+.visualCardBox {
+    box-shadow: 0 0.0725em 0.29em 0 rgba(0, 0, 0, 0.37);
+    border-radius: .145em;
+}
+
+.innerCardFooter {
+    background: rgba(0,0,0,.7);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    text-align: left;
+    z-index: 1;
+    overflow: hidden;
+    max-width: 100%;
+    color: #fff;
+}
+
+.innerCardFooterClear {
+    background-color: transparent;
+}
+
+.fullInnerCardFooter {
+    right: 0;
+}
+
+.cardText {
+    padding: .06em .5em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.cardText-secondary {
+    font-size: 86%;
+}
+
+.cardText-first {
+    padding-top: .24em;
+}
+
+.innerCardFooter > .cardText {
+    padding: .3em .5em;
+}
+
+.cardFooter-withlogo {
+    padding-left: 4em;
+    position: relative;
+}
+
+.cardFooterLogo {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4.5em;
+    background-size: 70% auto;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.cardTextCentered {
+    text-align: center;
+}
+
+.cardText-rightmargin {
+    margin-right: 2em;
+}
+
+.cardDefaultText {
+    white-space: normal;
+    text-align: center;
+}
+
+.textActionButton {
+    border: 0 !important;
+    background: transparent;
+    border: 0 !important;
+    padding: 0 !important;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    outline: none !important;
+    color: inherit;
+    vertical-align: middle;
+    font-family: inherit;
+    font-size: inherit;
+    /*display: flex;
+    align-items: center;
+    justify-content: center;*/
+}
+
+    .textActionButton:hover {
+        text-decoration: underline;
+    }
+
+.cardImageIcon {
+    font-size: 5em;
+    color: inherit;
+}
+
+.cardImageIcon-small {
+    font-size: 3em;
+    margin-bottom: .1em;
+}
+
+.cardIndicators {
+    right: .225em;
+    top: .225em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    contain: layout style;
+}
+
+.cardProgramAttributeIndicators {
+    top: 0;
+    left: 0;
+    position: absolute;
+    display: flex;
+    text-transform: uppercase;
+    font-size: 92%;
+}
+
+.programAttributeIndicator {
+    padding: .18em .5em;
+    color: #fff;
+    font-weight: 500;
+}
+
+.cardOverlayButton {
+    color: rgba(255, 255, 255, .76) !important;
+    margin: 0;
+    z-index: 1;
+    padding: .75em;
+    font-size: 88%;
+}
+
+.cardOverlayButton-br {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.cardOverlayButtonIcon {
+    background-color: rgba(0,0,0,.7) !important;
+    border-radius: 100em;
+    width: 1.5em !important;
+    height: 1.5em !important;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 1.66956521739130434em !important;
+}
+
+.cardOverlayButton-centered {
+    bottom: initial;
+    right: initial;
+    position: static;
+    position: absolute;
+    display: flex;
+    font-size: 112%;
+    margin: -1.3em 0 0 -1.3em;
+    width: 2.6em;
+    height: 2.6em;
+    top: 50%;
+    left: 50%;
+    background-color: rgba(0,0,0,.5) !important;
+    border: .06em solid rgba(255,255,255,.6);
+    padding: .38em !important;
+    color: rgba(255, 255, 255, .76);
+    transition: transform 200ms ease-out;
+}
+
+    .cardOverlayButton-centered:hover {
+        transform: scale(1.2, 1.2);
+    }
+
+.bannerCard {
+    width: 100%;
+}
+
+.backdropCard {
+    width: 100%;
+}
+
+.smallBackdropCard {
+    width: 50%;
+}
+
+.squareCard {
+    width: 50%;
+}
+
+.portraitCard {
+    width: 33.333333333333333333333333333333%;
+}
+
+.mixedPortraitCard {
+    width: 12em;
+}
+
+.mixedSquareCard {
+    width: 18em;
+}
+
+.mixedBackdropCard {
+    width: 32em;
+}
+
+@media (min-width: 25em) {
+
+    .backdropCard {
+        width: 50%;
+    }
+}
+
+@media (min-width: 31.25em) {
+
+    .smallBackdropCard {
+        width: 33.333333333333333333333333333333%;
+    }
+
+    .squareCard, .portraitCard {
+        width: 33.333333333333333333333333333333%;
+    }
+}
+
+@media (min-width: 43.75em) {
+    .squareCard, .portraitCard {
+        width: 25%;
+    }
+}
+
+@media (min-width: 48.125em) {
+    .backdropCard {
+        width: 33.333333333333333333333333333333%;
+    }
+}
+
+@media (min-width: 50em) {
+
+    .bannerCard {
+        width: 50%;
+    }
+
+    .squareCard, .portraitCard {
+        width: 20%;
+    }
+
+    .smallBackdropCard {
+        width: 25%;
+    }
+}
+
+@media (min-width: 62.5em) {
+
+
+    .smallBackdropCard {
+        width: 20%;
+    }
+}
+
+@media (min-width: 75em) {
+
+    .backdropCard {
+        width: 25%;
+    }
+
+    .squareCard, .portraitCard {
+        width: 16.666666666666666666666666666667%;
+    }
+
+    .bannerCard {
+        width: 33.333333333333333333333333333333%;
+    }
+
+    .smallBackdropCard {
+        width: 16.666666666666666666666666666667%;
+    }
+}
+
+
+@media (min-width: 87.5em) {
+
+    .squareCard, .portraitCard {
+        width: 14.285714285714285714285714285714%;
+    }
+
+    .smallBackdropCard {
+        width: 14.285714285714285714285714285714%;
+    }
+}
+
+@media (min-width: 100em) {
+
+    .smallBackdropCard {
+        width: 12.5%;
+    }
+
+    .backdropCard {
+        width: 20%;
+    }
+
+    .squareCard, .portraitCard {
+        width: 12.5%;
+    }
+}
+
+@media (min-width: 120em) {
+
+    .squareCard, .portraitCard {
+        width: 11.111111111111111111111111111111%;
+    }
+}
+
+@media (min-width: 131.25em) {
+
+    .bannerCard {
+        width: 25%;
+    }
+
+    .squareCard, .portraitCard {
+        width: 10%;
+    }
+}
+
+@media (min-width: 156.25em) {
+
+    .backdropCard {
+        width: 16.666666666666666666666666666667%;
+    }
+}
+
+.itemsContainer-tv > .backdropCard {
+    width: 25%;
+}
+
+.itemsContainer-tv > .squareCard {
+    width: 16.666666666666666666666666666667%;
+}
+
+.itemsContainer-tv > .portraitCard {
+    width: 16.666666666666666666666666666667%;
+}
+
+.overflowBackdropCard {
+    width: 72vw;
+}
+
+.overflowSmallBackdropCard {
+    width: 72vw;
+}
+
+.overflowSquareCard, .overflowPortraitCard {
+    width: 40vw;
+}
+
+@media (min-width: 25em) {
+    .overflowPortraitCard {
+        width: 31.2vw;
+    }
+}
+
+@media (min-width: 35em) {
+    .overflowSquareCard {
+        width: 31.2vw;
+    }
+
+    .overflowBackdropCard {
+        width: 45.5vw;
+    }
+
+    .overflowSmallBackdropCard {
+        width: 30vw;
+    }
+}
+
+@media (min-width: 43.75em) {
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 23.3vw;
+    }
+}
+
+@media (min-width: 48.125em) {
+    .overflowBackdropCard, .overflowSmallBackdropCard {
+        width: 30vw;
+    }
+}
+
+@media (orientation: landscape) {
+    .overflowBackdropCard, .overflowSmallBackdropCard {
+        width: 30vw;
+    }
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 23.3vw;
+    }
+}
+
+@media (orientation: landscape) and (min-width: 48.125em) {
+    .overflowBackdropCard, .overflowSmallBackdropCard {
+        width: 23.3vw;
+    }
+}
+
+@media (orientation: landscape) and (min-width: 50em) {
+    .overflowSmallBackdropCard {
+        width: 15.5vw;
+    }
+}
+
+@media (min-width: 50em) {
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 18.4vw;
+    }
+}
+
+@media (min-width: 75em) {
+
+    .overflowBackdropCard, .overflowSmallBackdropCard {
+        width: 23.3vw;
+    }
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 15.5vw;
+    }
+}
+
+@media (min-width: 87.5em) {
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 13.3vw;
+    }
+}
+
+@media (min-width: 100em) {
+
+    .overflowBackdropCard, .overflowSmallBackdropCard {
+        width: 18.7vw;
+    }
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 11.6vw;
+    }
+}
+
+@media (min-width: 120em) {
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 10.3vw;
+    }
+}
+
+@media (min-width: 131.25em) {
+
+    .overflowSquareCard, .overflowPortraitCard {
+        width: 9.3vw;
+    }
+}
+
+@media (min-width: 156.25em) {
+
+    .overflowBackdropCard, .overflowSmallBackdropCard {
+        width: 15.6vw;
+    }
+}
+
+.itemsContainer-tv > .overflowBackdropCard {
+    width: 23.5vw;
+}
+
+.overflowBackdropCard-textCard {
+    width: 15.5vw !important;
+}
+
+.overflowBackdropCard-textCardPadder {
+    padding-bottom: 87.75%;
+}
+
+.itemsContainer-tv > .overflowSquareCard, .itemsContainer-tv > .overflowPortraitCard {
+    width: 15.6vw;
+}
+
+.itemsContainer-tv > .overflowSmallBackdropCard {
+    width: 18.8vw;
+}
+
+.cardOverlayContainer {
+    background: radial-gradient(farthest-corner at 50% 50%,rgba(30,30,30,.5) 50%,#2c2c2c 100%);
+    opacity: 0;
+    transition: opacity .2s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    user-select: none;
+}
+
+.card-hoverable :hover .cardOverlayContainer {
+    opacity: 1;
+}
+
+.cardOverlayButton-hover {
+    opacity: 0;
+    transition: opacity .2s;
+    background: transparent;
+    color: #fff !important;
+    padding: .5em;
+}
+
+.cardOverlayButtonIcon-hover {
+    background: transparent !important;
+}
+
+.card-hoverable:hover .cardOverlayButton-hover {
+    opacity: 1;
+}
+
+.cardOverlayFab-primary {
+    font-size: 130%;
+    padding: 0;
+    width: 3em;
+    height: 3em;
+    margin-top: -1.5em;
+    margin-left: -1.5em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+    .cardOverlayFab-primary i {
+        border: .07em solid rgba(255,255,255,.9);
+        color: #fff;
+    }

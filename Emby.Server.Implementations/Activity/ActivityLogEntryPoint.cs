@@ -1,3 +1,6 @@
+#pragma warning disable CS1591
+#pragma warning disable SA1600
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,7 +29,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Emby.Server.Implementations.Activity
 {
-    public class ActivityLogEntryPoint : IServerEntryPoint
+    public sealed class ActivityLogEntryPoint : IServerEntryPoint
     {
         private readonly ILogger _logger;
         private readonly IInstallationManager _installationManager;
@@ -36,9 +39,21 @@ namespace Emby.Server.Implementations.Activity
         private readonly ILocalizationManager _localization;
         private readonly ISubtitleManager _subManager;
         private readonly IUserManager _userManager;
-        private readonly IServerApplicationHost _appHost;
         private readonly IDeviceManager _deviceManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActivityLogEntryPoint"/> class.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="sessionManager"></param>
+        /// <param name="deviceManager"></param>
+        /// <param name="taskManager"></param>
+        /// <param name="activityManager"></param>
+        /// <param name="localization"></param>
+        /// <param name="installationManager"></param>
+        /// <param name="subManager"></param>
+        /// <param name="userManager"></param>
+        /// <param name="appHost"></param>
         public ActivityLogEntryPoint(
             ILogger<ActivityLogEntryPoint> logger,
             ISessionManager sessionManager,
@@ -48,8 +63,7 @@ namespace Emby.Server.Implementations.Activity
             ILocalizationManager localization,
             IInstallationManager installationManager,
             ISubtitleManager subManager,
-            IUserManager userManager,
-            IServerApplicationHost appHost)
+            IUserManager userManager)
         {
             _logger = logger;
             _sessionManager = sessionManager;
@@ -60,7 +74,6 @@ namespace Emby.Server.Implementations.Activity
             _installationManager = installationManager;
             _subManager = subManager;
             _userManager = userManager;
-            _appHost = appHost;
         }
 
         public Task RunAsync()
@@ -125,7 +138,7 @@ namespace Emby.Server.Implementations.Activity
                     CultureInfo.InvariantCulture,
                     _localization.GetLocalizedString("SubtitleDownloadFailureFromForItem"),
                     e.Provider,
-                    Notifications.Notifications.GetItemName(e.Item)),
+                    Emby.Notifications.NotificationEntryPoint.GetItemName(e.Item)),
                 Type = "SubtitleDownloadFailure",
                 ItemId = e.Item.Id.ToString("N", CultureInfo.InvariantCulture),
                 ShortOverview = e.Exception.Message
@@ -517,6 +530,7 @@ namespace Emby.Server.Implementations.Activity
         private void CreateLogEntry(ActivityLogEntry entry)
             => _activityManager.Create(entry);
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _taskManager.TaskCompleted -= OnTaskCompleted;
@@ -616,8 +630,8 @@ namespace Emby.Server.Implementations.Activity
         /// <summary>
         /// Constructs a string description of a time-span value.
         /// </summary>
-        /// <param name="value">The value of this item</param>
-        /// <param name="description">The name of this item (singular form)</param>
+        /// <param name="value">The value of this item.</param>
+        /// <param name="description">The name of this item (singular form).</param>
         private static string CreateValueString(int value, string description)
         {
             return string.Format(

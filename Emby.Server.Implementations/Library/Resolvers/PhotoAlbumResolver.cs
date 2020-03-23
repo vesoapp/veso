@@ -7,11 +7,19 @@ using MediaBrowser.Model.Entities;
 
 namespace Emby.Server.Implementations.Library.Resolvers
 {
+    /// <summary>
+    /// Class PhotoAlbumResolver.
+    /// </summary>
     public class PhotoAlbumResolver : FolderResolver<PhotoAlbum>
     {
         private readonly IImageProcessor _imageProcessor;
         private ILibraryManager _libraryManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PhotoAlbumResolver"/> class.
+        /// </summary>
+        /// <param name="imageProcessor">The image processor.</param>
+        /// <param name="libraryManager">The library manager.</param>
         public PhotoAlbumResolver(IImageProcessor imageProcessor, ILibraryManager libraryManager)
         {
             _imageProcessor = imageProcessor;
@@ -55,13 +63,12 @@ namespace Emby.Server.Implementations.Library.Resolvers
             {
                 if (!file.IsDirectory && PhotoResolver.IsImageFile(file.FullName, _imageProcessor))
                 {
-                    var libraryOptions = args.GetLibraryOptions();
                     var filename = file.Name;
                     var ownedByMedia = false;
 
                     foreach (var siblingFile in files)
                     {
-                        if (PhotoResolver.IsOwnedByMedia(_libraryManager, libraryOptions, siblingFile.FullName, filename))
+                        if (PhotoResolver.IsOwnedByMedia(_libraryManager, siblingFile.FullName, filename))
                         {
                             ownedByMedia = true;
                             break;
@@ -74,9 +81,11 @@ namespace Emby.Server.Implementations.Library.Resolvers
                     }
                 }
             }
+
             return false;
         }
 
+        /// <inheritdoc />
         public override ResolverPriority Priority => ResolverPriority.Second;
     }
 }

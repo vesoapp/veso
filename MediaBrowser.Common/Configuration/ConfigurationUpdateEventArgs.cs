@@ -1,3 +1,6 @@
+#pragma warning disable CS1591
+#pragma warning disable SA1600
+
 using System;
 
 namespace MediaBrowser.Common.Configuration
@@ -9,6 +12,7 @@ namespace MediaBrowser.Common.Configuration
         /// </summary>
         /// <value>The key.</value>
         public string Key { get; set; }
+
         /// <summary>
         /// Gets or sets the new configuration.
         /// </summary>

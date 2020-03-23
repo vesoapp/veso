@@ -1,0 +1,9 @@
+﻿.imageEditor-buttons {
+    display: flex;
+    align-items: center;
+    margin: 1em 0 1em;
+}
+
+.first-imageEditor-buttons {
+    margin-top: 2em;
+}
