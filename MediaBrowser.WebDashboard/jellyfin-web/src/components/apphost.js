@@ -160,7 +160,7 @@ define(["appSettings", "browser", "events", "htmlMediaHelper"], function(appSett
                 return deviceId
             },
             appName: function() {
-                return "Jellyfin Web"
+                return "Veso Web"
             },
             appVersion: function() {
                 return appVersion

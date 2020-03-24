@@ -1,1 +1,1 @@
-powershell.exe -executionpolicy Bypass -file install-jellyfin.ps1
+powershell.exe -executionpolicy Bypass -file install-veso.ps1

@@ -179,7 +179,7 @@ define(['loading', 'dialogHelper', 'dom', 'listViewStyle', 'emby-input', 'emby-b
                 }
                 if (response.status === 500) {
                     if (validateWriteable) {
-                        alertText("Jellyfin Server requires write access to this folder. Please ensure write access and try again.");
+                        alertText("Veso Server requires write access to this folder. Please ensure write access and try again.");
                     } else {
                         alertText("The path could not be found. Please ensure the path is valid and try again.")
                     }

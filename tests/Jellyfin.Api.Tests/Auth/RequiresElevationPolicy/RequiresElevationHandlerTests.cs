@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Jellyfin.Api.Auth.RequiresElevationPolicy;
-using Jellyfin.Api.Constants;
+using Veso.Api.Auth.RequiresElevationPolicy;
+using Veso.Api.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
 
-namespace Jellyfin.Api.Tests.Auth.RequiresElevationPolicy
+namespace Veso.Api.Tests.Auth.RequiresElevationPolicy
 {
     public class RequiresElevationHandlerTests
     {

@@ -1,15 +1,15 @@
 [Unit]
 After=network.target
-Description=Jellyfin is a free software media system that puts you in control of managing and streaming your media.
+Description=Veso is a free software media system that puts you in control of managing and streaming your media.
 
 [Service]
-EnvironmentFile=/etc/sysconfig/jellyfin
-WorkingDirectory=/var/lib/jellyfin
-ExecStart=/usr/bin/jellyfin ${JELLYFIN_RESTART_OPT} ${JELLYFIN_FFMPEG_OPT} ${JELLYFIN_SERVICE_OPT} ${JELLYFIN_NOWEBAPP_OPT}
+EnvironmentFile=/etc/sysconfig/veso
+WorkingDirectory=/var/lib/veso
+ExecStart=/usr/bin/veso ${JELLYFIN_RESTART_OPT} ${JELLYFIN_FFMPEG_OPT} ${JELLYFIN_SERVICE_OPT} ${JELLYFIN_NOWEBAPP_OPT}
 TimeoutSec=15
 Restart=on-failure
-User=jellyfin
-Group=jellyfin
+User=veso
+Group=veso
 
 [Install]
 WantedBy=multi-user.target

@@ -3,7 +3,7 @@ using Emby.Naming.Common;
 using Emby.Naming.Video;
 using Xunit;
 
-namespace Jellyfin.Naming.Tests.Video
+namespace Veso.Naming.Tests.Video
 {
     public sealed class CleanStringTests
     {

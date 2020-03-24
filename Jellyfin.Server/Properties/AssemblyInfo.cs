@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Jellyfin.Server")]
+[assembly: AssemblyTitle("Veso.Server")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jellyfin Project")]
-[assembly: AssemblyProduct("Jellyfin Server")]
-[assembly: AssemblyCopyright("Copyright ©  2019 Jellyfin Contributors. Code released under the GNU General Public License")]
+[assembly: AssemblyCompany("Veso Project")]
+[assembly: AssemblyProduct("Veso Server")]
+[assembly: AssemblyCopyright("Copyright ©  2019 Veso Contributors. Code released under the GNU General Public License")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]

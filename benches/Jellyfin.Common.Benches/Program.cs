@@ -1,7 +1,7 @@
 ﻿using System;
 using BenchmarkDotNet.Running;
 
-namespace Jellyfin.Common.Benches
+namespace Veso.Common.Benches
 {
     public static class Program
     {

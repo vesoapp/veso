@@ -271,9 +271,9 @@ namespace Emby.Dlna.Main
                     Location = uri, // Must point to the URL that serves your devices UPnP description document.
                     Address = address,
                     SubnetMask = _networkManager.GetLocalIpSubnetMask(address),
-                    FriendlyName = "Jellyfin",
-                    Manufacturer = "Jellyfin",
-                    ModelName = "Jellyfin Server",
+                    FriendlyName = "Veso",
+                    Manufacturer = "Veso",
+                    ModelName = "Veso Server",
                     Uuid = udn
                     // This must be a globally unique value that survives reboots etc. Get from storage or embedded hardware etc.
                 };

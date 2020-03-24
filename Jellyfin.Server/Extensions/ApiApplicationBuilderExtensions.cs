@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace Jellyfin.Server.Extensions
+namespace Veso.Server.Extensions
 {
     /// <summary>
     /// Extensions for adding API specific functionality to the application pipeline.
@@ -12,7 +12,7 @@ namespace Jellyfin.Server.Extensions
         /// </summary>
         /// <param name="applicationBuilder">The application builder.</param>
         /// <returns>The updated application builder.</returns>
-        public static IApplicationBuilder UseJellyfinApiSwagger(this IApplicationBuilder applicationBuilder)
+        public static IApplicationBuilder UseVesoApiSwagger(this IApplicationBuilder applicationBuilder)
         {
             applicationBuilder.UseSwagger();
 
@@ -20,7 +20,7 @@ namespace Jellyfin.Server.Extensions
             // specifying the Swagger JSON endpoint.
             return applicationBuilder.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jellyfin API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Veso API V1");
             });
         }
     }

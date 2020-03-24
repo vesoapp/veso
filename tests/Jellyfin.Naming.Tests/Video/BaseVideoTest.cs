@@ -1,7 +1,7 @@
 ﻿using Emby.Naming.Common;
 using Emby.Naming.Video;
 
-namespace Jellyfin.Naming.Tests.Video
+namespace Veso.Naming.Tests.Video
 {
     public abstract class BaseVideoTest
     {

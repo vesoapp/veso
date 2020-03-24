@@ -1,6 +1,6 @@
 # Veso
 
-Veso is an open source media server. An emby/jellyfin fork that will move to a js react framework and focus on remote/rclone mounted media rather than local storage.
+Veso is an open source media server. An emby/veso fork that will move to a js react framework and focus on remote/rclone mounted media rather than local storage.
 
 ## Installation
 

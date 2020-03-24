@@ -28,13 +28,13 @@ Unicode True
 !ifdef x64
     !define ARCH "x64"
     !define NAMESUFFIX "(64 bit)"
-    !define INSTALL_DIRECTORY "$PROGRAMFILES64\Jellyfin\Server"
+    !define INSTALL_DIRECTORY "$PROGRAMFILES64\Veso\Server"
 !endif
 
 !ifdef x84
     !define ARCH "x86"
     !define NAMESUFFIX "(32 bit)"
-    !define INSTALL_DIRECTORY "$PROGRAMFILES32\Jellyfin\Server"
+    !define INSTALL_DIRECTORY "$PROGRAMFILES32\Veso\Server"
 !endif
 
 !ifndef ARCH
@@ -43,22 +43,22 @@ Unicode True
 
 ;--------------------------------
 
-    !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\JellyfinServer" ;Registry to show up in Add/Remove Programs
-    !define REG_CONFIG_KEY "Software\Jellyfin\Server" ;Registry to store all configuration
+    !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\VesoServer" ;Registry to show up in Add/Remove Programs
+    !define REG_CONFIG_KEY "Software\Veso\Server" ;Registry to store all configuration
 
-    !getdllversion "$%InstallLocation%\jellyfin.dll" ver_ ;Align installer version with jellyfin.dll version
+    !getdllversion "$%InstallLocation%\veso.dll" ver_ ;Align installer version with veso.dll version
 
-    Name "Jellyfin Server ${ver_1}.${ver_2}.${ver_3} ${NAMESUFFIX}" ; This is referred in various header text labels
-    OutFile "jellyfin_${ver_1}.${ver_2}.${ver_3}_windows-${ARCH}.exe" ; Naming convention jellyfin_{version}_windows-{arch].exe
-    BrandingText "Jellyfin Server ${ver_1}.${ver_2}.${ver_3} Installer" ; This shows in just over the buttons
+    Name "Veso Server ${ver_1}.${ver_2}.${ver_3} ${NAMESUFFIX}" ; This is referred in various header text labels
+    OutFile "veso_${ver_1}.${ver_2}.${ver_3}_windows-${ARCH}.exe" ; Naming convention veso_{version}_windows-{arch].exe
+    BrandingText "Veso Server ${ver_1}.${ver_2}.${ver_3} Installer" ; This shows in just over the buttons
 
 ; installer attributes, these show up in details tab on installer properties
     VIProductVersion "${ver_1}.${ver_2}.${ver_3}.0" ; VIProductVersion format, should be X.X.X.X
     VIFileVersion "${ver_1}.${ver_2}.${ver_3}.0" ; VIFileVersion format, should be X.X.X.X
-    VIAddVersionKey "ProductName" "Jellyfin Server"
+    VIAddVersionKey "ProductName" "Veso Server"
     VIAddVersionKey "FileVersion" "${ver_1}.${ver_2}.${ver_3}.0"
-    VIAddVersionKey "LegalCopyright" "(c) 2019 Jellyfin Contributors. Code released under the GNU General Public License"
-    VIAddVersionKey "FileDescription" "Jellyfin Server: The Free Software Media System"
+    VIAddVersionKey "LegalCopyright" "(c) 2019 Veso Contributors. Code released under the GNU General Public License"
+    VIAddVersionKey "FileDescription" "Veso Server: The Free Software Media System"
 
 ;TODO, check defaults
     InstallDir ${INSTALL_DIRECTORY} ;Default installation folder
@@ -70,7 +70,7 @@ Unicode True
 
     !define MUI_ABORTWARNING ;Prompts user in case of aborting install
 
-; TODO: Replace with nice Jellyfin Icons
+; TODO: Replace with nice Veso Icons
 !ifdef UXPATH
     !define MUI_ICON "${UXPATH}\branding\NSIS\modern-install.ico" ; Installer Icon
     !define MUI_UNICON "${UXPATH}\branding\NSIS\modern-install.ico" ; Uninstaller Icon
@@ -85,7 +85,7 @@ Unicode True
 ;Pages
 
 ; Welcome Page
-    !define MUI_WELCOMEPAGE_TEXT "The installer will ask for details to install Jellyfin Server."
+    !define MUI_WELCOMEPAGE_TEXT "The installer will ask for details to install Veso Server."
     !insertmacro MUI_PAGE_WELCOME
 ; License Page
     !insertmacro MUI_PAGE_LICENSE "$%InstallLocation%\LICENSE" ; picking up generic GPL
@@ -103,8 +103,8 @@ Unicode True
 ; Data folder Page
     !define MUI_PAGE_CUSTOMFUNCTION_PRE HideDataDirectoryPage ; Controls when to hide / show
     !define MUI_PAGE_HEADER_TEXT "Choose Data Location"
-    !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which to install the Jellyfin Server data."
-    !define MUI_DIRECTORYPAGE_TEXT_TOP "The installer will set the following folder for Jellyfin Server data. To install in a different folder, click Browse and select another folder. Please make sure the folder exists and is accessible. Click Next to continue."
+    !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which to install the Veso Server data."
+    !define MUI_DIRECTORYPAGE_TEXT_TOP "The installer will set the following folder for Veso Server data. To install in a different folder, click Browse and select another folder. Please make sure the folder exists and is accessible. Click Next to continue."
     !define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Data folder"
     !define MUI_DIRECTORYPAGE_VARIABLE $_JELLYFINDATADIR_
     !insertmacro MUI_PAGE_DIRECTORY
@@ -137,7 +137,7 @@ Unicode True
 
 ;--------------------------------
 ;Installer Sections
-Section "!Jellyfin Server (required)" InstallJellyfinServer
+Section "!Veso Server (required)" InstallVesoServer
     SectionIn RO ; Mandatory section, isn't this the whole purpose to run the installer.
 
     StrCmp "$_EXISTINGINSTALLATION_" "Yes" RunUninstaller CarryOn ; Silently uninstall in case of previous installation
@@ -154,12 +154,12 @@ Section "!Jellyfin Server (required)" InstallJellyfinServer
 
     CarryOn:
     ${If} $_EXISTINGSERVICE_ == 'Yes'
-        ExecWait '"$INSTDIR\nssm.exe" stop JellyfinServer' $0
+        ExecWait '"$INSTDIR\nssm.exe" stop VesoServer' $0
         ${If} $0 <> 0
-            MessageBox MB_OK|MB_ICONSTOP "Could not stop the Jellyfin Server service."
+            MessageBox MB_OK|MB_ICONSTOP "Could not stop the Veso Server service."
             Abort
         ${EndIf}
-        DetailPrint "Stopped Jellyfin Server service, $0"
+        DetailPrint "Stopped Veso Server service, $0"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -173,15 +173,15 @@ Section "!Jellyfin Server (required)" InstallJellyfinServer
     WriteRegExpandStr HKLM "${REG_CONFIG_KEY}" "DataFolder" "$_JELLYFINDATADIR_"
     WriteRegStr HKLM "${REG_CONFIG_KEY}" "ServiceAccountType" "$_SERVICEACCOUNTTYPE_"
 
-    !getdllversion "$%InstallLocation%\jellyfin.dll" ver_
+    !getdllversion "$%InstallLocation%\veso.dll" ver_
     StrCpy $_JELLYFINVERSION_ "${ver_1}.${ver_2}.${ver_3}" ;
 
 ; Write the uninstall keys for Windows
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Jellyfin Server $_JELLYFINVERSION_ ${NAMESUFFIX}"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Veso Server $_JELLYFINVERSION_ ${NAMESUFFIX}"
     WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" '"$INSTDIR\Uninstall.exe",0'
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "The Jellyfin Project"
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://jellyfin.org/"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "The Veso Project"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://veso.org/"
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "$_JELLYFINVERSION_"
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" 1
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" 1
@@ -190,75 +190,75 @@ Section "!Jellyfin Server (required)" InstallJellyfinServer
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 SectionEnd
 
-Section "Jellyfin Server Service" InstallService
+Section "Veso Server Service" InstallService
 ${If} $_INSTALLSERVICE_ == "Yes" ; Only run this if we're going to install the service!
-    ExecWait '"$INSTDIR\nssm.exe" statuscode JellyfinServer' $0
-    DetailPrint "Jellyfin Server service statuscode, $0"
+    ExecWait '"$INSTDIR\nssm.exe" statuscode VesoServer' $0
+    DetailPrint "Veso Server service statuscode, $0"
     ${If} $0 == 0
         InstallRetry:
-        ExecWait '"$INSTDIR\nssm.exe" install JellyfinServer "$INSTDIR\jellyfin.exe" --service --datadir \"$_JELLYFINDATADIR_\"' $0
+        ExecWait '"$INSTDIR\nssm.exe" install VesoServer "$INSTDIR\veso.exe" --service --datadir \"$_JELLYFINDATADIR_\"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not install the Jellyfin Server service." InstallRetry
+            !insertmacro ShowError "Could not install the Veso Server service." InstallRetry
         ${EndIf}
-        DetailPrint "Jellyfin Server Service install, $0"
+        DetailPrint "Veso Server Service install, $0"
     ${Else}
-        DetailPrint "Jellyfin Server Service exists, updating..."
+        DetailPrint "Veso Server Service exists, updating..."
 
         ConfigureApplicationRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer Application "$INSTDIR\jellyfin.exe"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set VesoServer Application "$INSTDIR\veso.exe"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Jellyfin Server service." ConfigureApplicationRetry
+            !insertmacro ShowError "Could not configure the Veso Server service." ConfigureApplicationRetry
         ${EndIf}
-        DetailPrint "Jellyfin Server Service setting (Application), $0"
+        DetailPrint "Veso Server Service setting (Application), $0"
 
         ConfigureAppParametersRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer AppParameters --service --datadir \"$_JELLYFINDATADIR_\"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set VesoServer AppParameters --service --datadir \"$_JELLYFINDATADIR_\"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Jellyfin Server service." ConfigureAppParametersRetry
+            !insertmacro ShowError "Could not configure the Veso Server service." ConfigureAppParametersRetry
         ${EndIf}
-        DetailPrint "Jellyfin Server Service setting (AppParameters), $0"
+        DetailPrint "Veso Server Service setting (AppParameters), $0"
     ${EndIf}
 
 
     Sleep 3000 ; Give time for Windows to catchup
     ConfigureStartRetry:
-    ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer Start SERVICE_DELAYED_AUTO_START' $0
+    ExecWait '"$INSTDIR\nssm.exe" set VesoServer Start SERVICE_DELAYED_AUTO_START' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not configure the Jellyfin Server service." ConfigureStartRetry
+        !insertmacro ShowError "Could not configure the Veso Server service." ConfigureStartRetry
     ${EndIf}
-    DetailPrint "Jellyfin Server Service setting (Start), $0"
+    DetailPrint "Veso Server Service setting (Start), $0"
 
     ConfigureDescriptionRetry:
-    ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer Description "Jellyfin Server: The Free Software Media System"' $0
+    ExecWait '"$INSTDIR\nssm.exe" set VesoServer Description "Veso Server: The Free Software Media System"' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not configure the Jellyfin Server service." ConfigureDescriptionRetry
+        !insertmacro ShowError "Could not configure the Veso Server service." ConfigureDescriptionRetry
     ${EndIf}
-    DetailPrint "Jellyfin Server Service setting (Description), $0"
+    DetailPrint "Veso Server Service setting (Description), $0"
     ConfigureDisplayNameRetry:
-    ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer DisplayName "Jellyfin Server"' $0
+    ExecWait '"$INSTDIR\nssm.exe" set VesoServer DisplayName "Veso Server"' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not configure the Jellyfin Server service." ConfigureDisplayNameRetry
+        !insertmacro ShowError "Could not configure the Veso Server service." ConfigureDisplayNameRetry
 
     ${EndIf}
-    DetailPrint "Jellyfin Server Service setting (DisplayName), $0"
+    DetailPrint "Veso Server Service setting (DisplayName), $0"
 
     Sleep 3000
     ${If} $_SERVICEACCOUNTTYPE_ == "NetworkService" ; the default install using NSSM is Local System
         ConfigureNetworkServiceRetry:
-        ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer Objectname "Network Service"' $0
+        ExecWait '"$INSTDIR\nssm.exe" set VesoServer Objectname "Network Service"' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Jellyfin Server service account." ConfigureNetworkServiceRetry
+            !insertmacro ShowError "Could not configure the Veso Server service account." ConfigureNetworkServiceRetry
         ${EndIf}
-        DetailPrint "Jellyfin Server service account change, $0"
+        DetailPrint "Veso Server service account change, $0"
     ${EndIf}
 
     Sleep 3000
     ConfigureDefaultAppExit:
-        ExecWait '"$INSTDIR\nssm.exe" set JellyfinServer AppExit Default Exit' $0
+        ExecWait '"$INSTDIR\nssm.exe" set VesoServer AppExit Default Exit' $0
         ${If} $0 <> 0
-            !insertmacro ShowError "Could not configure the Jellyfin Server service app exit action." ConfigureDefaultAppExit
+            !insertmacro ShowError "Could not configure the Veso Server service app exit action." ConfigureDefaultAppExit
         ${EndIf}
-        DetailPrint "Jellyfin Server service exit action set, $0"
+        DetailPrint "Veso Server service exit action set, $0"
 ${EndIf}
 
 SectionEnd
@@ -267,21 +267,21 @@ Section "-start service" StartService
 ${If} $_SERVICESTART_ == "Yes"
 ${AndIf} $_INSTALLSERVICE_ == "Yes"
     StartRetry:
-    ExecWait '"$INSTDIR\nssm.exe" start JellyfinServer' $0
+    ExecWait '"$INSTDIR\nssm.exe" start VesoServer' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not start the Jellyfin Server service." StartRetry
+        !insertmacro ShowError "Could not start the Veso Server service." StartRetry
     ${EndIf}
-    DetailPrint "Jellyfin Server service start, $0"
+    DetailPrint "Veso Server service start, $0"
 ${EndIf}
 SectionEnd
 
 Section "Create Shortcuts" CreateWinShortcuts
     ${If} $_MAKESHORTCUTS_ == "Yes"
-        CreateDirectory "$SMPROGRAMS\Jellyfin Server"
-        CreateShortCut "$SMPROGRAMS\Jellyfin Server\Jellyfin (View Console).lnk" "$INSTDIR\jellyfin.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMAXIMIZED
-        CreateShortCut "$SMPROGRAMS\Jellyfin Server\Jellyfin Tray App.lnk" "$INSTDIR\jellyfintray.exe" "" "$INSTDIR\icon.ico" 0
-        ;CreateShortCut "$DESKTOP\Jellyfin Server.lnk" "$INSTDIR\jellyfin.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMINIMIZED
-        CreateShortCut "$DESKTOP\Jellyfin Server\Jellyfin Server.lnk" "$INSTDIR\jellyfintray.exe" "" "$INSTDIR\icon.ico" 0
+        CreateDirectory "$SMPROGRAMS\Veso Server"
+        CreateShortCut "$SMPROGRAMS\Veso Server\Veso (View Console).lnk" "$INSTDIR\veso.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMAXIMIZED
+        CreateShortCut "$SMPROGRAMS\Veso Server\Veso Tray App.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
+        ;CreateShortCut "$DESKTOP\Veso Server.lnk" "$INSTDIR\veso.exe" "--datadir $\"$_JELLYFINDATADIR_$\"" "$INSTDIR\icon.ico" 0 SW_SHOWMINIMIZED
+        CreateShortCut "$DESKTOP\Veso Server\Veso Server.lnk" "$INSTDIR\vesotray.exe" "" "$INSTDIR\icon.ico" 0
     ${EndIf}
 SectionEnd
 
@@ -289,12 +289,12 @@ SectionEnd
 ;Descriptions
 
 ;Language strings
-    LangString DESC_InstallJellyfinServer ${LANG_ENGLISH} "Install Jellyfin Server"
+    LangString DESC_InstallVesoServer ${LANG_ENGLISH} "Install Veso Server"
     LangString DESC_InstallService ${LANG_ENGLISH} "Install As a Service"
 
 ;Assign language strings to sections
     !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${InstallJellyfinServer} $(DESC_InstallJellyfinServer)
+    !insertmacro MUI_DESCRIPTION_TEXT ${InstallVesoServer} $(DESC_InstallVesoServer)
     !insertmacro MUI_DESCRIPTION_TEXT ${InstallService} $(DESC_InstallService)
     !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -307,50 +307,50 @@ Section "Uninstall"
     ReadRegStr $_JELLYFINDATADIR_ HKLM "${REG_CONFIG_KEY}" "DataFolder"  ; read the data folder
     ReadRegStr $_SERVICEACCOUNTTYPE_ HKLM "${REG_CONFIG_KEY}" "ServiceAccountType"  ; read the account name
 
-    DetailPrint "Jellyfin Install location: $INSTDIR"
-    DetailPrint "Jellyfin Data folder: $_JELLYFINDATADIR_"
+    DetailPrint "Veso Install location: $INSTDIR"
+    DetailPrint "Veso Data folder: $_JELLYFINDATADIR_"
 
-    MessageBox MB_YESNO|MB_ICONINFORMATION "Do you want to retain the Jellyfin Server data folder? The media will not be touched. $\r$\nIf unsure choose YES." /SD IDYES IDYES PreserveData
+    MessageBox MB_YESNO|MB_ICONINFORMATION "Do you want to retain the Veso Server data folder? The media will not be touched. $\r$\nIf unsure choose YES." /SD IDYES IDYES PreserveData
 
     RMDir /r /REBOOTOK "$_JELLYFINDATADIR_"
 
     PreserveData:
 
-    ExecWait '"$INSTDIR\nssm.exe" statuscode JellyfinServer' $0
-    DetailPrint "Jellyfin Server service statuscode, $0"
+    ExecWait '"$INSTDIR\nssm.exe" statuscode VesoServer' $0
+    DetailPrint "Veso Server service statuscode, $0"
     IntCmp $0 0 NoServiceUninstall ; service doesn't exist, may be run from desktop shortcut
 
     Sleep 3000 ; Give time for Windows to catchup
 
     UninstallStopRetry:
-    ExecWait '"$INSTDIR\nssm.exe" stop JellyfinServer' $0
+    ExecWait '"$INSTDIR\nssm.exe" stop VesoServer' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not stop the Jellyfin Server service." UninstallStopRetry
+        !insertmacro ShowError "Could not stop the Veso Server service." UninstallStopRetry
     ${EndIf}
-    DetailPrint "Stopped Jellyfin Server service, $0"
+    DetailPrint "Stopped Veso Server service, $0"
 
     UninstallRemoveRetry:
-    ExecWait '"$INSTDIR\nssm.exe" remove JellyfinServer confirm' $0
+    ExecWait '"$INSTDIR\nssm.exe" remove VesoServer confirm' $0
     ${If} $0 <> 0
-        !insertmacro ShowError "Could not remove the Jellyfin Server service." UninstallRemoveRetry
+        !insertmacro ShowError "Could not remove the Veso Server service." UninstallRemoveRetry
     ${EndIf}
-    DetailPrint "Removed Jellyfin Server service, $0"
+    DetailPrint "Removed Veso Server service, $0"
 
     Sleep 3000 ; Give time for Windows to catchup
 
     NoServiceUninstall: ; existing install was present but no service was detected. Remove shortcuts if account is set to none
         ${If} $_SERVICEACCOUNTTYPE_ == "None"
-            RMDir /r "$SMPROGRAMS\Jellyfin Server"
-            Delete "$DESKTOP\Jellyfin Server.lnk"
+            RMDir /r "$SMPROGRAMS\Veso Server"
+            Delete "$DESKTOP\Veso Server.lnk"
             DetailPrint "Removed old shortcuts..."
         ${EndIf}
 
     Delete "$INSTDIR\*.*"
-    RMDir /r /REBOOTOK "$INSTDIR\jellyfin-web"
+    RMDir /r /REBOOTOK "$INSTDIR\veso-web"
     Delete "$INSTDIR\Uninstall.exe"
     RMDir /r /REBOOTOK "$INSTDIR"
     
-    DeleteRegKey HKLM "Software\Jellyfin"
+    DeleteRegKey HKLM "Software\Veso"
     DeleteRegKey HKLM "${REG_UNINST_KEY}"
 
 SectionEnd
@@ -365,15 +365,15 @@ Function .onInit
     StrCpy $_MAKESHORTCUTS_ "No"
 
     SetShellVarContext current
-    StrCpy $_JELLYFINDATADIR_ "$%ProgramData%\Jellyfin\Server"
+    StrCpy $_JELLYFINDATADIR_ "$%ProgramData%\Veso\Server"
 
-    System::Call 'kernel32::CreateMutex(p 0, i 0, t "JellyfinServerMutex") p .r1 ?e'
+    System::Call 'kernel32::CreateMutex(p 0, i 0, t "VesoServerMutex") p .r1 ?e'
     Pop $R0
 
     StrCmp $R0 0 +3
     !insertmacro ShowErrorFinal "The installer is already running."
 
-;Detect if Jellyfin is already installed.
+;Detect if Veso is already installed.
 ; In case it is installed, let the user choose either
 ;	1. Exit installer
 ;   2. Upgrade without messing with data
@@ -384,11 +384,11 @@ Function .onInit
     ReadRegStr "$0" HKLM "${REG_CONFIG_KEY}" "InstallFolder"
     IfErrors NoExisitingInstall
 
-    DetailPrint "Existing Jellyfin Server detected at: $0"
+    DetailPrint "Existing Veso Server detected at: $0"
     StrCpy "$INSTDIR" "$0" ; set the location fro registry as new default
 
     StrCpy $_EXISTINGINSTALLATION_ "Yes" ; Set our flag to be used later
-    SectionSetText ${InstallJellyfinServer} "Upgrade Jellyfin Server (required)" ; Change install text to "Upgrade"
+    SectionSetText ${InstallVesoServer} "Upgrade Veso Server (required)" ; Change install text to "Upgrade"
 
   ; check if service was run using Network Service account
     ClearErrors
@@ -400,10 +400,10 @@ Function .onInit
     ; Hide sections which will not be needed in case of previous install
     ; SectionSetText ${InstallService} ""
 
-; check if there is a service called Jellyfin, there should be
-; hack : nssm statuscode Jellyfin will return non zero return code in case it exists
-    ExecWait '"$INSTDIR\nssm.exe" statuscode JellyfinServer' $0
-    DetailPrint "Jellyfin Server service statuscode, $0"
+; check if there is a service called Veso, there should be
+; hack : nssm statuscode Veso will return non zero return code in case it exists
+    ExecWait '"$INSTDIR\nssm.exe" statuscode VesoServer' $0
+    DetailPrint "Veso Server service statuscode, $0"
     IntCmp $0 0 NoService ; service doesn't exist, may be run from desktop shortcut
 
     ; if service was detected, set defaults going forward.
@@ -423,7 +423,7 @@ Function .onInit
         ${EndIf}
 
 ; Let the user know that we'll upgrade and provide an option to quit.
-    MessageBox MB_OKCANCEL|MB_ICONINFORMATION "Existing installation of Jellyfin Server was detected, it'll be upgraded, settings will be retained. \
+    MessageBox MB_OKCANCEL|MB_ICONINFORMATION "Existing installation of Veso Server was detected, it'll be upgraded, settings will be retained. \
     $\r$\nClick OK to proceed, Cancel to exit installer." /SD IDOK IDOK ProceedWithUpgrade
     Quit ; Quit if the user is not sure about upgrade
 
@@ -500,7 +500,7 @@ Var BasicInstall
 
 Function SetupTypePage_Config
 ${NSD_GetState} $hCtl_setuptype_BasicInstall $BasicInstall
- IfFileExists "$LOCALAPPDATA\Jellyfin" folderfound foldernotfound ; if the folder exists, use this, otherwise, go with new default
+ IfFileExists "$LOCALAPPDATA\Veso" folderfound foldernotfound ; if the folder exists, use this, otherwise, go with new default
         folderfound:
             StrCpy $_FOLDEREXISTS_ "Yes"
             Goto InstallCheck
@@ -516,7 +516,7 @@ ${If} $BasicInstall == 1
     StrCpy $_SERVICEACCOUNTTYPE_ "None"
     StrCpy $_MAKESHORTCUTS_ "Yes"
     ${If} $_FOLDEREXISTS_ == "Yes"
-        StrCpy $_JELLYFINDATADIR_ "$LOCALAPPDATA\Jellyfin\"
+        StrCpy $_JELLYFINDATADIR_ "$LOCALAPPDATA\Veso\"
     ${EndIf}
 ${Else}
     StrCpy $_SETUPTYPE_ "Advanced"
@@ -525,12 +525,12 @@ ${Else}
     ${If} $_FOLDEREXISTS_ == "Yes"
             MessageBox MB_OKCANCEL|MB_ICONINFORMATION "An existing data folder was detected.\
             $\r$\nBasic Setup is highly recommended.\
-            $\r$\nIf you proceed, you will need to set up Jellyfin again." IDOK GoAhead IDCANCEL GoBack
+            $\r$\nIf you proceed, you will need to set up Veso again." IDOK GoAhead IDCANCEL GoBack
         GoBack:
             Abort
     ${EndIf}
         GoAhead:
-            StrCpy $_JELLYFINDATADIR_ "$%ProgramData%\Jellyfin\Server"
+            StrCpy $_JELLYFINDATADIR_ "$%ProgramData%\Veso\Server"
             SectionSetText ${CreateWinShortcuts} ""
 ${EndIf}
     

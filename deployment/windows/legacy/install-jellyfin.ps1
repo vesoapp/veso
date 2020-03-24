@@ -5,15 +5,15 @@ param(
     [Switch]$InstallAsService,
     [System.Management.Automation.pscredential]$ServiceUser,
     [switch]$CreateDesktopShorcut,
-    [switch]$LaunchJellyfin,
+    [switch]$LaunchVeso,
     [switch]$MigrateEmbyLibrary,
     [string]$InstallLocation,
     [string]$EmbyLibraryLocation,
-    [string]$JellyfinLibraryLocation
+    [string]$VesoLibraryLocation
 )
 <# This form was created using POSHGUI.com  a free online gui designer for PowerShell
 .NAME
-    Install-Jellyfin
+    Install-Veso
 #>
 
 #This doesn't need to be used by default anymore, but I am keeping it in as a function for future use.
@@ -57,15 +57,15 @@ function Elevate-Window {
 #FIXME The install methods should be a function that takes all the params, the quiet flag should be a paramset
 
 if($Quiet.IsPresent -or $Quiet -eq $true){
-    if([string]::IsNullOrEmpty($JellyfinLibraryLocation)){
-        $Script:JellyfinDataDir = "$env:LOCALAPPDATA\jellyfin\"
+    if([string]::IsNullOrEmpty($VesoLibraryLocation)){
+        $Script:VesoDataDir = "$env:LOCALAPPDATA\veso\"
     }else{
-        $Script:JellyfinDataDir = $JellyfinLibraryLocation
+        $Script:VesoDataDir = $VesoLibraryLocation
     }
     if([string]::IsNullOrEmpty($InstallLocation)){
-        $Script:DefaultJellyfinInstallDirectory = "$env:Appdata\jellyfin\"
+        $Script:DefaultVesoInstallDirectory = "$env:Appdata\veso\"
     }else{
-        $Script:DefaultJellyfinInstallDirectory = $InstallLocation
+        $Script:DefaultVesoInstallDirectory = $InstallLocation
     }
     
     if([string]::IsNullOrEmpty($EmbyLibraryLocation)){
@@ -82,47 +82,47 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
     }else{
         $Script:InstallServiceAsUser = $true
         $Script:UserCredentials = $ServiceUser
-        $Script:JellyfinDataDir = "$env:HOMEDRIVE\Users\$($Script:UserCredentials.UserName)\Appdata\Local\jellyfin\"}
+        $Script:VesoDataDir = "$env:HOMEDRIVE\Users\$($Script:UserCredentials.UserName)\Appdata\Local\veso\"}
     if($CreateDesktopShorcut.IsPresent -or $CreateDesktopShorcut -eq $true) {$Script:CreateShortcut = $true}else{$Script:CreateShortcut = $false}
     if($MigrateEmbyLibrary.IsPresent -or $MigrateEmbyLibrary -eq $true){$Script:MigrateLibrary = $true}else{$Script:MigrateLibrary = $false}
-    if($LaunchJellyfin.IsPresent -or $LaunchJellyfin -eq $true){$Script:StartJellyfin = $true}else{$Script:StartJellyfin = $false}
+    if($LaunchVeso.IsPresent -or $LaunchVeso -eq $true){$Script:StartVeso = $true}else{$Script:StartVeso = $false}
     
-    if(-not (Test-Path $Script:DefaultJellyfinInstallDirectory)){
-        mkdir $Script:DefaultJellyfinInstallDirectory
+    if(-not (Test-Path $Script:DefaultVesoInstallDirectory)){
+        mkdir $Script:DefaultVesoInstallDirectory
     }
-    Copy-Item -Path $PSScriptRoot/* -DestinationPath "$Script:DefaultJellyfinInstallDirectory/" -Force -Recurse
+    Copy-Item -Path $PSScriptRoot/* -DestinationPath "$Script:DefaultVesoInstallDirectory/" -Force -Recurse
     if($Script:InstallAsService){
         if($Script:InstallServiceAsUser){
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
             Start-Sleep -Milliseconds 500
-            &sc.exe config Jellyfin obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
+            &sc.exe config Veso obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
         }else{
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
             Start-Sleep -Milliseconds 500
-            #&"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin ObjectName $Script:UserCredentials.UserName $Script:UserCredentials.GetNetworkCredential().Password
-            #Set-Service -Name Jellyfin -Credential $Script:UserCredentials
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
+            #&"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso ObjectName $Script:UserCredentials.UserName $Script:UserCredentials.GetNetworkCredential().Password
+            #Set-Service -Name Veso -Credential $Script:UserCredentials
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
         }
     }
     if($Script:MigrateLibrary){
-        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:JellyfinDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:JellyfinDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:JellyfinDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:JellyfinDataDir -force -Recurse
-        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:JellyfinDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:VesoDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:VesoDataDir -force -Recurse
     }
     if($Script:CreateShortcut){
         $WshShell = New-Object -comObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Jellyfin.lnk")
-        $Shortcut.TargetPath = "$Script:DefaultJellyfinInstallDirectory\jellyfin.exe"
+        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Veso.lnk")
+        $Shortcut.TargetPath = "$Script:DefaultVesoInstallDirectory\veso.exe"
         $Shortcut.Save()
     }
-    if($Script:StartJellyfin){
+    if($Script:StartVeso){
         if($Script:InstallAsService){
-            Get-Service Jellyfin | Start-Service
+            Get-Service Veso | Start-Service
         }else{
-            Start-Process -FilePath $Script:DefaultJellyfinInstallDirectory\jellyfin.exe -PassThru
+            Start-Process -FilePath $Script:DefaultVesoInstallDirectory\veso.exe -PassThru
         }
     }
 }else{
@@ -131,16 +131,16 @@ if($Quiet.IsPresent -or $Quiet -eq $true){
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-$Script:JellyFinDataDir = "$env:LOCALAPPDATA\jellyfin\"
-$Script:DefaultJellyfinInstallDirectory = "$env:Appdata\jellyfin\"
+$Script:JellyFinDataDir = "$env:LOCALAPPDATA\veso\"
+$Script:DefaultVesoInstallDirectory = "$env:Appdata\veso\"
 $Script:defaultEmbyDataDir = "$env:Appdata\Emby-Server\"
 $Script:InstallAsService = $False
 $Script:InstallServiceAsUser = $false
 $Script:CreateShortcut = $false
 $Script:MigrateLibrary = $false
-$Script:StartJellyfin = $false
+$Script:StartVeso = $false
 
-function InstallJellyfin {
+function InstallVeso {
     Write-Host "Install as service: $Script:InstallAsService" 
     Write-Host "Install as serviceuser: $Script:InstallServiceAsUser"
     Write-Host "Create Shortcut: $Script:CreateShortcut"
@@ -148,38 +148,38 @@ function InstallJellyfin {
     $GUIElementsCollection | ForEach-Object {
         $_.Enabled = $false
     }
-    Write-Host "Making Jellyfin directory"
+    Write-Host "Making Veso directory"
     $ProgressBar.Minimum = 1
     $ProgressBar.Maximum = 100
     $ProgressBar.Value = 1
-    if($Script:DefaultJellyfinInstallDirectory -ne $InstallLocationBox.Text){
+    if($Script:DefaultVesoInstallDirectory -ne $InstallLocationBox.Text){
         Write-Host "Custom Install Location Chosen: $($InstallLocationBox.Text)"
-        $Script:DefaultJellyfinInstallDirectory = $InstallLocationBox.Text
+        $Script:DefaultVesoInstallDirectory = $InstallLocationBox.Text
     }
-    if($Script:JellyfinDataDir -ne $CustomLibraryBox.Text){
+    if($Script:VesoDataDir -ne $CustomLibraryBox.Text){
         Write-Host "Custom Library Location Chosen: $($CustomLibraryBox.Text)"
-        $Script:JellyfinDataDir = $CustomLibraryBox.Text
+        $Script:VesoDataDir = $CustomLibraryBox.Text
     }
-    if(-not (Test-Path $Script:DefaultJellyfinInstallDirectory)){
-        mkdir $Script:DefaultJellyfinInstallDirectory
+    if(-not (Test-Path $Script:DefaultVesoInstallDirectory)){
+        mkdir $Script:DefaultVesoInstallDirectory
     }
-    Write-Host "Copying Jellyfin Data"
+    Write-Host "Copying Veso Data"
     $progressbar.Value = 10 
-    Copy-Item -Path $PSScriptRoot/* -Destination $Script:DefaultJellyfinInstallDirectory/ -Force -Recurse
+    Copy-Item -Path $PSScriptRoot/* -Destination $Script:DefaultVesoInstallDirectory/ -Force -Recurse
     Write-Host "Finished Copying"
     $ProgressBar.Value = 50
     if($Script:InstallAsService){
         if($Script:InstallServiceAsUser){
             Write-Host "Installing Service as user $($Script:UserCredentials.UserName)"
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
             Start-Sleep -Milliseconds 2000
-            &sc.exe config Jellyfin obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
+            &sc.exe config Veso obj=".\$($Script:UserCredentials.UserName)" password="$($Script:UserCredentials.GetNetworkCredential().Password)"
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
         }else{
             Write-Host "Installing Service as LocalSystem"
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" install Jellyfin `"$Script:DefaultJellyfinInstallDirectory\jellyfin.exe`" --datadir `"$Script:JellyfinDataDir`"
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" install Veso `"$Script:DefaultVesoInstallDirectory\veso.exe`" --datadir `"$Script:VesoDataDir`"
             Start-Sleep -Milliseconds 2000
-            &"$Script:DefaultJellyfinInstallDirectory\nssm.exe" set Jellyfin Start SERVICE_DELAYED_AUTO_START 
+            &"$Script:DefaultVesoInstallDirectory\nssm.exe" set Veso Start SERVICE_DELAYED_AUTO_START 
         }
     }
     $progressbar.Value = 60
@@ -191,32 +191,32 @@ function InstallJellyfin {
         Write-Host "Copying emby library from $Script:defaultEmbyDataDir to $Script:JellyFinDataDir"
         Write-Host "This could take a while depending on the size of your library. Please be patient"
         Write-Host "Copying config"
-        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:JellyfinDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/config -Destination $Script:VesoDataDir -force -Recurse
         Write-Host "Copying cache"
-        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:JellyfinDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/cache -Destination $Script:VesoDataDir -force -Recurse
         Write-Host "Copying data"
-        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:JellyfinDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/data -Destination $Script:VesoDataDir -force -Recurse
         Write-Host "Copying metadata"
-        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:JellyfinDataDir -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/metadata -Destination $Script:VesoDataDir -force -Recurse
         Write-Host "Copying root dir"
-        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:JellyfinDataDir  -force -Recurse
+        Copy-Item -Path $Script:defaultEmbyDataDir/root -Destination $Script:VesoDataDir  -force -Recurse
     }
     $progressbar.Value = 80
     if($Script:CreateShortcut){
         Write-Host "Creating Shortcut"
         $WshShell = New-Object -comObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Jellyfin.lnk")
-        $Shortcut.TargetPath = "$Script:DefaultJellyfinInstallDirectory\jellyfin.exe"
+        $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Veso.lnk")
+        $Shortcut.TargetPath = "$Script:DefaultVesoInstallDirectory\veso.exe"
         $Shortcut.Save()
     }
     $ProgressBar.Value = 90
-    if($Script:StartJellyfin){
+    if($Script:StartVeso){
         if($Script:InstallAsService){
-            Write-Host "Starting Jellyfin Service"
-            Get-Service Jellyfin | Start-Service
+            Write-Host "Starting Veso Service"
+            Get-Service Veso | Start-Service
         }else{
-            Write-Host "Starting Jellyfin"
-            Start-Process -FilePath $Script:DefaultJellyfinInstallDirectory\jellyfin.exe -PassThru
+            Write-Host "Starting Veso"
+            Start-Process -FilePath $Script:DefaultVesoInstallDirectory\veso.exe -PassThru
         }
     }
     $progressbar.Value = 100
@@ -249,7 +249,7 @@ function UserSelect {
          $ServiceUserBox.Items.Add("Custom User")
     }elseif($ServiceUserBox.Text -eq 'Custom User'){
         $Script:InstallServiceAsUser = $true
-        $Script:UserCredentials = Get-Credential -Message "Please enter the credentials of the user you with to run Jellyfin Service as" -UserName $env:USERNAME
+        $Script:UserCredentials = Get-Credential -Message "Please enter the credentials of the user you with to run Veso Service as" -UserName $env:USERNAME
         $ServiceUserBox.Items[1] = "$($Script:UserCredentials.UserName)"
     }
 }
@@ -262,9 +262,9 @@ function CreateShortcutBoxCheckChanged {
 }
 function StartJellyFinBoxCheckChanged {
     if($StartProgramCheck.Checked){
-        $Script:StartJellyfin = $true
+        $Script:StartVeso = $true
     }else{
-        $Script:StartJellyfin = $false
+        $Script:StartVeso = $false
     }
 }
 
@@ -301,7 +301,7 @@ function MigrateLibraryCheckboxChanged {
 
 $InstallForm                     = New-Object system.Windows.Forms.Form
 $InstallForm.ClientSize          = '320,240'
-$InstallForm.text                = "Terrible Jellyfin Installer"
+$InstallForm.text                = "Terrible Veso Installer"
 $InstallForm.TopMost             = $false
 
 $GUIElementsCollection = @()
@@ -334,7 +334,7 @@ $InstallLocationBox.multiline    = $false
 $InstallLocationBox.width        = 205
 $InstallLocationBox.height       = 20
 $InstallLocationBox.location     = New-Object System.Drawing.Point(110,50)
-$InstallLocationBox.Text            = $Script:DefaultJellyfinInstallDirectory
+$InstallLocationBox.Text            = $Script:DefaultVesoInstallDirectory
 $InstallLocationBox.Font         = 'Microsoft Sans Serif,10'
 $GUIElementsCollection += $InstallLocationBox
 
@@ -433,7 +433,7 @@ $CreateShortcutCheck.Font                  = 'Microsoft Sans Serif,10'
 $GUIElementsCollection += $CreateShortcutCheck
 
 $StartProgramCheck                       = New-Object system.Windows.Forms.CheckBox
-$StartProgramCheck.text                  = "Start Jellyfin"
+$StartProgramCheck.text                  = "Start Veso"
 $StartProgramCheck.AutoSize              = $false
 $StartProgramCheck.width                 = 160
 $StartProgramCheck.height                = 20
@@ -445,7 +445,7 @@ $InstallForm.controls.AddRange($GUIElementsCollection)
 $InstallForm.Controls.Add($ProgressBar)
 
 #region gui events {
-$InstallButton.Add_Click({ InstallJellyfin })
+$InstallButton.Add_Click({ InstallVeso })
 $CustomLibraryCheck.Add_CheckedChanged({CustomLibraryCheckChanged})
 $InstallAsServiceCheck.Add_CheckedChanged({ServiceBoxCheckChanged})
 $ServiceUserBox.Add_SelectedValueChanged({ UserSelect })

@@ -3,7 +3,7 @@ using Emby.Naming.Video;
 using MediaBrowser.Model.Entities;
 using Xunit;
 
-namespace Jellyfin.Naming.Tests.Video
+namespace Veso.Naming.Tests.Video
 {
     public class ExtraTests : BaseVideoTest
     {

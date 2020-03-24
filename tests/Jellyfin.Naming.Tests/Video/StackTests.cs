@@ -4,7 +4,7 @@ using Emby.Naming.Video;
 using MediaBrowser.Model.IO;
 using Xunit;
 
-namespace Jellyfin.Naming.Tests.Video
+namespace Veso.Naming.Tests.Video
 {
     public class StackTests : BaseVideoTest
     {

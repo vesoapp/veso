@@ -64,8 +64,8 @@ define(["loading", "appRouter", "layoutManager", "appSettings", "apphost", "focu
                         break;
                     case "ServerUpdateNeeded":
                         alertTextWithOptions({
-                            text: globalize.translate("core#ServerUpdateNeeded", "https://github.com/jellyfin/jellyfin"),
-                            html: globalize.translate("core#ServerUpdateNeeded", '<a href="https://github.com/jellyfin/jellyfin">https://github.com/jellyfin/jellyfin</a>')
+                            text: globalize.translate("core#ServerUpdateNeeded", "https://github.com/vesotv/veso"),
+                            html: globalize.translate("core#ServerUpdateNeeded", '<a href="https://github.com/vesotv/veso">https://github.com/vesotv/veso</a>')
                         });
                         break;
                     default:

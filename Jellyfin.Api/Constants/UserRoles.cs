@@ -1,4 +1,4 @@
-namespace Jellyfin.Api.Constants
+namespace Veso.Api.Constants
 {
     /// <summary>
     /// Constants for user roles used in the authentication and authorization for the API.

@@ -1,7 +1,7 @@
 using MediaBrowser.Common;
 using Xunit;
 
-namespace Jellyfin.Common.Tests
+namespace Veso.Common.Tests
 {
     public class HexTests
     {

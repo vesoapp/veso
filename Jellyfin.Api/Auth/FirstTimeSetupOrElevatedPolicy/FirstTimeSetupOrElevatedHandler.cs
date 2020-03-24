@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using Jellyfin.Api.Constants;
+using Veso.Api.Constants;
 using MediaBrowser.Common.Configuration;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Jellyfin.Api.Auth.FirstTimeSetupOrElevatedPolicy
+namespace Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy
 {
     /// <summary>
     /// Authorization handler for requiring first time setup or elevated privileges.
@@ -15,7 +15,7 @@ namespace Jellyfin.Api.Auth.FirstTimeSetupOrElevatedPolicy
         /// <summary>
         /// Initializes a new instance of the <see cref="FirstTimeSetupOrElevatedHandler" /> class.
         /// </summary>
-        /// <param name="configurationManager">The jellyfin configuration manager.</param>
+        /// <param name="configurationManager">The veso configuration manager.</param>
         public FirstTimeSetupOrElevatedHandler(IConfigurationManager configurationManager)
         {
             _configurationManager = configurationManager;

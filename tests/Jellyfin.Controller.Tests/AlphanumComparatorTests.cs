@@ -4,7 +4,7 @@ using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Sorting;
 using Xunit;
 
-namespace Jellyfin.Controller.Tests
+namespace Veso.Controller.Tests
 {
     public class AlphanumComparatorTests
     {

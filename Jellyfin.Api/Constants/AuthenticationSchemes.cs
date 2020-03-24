@@ -1,4 +1,4 @@
-namespace Jellyfin.Api.Constants
+namespace Veso.Api.Constants
 {
     /// <summary>
     /// Authentication schemes for user authentication in the API.

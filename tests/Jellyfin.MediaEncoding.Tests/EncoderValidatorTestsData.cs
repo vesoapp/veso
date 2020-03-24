@@ -1,4 +1,4 @@
-namespace Jellyfin.MediaEncoding.Tests
+namespace Veso.MediaEncoding.Tests
 {
     internal static class EncoderValidatorTestsData
     {

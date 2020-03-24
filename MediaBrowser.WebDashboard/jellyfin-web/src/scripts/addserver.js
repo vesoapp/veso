@@ -16,7 +16,7 @@ define(["appSettings", "loading", "browser", "emby-linkbutton"], function(appSet
                 break;
             case "ServerUpdateNeeded":
                 Dashboard.alert({
-                    message: Globalize.translate("ServerUpdateNeeded", '<a href="https://github.com/jellyfin/jellyfin">https://github.com/jellyfin/jellyfin</a>')
+                    message: Globalize.translate("ServerUpdateNeeded", '<a href="https://github.com/vesotv/veso">https://github.com/vesotv/veso</a>')
                 });
                 break;
             case "Unavailable":

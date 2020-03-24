@@ -1,8 +1,8 @@
 {
 
     "name": "Emby",
-    "_comment": "This should be Jellyfin, but that breaks apps...",
-    "description": "Jellyfin: the Free Software Media System.",
+    "_comment": "This should be Veso, but that breaks apps...",
+    "description": "Veso: the Free Software Media System.",
     "lang": "en-US",
     "display": "minimal-ui",
     "short_name": "Emby",

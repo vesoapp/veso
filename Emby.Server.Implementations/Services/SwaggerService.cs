@@ -149,18 +149,18 @@ namespace Emby.Server.Implementations.Services
                 swagger = "2.0",
                 info = new SwaggerInfo
                 {
-                    title = "Jellyfin Server API",
+                    title = "Veso Server API",
                     version = "1.0.0",
-                    description = "Explore the Jellyfin Server API",
+                    description = "Explore the Veso Server API",
                     contact = new SwaggerConcactInfo
                     {
-                        name = "Jellyfin Community",
-                        url = "https://jellyfin.readthedocs.io/en/latest/user-docs/getting-help/"
+                        name = "Veso Community",
+                        url = "https://veso.readthedocs.io/en/latest/user-docs/getting-help/"
                     }
                 },
                 paths = GetPaths(),
                 definitions = GetDefinitions(),
-                basePath = "/jellyfin",
+                basePath = "/veso",
                 host = host,
 
                 components = new SwaggerComponents
@@ -200,7 +200,7 @@ namespace Emby.Server.Implementations.Services
                     }
 
                     if (info.Path.StartsWith("/mediabrowser", StringComparison.OrdinalIgnoreCase)
-                        || info.Path.StartsWith("/jellyfin", StringComparison.OrdinalIgnoreCase))
+                        || info.Path.StartsWith("/veso", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

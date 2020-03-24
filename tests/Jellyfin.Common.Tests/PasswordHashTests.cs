@@ -2,7 +2,7 @@ using MediaBrowser.Common;
 using MediaBrowser.Common.Cryptography;
 using Xunit;
 
-namespace Jellyfin.Common.Tests
+namespace Veso.Common.Tests
 {
     public class PasswordHashTests
     {

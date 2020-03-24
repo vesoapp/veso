@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Drawing.Skia
+namespace Veso.Drawing.Skia
 {
     /// <summary>
     /// Represents errors that occur during interaction with Skia.

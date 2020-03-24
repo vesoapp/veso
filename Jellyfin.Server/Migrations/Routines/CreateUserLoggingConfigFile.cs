@@ -6,7 +6,7 @@ using MediaBrowser.Common.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace Jellyfin.Server.Migrations.Routines
+namespace Veso.Server.Migrations.Routines
 {
     /// <summary>
     /// Migration to initialize the user logging configuration file "logging.user.json".

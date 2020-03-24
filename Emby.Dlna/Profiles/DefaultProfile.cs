@@ -15,12 +15,12 @@ namespace Emby.Dlna.Profiles
 
             ProtocolInfo = "http-get:*:video/mpeg:*,http-get:*:video/mp4:*,http-get:*:video/vnd.dlna.mpeg-tts:*,http-get:*:video/avi:*,http-get:*:video/x-matroska:*,http-get:*:video/x-ms-wmv:*,http-get:*:video/wtv:*,http-get:*:audio/mpeg:*,http-get:*:audio/mp3:*,http-get:*:audio/mp4:*,http-get:*:audio/x-ms-wma*,http-get:*:audio/wav:*,http-get:*:audio/L16:*,http-get:*image/jpeg:*,http-get:*image/png:*,http-get:*image/gif:*,http-get:*image/tiff:*";
 
-            Manufacturer = "Jellyfin";
+            Manufacturer = "Veso";
             ModelDescription = "UPnP/AV 1.0 Compliant Media Server";
-            ModelName = "Jellyfin Server";
+            ModelName = "Veso Server";
             ModelNumber = "01";
-            ModelUrl = "https://github.com/jellyfin/jellyfin";
-            ManufacturerUrl = "https://github.com/jellyfin/jellyfin";
+            ModelUrl = "https://github.com/vesotv/veso";
+            ManufacturerUrl = "https://github.com/vesotv/veso";
 
             AlbumArtPn = "JPEG_SM";
 

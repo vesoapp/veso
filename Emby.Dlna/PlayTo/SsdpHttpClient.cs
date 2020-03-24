@@ -17,7 +17,7 @@ namespace Emby.Dlna.PlayTo
     public class SsdpHttpClient
     {
         private const string USERAGENT = "Microsoft-Windows/6.2 UPnP/1.0 Microsoft-DLNA DLNADOC/1.50";
-        private const string FriendlyName = "Jellyfin";
+        private const string FriendlyName = "Veso";
 
         private readonly CultureInfo _usCulture = new CultureInfo("en-US");
 

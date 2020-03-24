@@ -5,8 +5,8 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Jellyfin.Api.Auth;
-using Jellyfin.Api.Constants;
+using Veso.Api.Auth;
+using Veso.Api.Constants;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Net;
 using Microsoft.AspNetCore.Authentication;
@@ -17,13 +17,13 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Jellyfin.Api.Tests.Auth
+namespace Veso.Api.Tests.Auth
 {
     public class CustomAuthenticationHandlerTests
     {
         private readonly IFixture _fixture;
 
-        private readonly Mock<IAuthService> _jellyfinAuthServiceMock;
+        private readonly Mock<IAuthService> _vesoAuthServiceMock;
         private readonly Mock<IOptionsMonitor<AuthenticationSchemeOptions>> _optionsMonitorMock;
         private readonly Mock<ISystemClock> _clockMock;
         private readonly Mock<IServiceProvider> _serviceProviderMock;
@@ -44,7 +44,7 @@ namespace Jellyfin.Api.Tests.Auth
             _fixture = new Fixture().Customize(fixtureCustomizations);
             AllowFixtureCircularDependencies();
 
-            _jellyfinAuthServiceMock = _fixture.Freeze<Mock<IAuthService>>();
+            _vesoAuthServiceMock = _fixture.Freeze<Mock<IAuthService>>();
             _optionsMonitorMock = _fixture.Freeze<Mock<IOptionsMonitor<AuthenticationSchemeOptions>>>();
             _clockMock = _fixture.Freeze<Mock<ISystemClock>>();
             _serviceProviderMock = _fixture.Freeze<Mock<IServiceProvider>>();
@@ -79,7 +79,7 @@ namespace Jellyfin.Api.Tests.Auth
         [Fact]
         public async Task HandleAuthenticateAsyncShouldFailWithNullUser()
         {
-            _jellyfinAuthServiceMock.Setup(
+            _vesoAuthServiceMock.Setup(
                     a => a.Authenticate(
                         It.IsAny<HttpRequest>(),
                         It.IsAny<AuthenticatedAttribute>()))
@@ -96,7 +96,7 @@ namespace Jellyfin.Api.Tests.Auth
         {
             var errorMessage = _fixture.Create<string>();
 
-            _jellyfinAuthServiceMock.Setup(
+            _vesoAuthServiceMock.Setup(
                     a => a.Authenticate(
                         It.IsAny<HttpRequest>(),
                         It.IsAny<AuthenticatedAttribute>()))
@@ -153,7 +153,7 @@ namespace Jellyfin.Api.Tests.Auth
             var user = _fixture.Create<User>();
             user.Policy.IsAdministrator = isAdmin;
 
-            _jellyfinAuthServiceMock.Setup(
+            _vesoAuthServiceMock.Setup(
                     a => a.Authenticate(
                         It.IsAny<HttpRequest>(),
                         It.IsAny<AuthenticatedAttribute>()))

@@ -1,4 +1,4 @@
-using Jellyfin.Server.Extensions;
+using Veso.Server.Extensions;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Jellyfin.Server
+namespace Veso.Server
 {
     /// <summary>
     /// Startup configuration for the Kestrel webhost.
@@ -32,14 +32,14 @@ namespace Jellyfin.Server
         {
             services.AddResponseCompression();
             services.AddHttpContextAccessor();
-            services.AddJellyfinApi(_serverConfigurationManager.Configuration.BaseUrl.TrimStart('/'));
+            services.AddVesoApi(_serverConfigurationManager.Configuration.BaseUrl.TrimStart('/'));
 
-            services.AddJellyfinApiSwagger();
+            services.AddVesoApiSwagger();
 
             // configure custom legacy authentication
             services.AddCustomAuthentication();
 
-            services.AddJellyfinApiAuthorization();
+            services.AddVesoApiAuthorization();
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Jellyfin.Server
             app.Use(serverApplicationHost.ExecuteWebsocketHandlerAsync);
 
             // TODO use when old API is removed: app.UseAuthentication();
-            app.UseJellyfinApiSwagger();
+            app.UseVesoApiSwagger();
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

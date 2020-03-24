@@ -437,7 +437,7 @@ define(['apphost', 'globalize', 'connectionManager', 'itemHelper', 'appRouter', 
                     navigator.share({
                         title: item.Name,
                         text: item.Overview,
-                        url: "https://github.com/jellyfin/jellyfin"
+                        url: "https://github.com/vesotv/veso"
                     });
                     break;
                     }
