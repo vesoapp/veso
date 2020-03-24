@@ -38,9 +38,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 RUN apt-get update \
  && apt-get install --no-install-recommends --no-install-suggests -y ca-certificates gnupg curl && \
- curl -ks https://repo.veso.org/debian/veso_team.gpg.key | apt-key add - && \
+ curl -ks https://repo.veso.tv/debian/veso_team.gpg.key | apt-key add - && \
  curl -ks https://keyserver.ubuntu.com/pks/lookup?op=get\&search=0x6587ffd6536b8826e88a62547876ae518cbcf2f2 | apt-key add - && \
- echo 'deb [arch=armhf] https://repo.veso.org/debian buster main' > /etc/apt/sources.list.d/veso.list && \
+ echo 'deb [arch=armhf] https://repo.veso.tv/debian buster main' > /etc/apt/sources.list.d/veso.list && \
  echo "deb http://ppa.launchpad.net/ubuntu-raspi2/ppa/ubuntu bionic main">> /etc/apt/sources.list.d/raspbins.list && \
  apt-get update && \
  apt-get install --no-install-recommends --no-install-suggests -y \

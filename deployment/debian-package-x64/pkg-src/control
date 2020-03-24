@@ -1,7 +1,7 @@
 Source: veso
 Section: misc
 Priority: optional
-Maintainer: Veso Team <team@veso.org>
+Maintainer: Veso Team <team@veso.tv>
 Build-Depends:  debhelper (>= 9),
                 dotnet-sdk-3.1,
                 libc6-dev,

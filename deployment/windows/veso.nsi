@@ -181,7 +181,7 @@ Section "!Veso Server (required)" InstallVesoServer
     WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" '"$INSTDIR\Uninstall.exe",0'
     WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "The Veso Project"
-    WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://veso.org/"
+    WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://veso.tv/"
     WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "$_JELLYFINVERSION_"
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" 1
     WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" 1

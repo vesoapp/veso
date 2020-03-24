@@ -2,9 +2,9 @@ ARG DOTNET_VERSION=3.1
 ARG FFMPEG_VERSION=latest
 
 FROM node:alpine as web-builder
-ARG JELLYFIN_WEB_VERSION=release-1.0.z
+ARG JELLYFIN_WEB_VERSION=release-develop
 RUN apk add curl git \
- && git clone --branch release-1.0.z --single-branch https://github.com/vesotv/veso-web.git \
+ && git clone --branch develop --single-branch https://github.com/dannymichel/veso-web.git \
  && cd veso-web \
  && yarn install \
  && yarn build \
@@ -18,7 +18,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 # see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
 RUN dotnet publish Veso.Server --disable-parallel --configuration Release --output="/veso" --self-contained --runtime linux-x64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
-FROM veso/ffmpeg:${FFMPEG_VERSION} as ffmpeg
+FROM jellyfin/ffmpeg:${FFMPEG_VERSION} as ffmpeg
 FROM debian:buster-slim
 
 # https://askubuntu.com/questions/972516/debian-frontend-environment-variable

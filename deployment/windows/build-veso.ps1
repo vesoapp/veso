@@ -55,7 +55,7 @@ function Install-FFMPEG {
         Write-Warning "FFMPEG will not be installed"
     }elseif($Architecture -eq 'x64'){
          Write-Verbose "Downloading 64 bit FFMPEG"
-         Invoke-WebRequest -Uri https://repo.veso.org/releases/server/windows/ffmpeg/veso-ffmpeg.zip -UseBasicParsing -OutFile "$tempdir/ffmpeg.zip" | Write-Verbose
+         Invoke-WebRequest -Uri https://repo.veso.tv/releases/server/windows/ffmpeg/veso-ffmpeg.zip -UseBasicParsing -OutFile "$tempdir/ffmpeg.zip" | Write-Verbose
     }else{
          Write-Verbose "Downloading 32 bit FFMPEG"
          Invoke-WebRequest -Uri https://ffmpeg.zeranoe.com/builds/win32/shared/$FFMPEGVersionX86.zip -UseBasicParsing -OutFile "$tempdir/ffmpeg.zip" | Write-Verbose
