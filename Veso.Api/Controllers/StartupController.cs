@@ -1,11 +1,11 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Veso.Api.Constants;
-using Veso.Api.Models.StartupDtos;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Veso.Api.Constants;
+using Veso.Api.Models.StartupDtos;
 
 namespace Veso.Api.Controllers
 {

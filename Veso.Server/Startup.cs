@@ -1,10 +1,10 @@
-using Veso.Server.Extensions;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Veso.Server.Extensions;
 
 namespace Veso.Server
 {
