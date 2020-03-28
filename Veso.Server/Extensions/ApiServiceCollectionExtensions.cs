@@ -1,13 +1,13 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Veso.Api;
 using Veso.Api.Auth;
 using Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy;
 using Veso.Api.Auth.RequiresElevationPolicy;
 using Veso.Api.Constants;
 using Veso.Api.Controllers;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 
 namespace Veso.Server.Extensions
 {
