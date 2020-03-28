@@ -127,7 +127,7 @@ namespace Emby.Server.Implementations.LiveTv.EmbyTV
         public string DataPath => Path.Combine(_config.CommonApplicationPaths.DataPath, "livetv");
 
         /// <inheritdoc />
-        public string HomePageUrl => "https://github.com/jellyfin/jellyfin";
+        public string HomePageUrl => "https://github.com/vesotv/veso";
 
         private string DefaultRecordingPath => Path.Combine(DataPath, "recordings");
 

@@ -427,7 +427,7 @@ namespace Emby.Server.Implementations
         /// Gets the email address for use within a comment section of a user agent field.
         /// Presently used to provide contact information to MusicBrainz service.
         /// </summary>
-        public string ApplicationUserAgentAddress { get; } = "team@jellyfin.org";
+        public string ApplicationUserAgentAddress { get; } = "team@veso.tv";
 
         /// <summary>
         /// Gets the current application name.
@@ -899,16 +899,16 @@ namespace Emby.Server.Implementations
 
             // Get all 'JELLYFIN_' prefixed environment variables
             var allEnvVars = Environment.GetEnvironmentVariables();
-            var jellyfinEnvVars = new Dictionary<object, object>();
+            var vesoEnvVars = new Dictionary<object, object>();
             foreach (var key in allEnvVars.Keys)
             {
                 if (key.ToString().StartsWith("JELLYFIN_", StringComparison.OrdinalIgnoreCase))
                 {
-                    jellyfinEnvVars.Add(key, allEnvVars[key]);
+                    vesoEnvVars.Add(key, allEnvVars[key]);
                 }
             }
 
-            logger.LogInformation("Environment Variables: {EnvVars}", jellyfinEnvVars);
+            logger.LogInformation("Environment Variables: {EnvVars}", vesoEnvVars);
             logger.LogInformation("Arguments: {Args}", commandLineArgs);
             logger.LogInformation("Operating system: {OS}", OperatingSystem.Name);
             logger.LogInformation("Architecture: {Architecture}", RuntimeInformation.OSArchitecture);

@@ -1,11 +1,11 @@
 FROM debian:10
 # Docker build arguments
-ARG SOURCE_DIR=/jellyfin
-ARG PLATFORM_DIR=/jellyfin/deployment/win-x64
+ARG SOURCE_DIR=/veso
+ARG PLATFORM_DIR=/veso/deployment/win-x64
 ARG ARTIFACT_DIR=/dist
 ARG SDK_VERSION=3.1
 # Docker run environment
-ENV SOURCE_DIR=/jellyfin
+ENV SOURCE_DIR=/veso
 ENV ARTIFACT_DIR=/dist
 ENV DEB_BUILD_OPTIONS=noddebs
 ENV ARCH=amd64

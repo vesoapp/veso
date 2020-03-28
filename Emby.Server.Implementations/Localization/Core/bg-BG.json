@@ -44,7 +44,7 @@
     "NameInstallFailed": "{0} не можа да се инсталира",
     "NameSeasonNumber": "Сезон {0}",
     "NameSeasonUnknown": "Неразпознат сезон",
-    "NewVersionIsAvailable": "Нова версия на Jellyfin сървъра е достъпна за сваляне.",
+    "NewVersionIsAvailable": "Нова версия на Veso сървъра е достъпна за сваляне.",
     "NotificationOptionApplicationUpdateAvailable": "Налично е обновление на програмата",
     "NotificationOptionApplicationUpdateInstalled": "Обновлението на програмата е инсталирано",
     "NotificationOptionAudioPlayback": "Възпроизвеждането на звук започна",

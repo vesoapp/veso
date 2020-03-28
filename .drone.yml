@@ -11,7 +11,7 @@ steps:
 - name: build
   image: microsoft/dotnet:2-sdk
   commands:
-    - dotnet publish "Jellyfin.Server" --configuration Debug --output "../ci/ci-debug"
+    - dotnet publish "Veso.Server" --configuration Debug --output "../ci/ci-debug"
 
 ---
 kind: pipeline
@@ -26,5 +26,5 @@ steps:
 - name: build
   image: microsoft/dotnet:2-sdk
   commands:
-    - dotnet publish "Jellyfin.Server" --configuration Release --output "../ci/ci-release"
+    - dotnet publish "Veso.Server" --configuration Release --output "../ci/ci-release"
 

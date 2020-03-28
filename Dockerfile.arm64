@@ -8,8 +8,8 @@ ARG DOTNET_VERSION=3.1
 FROM node:alpine as web-builder
 ARG JELLYFIN_WEB_VERSION=master
 RUN apk add curl git zlib zlib-dev autoconf g++ make libpng-dev gifsicle alpine-sdk automake libtool make gcc musl-dev nasm python \
- && curl -L https://github.com/jellyfin/jellyfin-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
- && cd jellyfin-web-* \
+ && curl -L https://github.com/vesotv/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
+ && cd veso-web-* \
  && yarn install \
  && mv dist /dist
 
@@ -21,7 +21,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 # Discard objs - may cause failures if exists
 RUN find . -type d -name obj | xargs -r rm -r
 # Build
-RUN dotnet publish Jellyfin.Server --configuration Release --output="/jellyfin" --self-contained --runtime linux-arm64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
+RUN dotnet publish Veso.Server --configuration Release --output="/veso" --self-contained --runtime linux-arm64 "-p:GenerateDocumentationFile=false;DebugSymbols=false;DebugType=none"
 
 FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
 FROM arm64v8/debian:buster-slim
@@ -47,14 +47,14 @@ RUN apt-get update && apt-get install --no-install-recommends --no-install-sugge
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /cache /config /media \
  && chmod 777 /cache /config /media
-COPY --from=builder /jellyfin /jellyfin
-COPY --from=web-builder /dist /jellyfin/jellyfin-web
+COPY --from=builder /veso /veso
+COPY --from=web-builder /dist /veso/veso-web
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 EXPOSE 8096
 VOLUME /cache /config /media
-ENTRYPOINT ["./jellyfin/jellyfin", \
+ENTRYPOINT ["./veso/veso", \
     "--datadir", "/config", \
     "--cachedir", "/cache", \
     "--ffmpeg", "/usr/bin/ffmpeg"]

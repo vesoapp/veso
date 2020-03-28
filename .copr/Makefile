@@ -1,13 +1,13 @@
 VERSION := $(shell sed -ne '/^Version:/s/.*  *//p'                      \
-                   deployment/fedora-package-x64/pkg-src/jellyfin.spec)
+                   deployment/fedora-package-x64/pkg-src/veso.spec)
 
-deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz:
-	curl -f -L -o deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz \
-         https://github.com/jellyfin/jellyfin-web/archive/v$(VERSION).tar.gz \
-	|| curl -f -L -o deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz \
-         https://github.com/jellyfin/jellyfin-web/archive/master.tar.gz \
+deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz:
+	curl -f -L -o deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz \
+         https://github.com/vesotv/veso-web/archive/v$(VERSION).tar.gz \
+	|| curl -f -L -o deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz \
+         https://github.com/vesotv/veso-web/archive/master.tar.gz \
 
-srpm: deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz
+srpm: deployment/fedora-package-x64/pkg-src/veso-web-$(VERSION).tar.gz
 	cd deployment/fedora-package-x64;                                             \
     SOURCE_DIR=../..                                                              \
     WORKDIR="$${PWD}";                                                            \
@@ -15,7 +15,7 @@ srpm: deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz
     pkg_src_dir="$${WORKDIR}/pkg-src";                                            \
     GNU_TAR=1;                                                                    \
     tar                                                                           \
-    --transform "s,^\.,jellyfin-$(VERSION),"                                      \
+    --transform "s,^\.,veso-$(VERSION),"                                      \
     --exclude='.git*'                                                             \
     --exclude='**/.git'                                                           \
     --exclude='**/.hg'                                                            \
@@ -27,11 +27,11 @@ srpm: deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz
     --exclude='**/.nuget'                                                         \
     --exclude='*.deb'                                                             \
     --exclude='*.rpm'                                                             \
-    -czf "pkg-src/jellyfin-$(VERSION).tar.gz"                                     \
+    -czf "pkg-src/veso-$(VERSION).tar.gz"                                     \
     -C $${SOURCE_DIR} ./ || GNU_TAR=0;                                            \
     if [ $${GNU_TAR} -eq 0 ]; then                                                \
         package_temporary_dir="$$(mktemp -d)";                                    \
-        mkdir -p "$${package_temporary_dir}/jellyfin";                            \
+        mkdir -p "$${package_temporary_dir}/veso";                            \
         tar                                                                       \
         --exclude='.git*'                                                         \
         --exclude='**/.git'                                                       \
@@ -44,16 +44,16 @@ srpm: deployment/fedora-package-x64/pkg-src/jellyfin-web-$(VERSION).tar.gz
         --exclude='**/.nuget'                                                     \
         --exclude='*.deb'                                                         \
         --exclude='*.rpm'                                                         \
-        -czf "$${package_temporary_dir}/jellyfin/jellyfin-$(VERSION).tar.gz"      \
+        -czf "$${package_temporary_dir}/veso/veso-$(VERSION).tar.gz"      \
         -C $${SOURCE_DIR} ./;                                                     \
-        mkdir -p "$${package_temporary_dir}/jellyfin-$(VERSION)";                 \
-        tar -xzf "$${package_temporary_dir}/jellyfin/jellyfin-$(VERSION).tar.gz"  \
-            -C "$${package_temporary_dir}/jellyfin-$(VERSION);                    \
-        rm -f "$${package_temporary_dir}/jellyfin/jellyfin-$(VERSION).tar.gz";    \
-        tar -czf "$${SOURCE_DIR}/SOURCES/pkg-src/jellyfin-$(VERSION).tar.gz"      \
-            -C "$${package_temporary_dir}" "jellyfin-$(VERSION);                  \
+        mkdir -p "$${package_temporary_dir}/veso-$(VERSION)";                 \
+        tar -xzf "$${package_temporary_dir}/veso/veso-$(VERSION).tar.gz"  \
+            -C "$${package_temporary_dir}/veso-$(VERSION);                    \
+        rm -f "$${package_temporary_dir}/veso/veso-$(VERSION).tar.gz";    \
+        tar -czf "$${SOURCE_DIR}/SOURCES/pkg-src/veso-$(VERSION).tar.gz"      \
+            -C "$${package_temporary_dir}" "veso-$(VERSION);                  \
         rm -rf $${package_temporary_dir};                                         \
 	fi;                                                                           \
-	rpmbuild -bs pkg-src/jellyfin.spec                                            \
+	rpmbuild -bs pkg-src/veso.spec                                            \
 	         --define "_sourcedir $$PWD/pkg-src/"                                 \
 	         --define "_srcrpmdir $(outdir)"

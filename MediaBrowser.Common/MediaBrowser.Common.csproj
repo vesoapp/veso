@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>Jellyfin Contributors</Authors>
-    <PackageId>Jellyfin.Common</PackageId>
+    <Authors>Veso Contributors</Authors>
+    <PackageId>Veso.Common</PackageId>
     <PackageLicenseUrl>https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/jellyfin/jellyfin</RepositoryUrl>
+    <RepositoryUrl>https://github.com/vesotv/veso</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,12 +37,12 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <CodeAnalysisRuleSet>../jellyfin.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>../veso.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Jellyfin.Common.Tests</_Parameter1>
+      <_Parameter1>Veso.Common.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 

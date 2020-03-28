@@ -8,12 +8,12 @@
       <HttpHeaderInfo name="User-Agent" value="DIRECTV" match="Substring" />
     </Headers>
   </Identification>
-  <Manufacturer>Jellyfin</Manufacturer>
-  <ManufacturerUrl>https://github.com/jellyfin/jellyfin</ManufacturerUrl>
-  <ModelName>Jellyfin Server</ModelName>
+  <Manufacturer>Veso</Manufacturer>
+  <ManufacturerUrl>https://github.com/vesotv/veso</ManufacturerUrl>
+  <ModelName>Veso Server</ModelName>
   <ModelDescription>UPnP/AV 1.0 Compliant Media Server</ModelDescription>
   <ModelNumber>01</ModelNumber>
-  <ModelUrl>https://github.com/jellyfin/jellyfin</ModelUrl>
+  <ModelUrl>https://github.com/vesotv/veso</ModelUrl>
   <EnableAlbumArtInDidl>false</EnableAlbumArtInDidl>
   <EnableSingleAlbumArtLimit>false</EnableSingleAlbumArtLimit>
   <EnableSingleSubtitleLimit>false</EnableSingleSubtitleLimit>

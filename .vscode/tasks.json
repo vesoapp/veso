@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Jellyfin.Server/Jellyfin.Server.csproj"
+                "${workspaceFolder}/Veso.Server/Veso.Server.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

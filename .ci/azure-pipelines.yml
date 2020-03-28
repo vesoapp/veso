@@ -4,7 +4,7 @@ variables:
   - name: TestProjects
     value: "tests/**/*Tests.csproj"
   - name: RestoreBuildProjects
-    value: "Jellyfin.Server/Jellyfin.Server.csproj"
+    value: "Veso.Server/Veso.Server.csproj"
   - name: DotNetSdkVersion
     value: 3.1.100
 
@@ -36,15 +36,15 @@ jobs:
     parameters:
       Packages:
         Naming:
-          NugetPackageName: Jellyfin.Naming
+          NugetPackageName: Veso.Naming
           AssemblyFileName: Emby.Naming.dll
         Controller:
-          NugetPackageName: Jellyfin.Controller
+          NugetPackageName: Veso.Controller
           AssemblyFileName: MediaBrowser.Controller.dll
         Model:
-          NugetPackageName: Jellyfin.Model
+          NugetPackageName: Veso.Model
           AssemblyFileName: MediaBrowser.Model.dll
         Common:
-          NugetPackageName: Jellyfin.Common
+          NugetPackageName: Veso.Common
           AssemblyFileName: MediaBrowser.Common.dll
       LinuxImage: "ubuntu-latest"
