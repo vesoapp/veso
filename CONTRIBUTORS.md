@@ -1,4 +1,4 @@
-# Veso Contributors
+# Jellyfin Contributors
 
  - [97carmine](https://github.com/97carmine)
  - [Abbe98](https://github.com/Abbe98)
