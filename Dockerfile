@@ -2,7 +2,7 @@ ARG DOTNET_VERSION=3.1
 ARG FFMPEG_VERSION=latest
 
 FROM node:alpine as web-builder
-ARG JELLYFIN_WEB_VERSION=master
+ARG JELLYFIN_WEB_VERSION=feature/subtitles
 RUN apk add curl git zlib zlib-dev autoconf g++ make libpng-dev gifsicle alpine-sdk automake libtool make gcc musl-dev nasm \
  && curl -L https://github.com/vesotv/veso-web/archive/${JELLYFIN_WEB_VERSION}.tar.gz | tar zxf - \
  && cd veso-web-* \
