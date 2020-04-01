@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Veso.Api.Constants;
 using MediaBrowser.Common.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Veso.Api.Constants;
 
 namespace Veso.Api.Auth.FirstTimeSetupOrElevatedPolicy
 {
