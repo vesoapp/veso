@@ -361,7 +361,7 @@ namespace MediaBrowser.Providers.Manager
 
             return _metadataProviders.OfType<IMetadataProvider<T>>()
                 .Where(i => CanRefresh(i, item, libraryOptions, includeDisabled, forceEnableInternetMetadata))
-                .OrderBy(i => GetConfiguredOrder(item, i, libraryOptions, globalMetadataOptions))
+                .OrderBy(i => GetConfiguredOrder(item, i, libraryOptions, currentOptions))
                 .ThenBy(GetDefaultOrder);
         }
 
