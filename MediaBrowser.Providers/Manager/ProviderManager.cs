@@ -46,7 +46,7 @@ namespace MediaBrowser.Providers.Manager
     /// </summary>
     public class ProviderManager : IProviderManager, IDisposable
     {
-        private readonly object _refreshQueueLock = new ();
+        private readonly object _refreshQueueLock = new();
         private readonly ILogger<ProviderManager> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILibraryMonitor _libraryMonitor;
@@ -56,9 +56,9 @@ namespace MediaBrowser.Providers.Manager
         private readonly ISubtitleManager _subtitleManager;
         private readonly IServerConfigurationManager _configurationManager;
         private readonly IBaseItemManager _baseItemManager;
-        private readonly ConcurrentDictionary<Guid, double> _activeRefreshes = new ();
-        private readonly CancellationTokenSource _disposeCancellationTokenSource = new ();
-        private readonly SimplePriorityQueue<Tuple<Guid, MetadataRefreshOptions>> _refreshQueue = new ();
+        private readonly ConcurrentDictionary<Guid, double> _activeRefreshes = new();
+        private readonly CancellationTokenSource _disposeCancellationTokenSource = new();
+        private readonly SimplePriorityQueue<Tuple<Guid, MetadataRefreshOptions>> _refreshQueue = new();
 
         private IImageProvider[] _imageProviders = Array.Empty<IImageProvider>();
         private IMetadataService[] _metadataServices = Array.Empty<IMetadataService>();
@@ -164,6 +164,10 @@ namespace MediaBrowser.Providers.Manager
                 if (url.IndexOf("/imagecache/", StringComparison.OrdinalIgnoreCase) != -1)
                 {
                     contentType = "image/png";
+                }
+                else
+                {
+                    throw new HttpRequestException("Invalid image received: contentType not set.", null, response.StatusCode);
                 }
             }
 
@@ -596,7 +600,7 @@ namespace MediaBrowser.Providers.Manager
 
             foreach (var saver in savers.Where(i => IsSaverEnabledForItem(i, item, libraryOptions, updateType, false)))
             {
-                _logger.LogDebug("Saving {0} to {1}.", item.Path ?? item.Name, saver.Name);
+                _logger.LogDebug("Saving {Item} to {Saver}", item.Path ?? item.Name, saver.Name);
 
                 if (saver is IMetadataFileSaver fileSaver)
                 {
@@ -608,7 +612,7 @@ namespace MediaBrowser.Providers.Manager
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error in {0} GetSavePath", saver.Name);
+                        _logger.LogError(ex, "Error in {Saver} GetSavePath", saver.Name);
                         continue;
                     }
 
@@ -695,7 +699,7 @@ namespace MediaBrowser.Providers.Manager
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in {0}.IsEnabledFor", saver.Name);
+                _logger.LogError(ex, "Error in {Saver}.IsEnabledFor", saver.Name);
                 return false;
             }
         }
@@ -845,7 +849,7 @@ namespace MediaBrowser.Providers.Manager
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error in {0}.Supports", i.GetType().Name);
+                    _logger.LogError(ex, "Error in {Type}.Supports", i.GetType().Name);
                     return false;
                 }
             });
@@ -911,7 +915,7 @@ namespace MediaBrowser.Providers.Manager
         /// <inheritdoc/>
         public void OnRefreshStart(BaseItem item)
         {
-            _logger.LogDebug("OnRefreshStart {0}", item.Id.ToString("N", CultureInfo.InvariantCulture));
+            _logger.LogDebug("OnRefreshStart {Item}", item.Id.ToString("N", CultureInfo.InvariantCulture));
             _activeRefreshes[item.Id] = 0;
             RefreshStarted?.Invoke(this, new GenericEventArgs<BaseItem>(item));
         }
@@ -919,7 +923,7 @@ namespace MediaBrowser.Providers.Manager
         /// <inheritdoc/>
         public void OnRefreshComplete(BaseItem item)
         {
-            _logger.LogDebug("OnRefreshComplete {0}", item.Id.ToString("N", CultureInfo.InvariantCulture));
+            _logger.LogDebug("OnRefreshComplete {Item}", item.Id.ToString("N", CultureInfo.InvariantCulture));
 
             _activeRefreshes.Remove(item.Id, out _);
 
@@ -941,7 +945,7 @@ namespace MediaBrowser.Providers.Manager
         public void OnRefreshProgress(BaseItem item, double progress)
         {
             var id = item.Id;
-            _logger.LogDebug("OnRefreshProgress {0} {1}", id.ToString("N", CultureInfo.InvariantCulture), progress);
+            _logger.LogDebug("OnRefreshProgress {Id} {Progress}", id.ToString("N", CultureInfo.InvariantCulture), progress);
 
             // TODO: Need to hunt down the conditions for this happening
             _activeRefreshes.AddOrUpdate(
