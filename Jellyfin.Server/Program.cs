@@ -470,7 +470,7 @@ namespace Jellyfin.Server
             // webDir
             // IF      --webdir
             // ELSE IF $JELLYFIN_WEB_DIR
-            // ELSE    <bindir>/jellyfin-web
+            // ELSE    <bindir>/veso-web
             var webDir = options.WebDir;
             if (string.IsNullOrEmpty(webDir))
             {
@@ -479,7 +479,7 @@ namespace Jellyfin.Server
                 if (string.IsNullOrEmpty(webDir))
                 {
                     // Use default location under ResourcesPath
-                    webDir = Path.Combine(AppContext.BaseDirectory, "jellyfin-web");
+                    webDir = Path.Combine(AppContext.BaseDirectory, "veso-web");
                 }
             }
 
