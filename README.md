@@ -28,3 +28,6 @@ services:
       - /dev/dri:/dev/dri
     restart: unless-stopped
     image: vesotv/veso:latest
+    
+```
+Join us on discord https://discord.gg/Ce4PmFcX7Y
