@@ -153,6 +153,8 @@ fi
 %systemd_postun_with_restart jellyfin.service
 
 %changelog
+* Fri Jun 10 2022 Jellyfin Packaging Team <packaging@jellyfin.org>
+- New upstream version 10.8.0; release changelog at https://github.com/jellyfin/jellyfin/releases/tag/v10.8.0
 * Mon Nov 29 2021 Brian J. Murrell <brian@interlinx.bc.ca>
 - Add jellyfin-server-lowports.service drop-in in a server-lowports
   subpackage to allow binding to low ports
