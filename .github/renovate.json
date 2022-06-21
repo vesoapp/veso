@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>jellyfin/.github//renovate-presets/dotnet"
+    "github>vesoapp/.github//renovate-presets/dotnet"
   ]
 }
