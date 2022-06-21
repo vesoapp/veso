@@ -12,7 +12,7 @@ on:
 jobs:
   rebase:
     name: Rebase
-    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '@jellyfin-bot rebase') && github.event.comment.author_association == 'MEMBER'
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '@veso-bot rebase') && github.event.comment.author_association == 'MEMBER'
     runs-on: ubuntu-latest
     steps:
       - name: Notify as seen
@@ -35,7 +35,7 @@ jobs:
 
   check-backport:
     name: Check Backport
-    if: ${{ ( github.event.issue.pull_request && contains(github.event.comment.body, '@jellyfin-bot check backport') ) || github.event.label.name == 'stable backport' || contains(github.event.pull_request.labels.*.name, 'stable backport' ) }}
+    if: ${{ ( github.event.issue.pull_request && contains(github.event.comment.body, '@veso-bot check backport') ) || github.event.label.name == 'stable backport' || contains(github.event.pull_request.labels.*.name, 'stable backport' ) }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify as seen
