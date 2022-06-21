@@ -11,7 +11,7 @@ jobs:
   label:
     name: Labeling
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'jellyfin/jellyfin' }}
+    if: ${{ github.repository == 'vesoapp/veso' }}
     steps:
       - name: Apply label
         uses: eps1lon/actions-label-merge-conflict@b8bf8341285ec9a4567d4318ba474fee998a6919 # tag=v2.0.1
@@ -23,7 +23,7 @@ jobs:
   project:
     name: Project board
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'jellyfin/jellyfin' }}
+    if: ${{ github.repository == 'vesoapp/veso' }}
     steps:
       - name: Remove from 'Current Release' project
         uses: alex-page/github-project-automation-plus@1f8873e97e3c8f58161a323b7c568c1f623a1c4d # tag=v0.8.2
