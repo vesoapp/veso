@@ -121,8 +121,7 @@ namespace MediaBrowser.Model.Entities
 
                 var codecTag = CodecTag;
 
-                if (string.Equals(codecTag, "dva1", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(codecTag, "dvav", StringComparison.OrdinalIgnoreCase)
+                if (string.Equals(codecTag, "dovi", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(codecTag, "dvh1", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(codecTag, "dvhe", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(codecTag, "dav1", StringComparison.OrdinalIgnoreCase))
@@ -139,6 +138,8 @@ namespace MediaBrowser.Model.Entities
         public string LocalizedDefault { get; set; }
 
         public string LocalizedForced { get; set; }
+
+        public string LocalizedExternal { get; set; }
 
         public string DisplayTitle
         {
@@ -182,6 +183,11 @@ namespace MediaBrowser.Model.Entities
                         if (IsDefault)
                         {
                             attributes.Add(string.IsNullOrEmpty(LocalizedDefault) ? "Default" : LocalizedDefault);
+                        }
+
+                        if (IsExternal)
+                        {
+                            attributes.Add(string.IsNullOrEmpty(LocalizedExternal) ? "External" : LocalizedExternal);
                         }
 
                         if (!string.IsNullOrEmpty(Title))
@@ -272,6 +278,11 @@ namespace MediaBrowser.Model.Entities
                         if (!string.IsNullOrEmpty(Codec))
                         {
                             attributes.Add(Codec.ToUpperInvariant());
+                        }
+
+                        if (IsExternal)
+                        {
+                            attributes.Add(string.IsNullOrEmpty(LocalizedExternal) ? "External" : LocalizedExternal);
                         }
 
                         if (!string.IsNullOrEmpty(Title))

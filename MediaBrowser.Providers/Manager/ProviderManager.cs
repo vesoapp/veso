@@ -30,6 +30,7 @@ using MediaBrowser.Model.Configuration;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Extensions;
 using MediaBrowser.Model.IO;
+using MediaBrowser.Model.Net;
 using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.Logging;
 using Priority_Queue;
@@ -186,6 +187,12 @@ namespace MediaBrowser.Providers.Manager
             if (contentType.Equals(MediaTypeNames.Text.Html, StringComparison.OrdinalIgnoreCase))
             {
                 throw new HttpRequestException("Invalid image received.", null, HttpStatusCode.NotFound);
+            }
+
+            // some iptv/epg providers don't correctly report media type, extract from url if no extension found
+            if (string.IsNullOrWhiteSpace(MimeTypes.ToExtension(contentType)))
+            {
+                contentType = MimeTypes.GetMimeType(url);
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
@@ -412,7 +419,7 @@ namespace MediaBrowser.Providers.Manager
             }
 
             // If this restriction is ever lifted, movie xml providers will have to be updated to prevent owned items like trailers from reading those files
-            if (!item.OwnerId.Equals(Guid.Empty))
+            if (!item.OwnerId.Equals(default))
             {
                 if (provider is ILocalMetadataProvider || provider is IRemoteMetadataProvider)
                 {
@@ -781,7 +788,7 @@ namespace MediaBrowser.Providers.Manager
         {
             BaseItem referenceItem = null;
 
-            if (!searchInfo.ItemId.Equals(Guid.Empty))
+            if (!searchInfo.ItemId.Equals(default))
             {
                 referenceItem = _libraryManager.GetItemById(searchInfo.ItemId);
             }

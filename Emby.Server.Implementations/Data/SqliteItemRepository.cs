@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
-using Diacritics.Extensions;
 using Emby.Server.Implementations.Playlists;
 using Jellyfin.Data.Enums;
 using Jellyfin.Extensions;
@@ -3029,7 +3028,7 @@ namespace Emby.Server.Implementations.Data
 
             if (string.Equals(name, ItemSortBy.PlayCount, StringComparison.OrdinalIgnoreCase))
             {
-                return "PlayCount";
+                return ItemSortBy.PlayCount;
             }
 
             if (string.Equals(name, ItemSortBy.IsFavoriteOrLiked, StringComparison.OrdinalIgnoreCase))
@@ -3039,7 +3038,7 @@ namespace Emby.Server.Implementations.Data
 
             if (string.Equals(name, ItemSortBy.IsFolder, StringComparison.OrdinalIgnoreCase))
             {
-                return "IsFolder";
+                return ItemSortBy.IsFolder;
             }
 
             if (string.Equals(name, ItemSortBy.IsPlayed, StringComparison.OrdinalIgnoreCase))
@@ -3087,7 +3086,68 @@ namespace Emby.Server.Implementations.Data
                 return "SeriesName";
             }
 
-            return name;
+            if (string.Equals(name, ItemSortBy.AiredEpisodeOrder, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.AiredEpisodeOrder;
+            }
+
+            if (string.Equals(name, ItemSortBy.Album, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.Album;
+            }
+
+            if (string.Equals(name, ItemSortBy.DateCreated, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.DateCreated;
+            }
+
+            if (string.Equals(name, ItemSortBy.PremiereDate, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.PremiereDate;
+            }
+
+            if (string.Equals(name, ItemSortBy.StartDate, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.StartDate;
+            }
+
+            if (string.Equals(name, ItemSortBy.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.Name;
+            }
+
+            if (string.Equals(name, ItemSortBy.CommunityRating, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.CommunityRating;
+            }
+
+            if (string.Equals(name, ItemSortBy.ProductionYear, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.ProductionYear;
+            }
+
+            if (string.Equals(name, ItemSortBy.CriticRating, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.CriticRating;
+            }
+
+            if (string.Equals(name, ItemSortBy.VideoBitRate, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.VideoBitRate;
+            }
+
+            if (string.Equals(name, ItemSortBy.ParentIndexNumber, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.ParentIndexNumber;
+            }
+
+            if (string.Equals(name, ItemSortBy.IndexNumber, StringComparison.OrdinalIgnoreCase))
+            {
+                return ItemSortBy.IndexNumber;
+            }
+
+            // Unknown SortBy, just sort by the SortName.
+            return ItemSortBy.SortName;
         }
 
         public List<Guid> GetItemIdsList(InternalItemsQuery query)
@@ -5702,7 +5762,7 @@ AND Type = @InternalPersonType)");
                 {
                     var itemIdBlob = id.ToByteArray();
 
-                    // First delete chapters
+                    // Delete existing mediastreams
                     db.Execute("delete from mediastreams where ItemId=@ItemId", itemIdBlob);
 
                     InsertMediaStreams(itemIdBlob, streams, db);
@@ -5806,10 +5866,10 @@ AND Type = @InternalPersonType)");
         }
 
         /// <summary>
-        /// Gets the chapter.
+        /// Gets the media stream.
         /// </summary>
         /// <param name="reader">The reader.</param>
-        /// <returns>ChapterInfo.</returns>
+        /// <returns>MediaStream.</returns>
         private MediaStream GetMediaStream(IReadOnlyList<ResultSetValue> reader)
         {
             var item = new MediaStream
@@ -5970,6 +6030,7 @@ AND Type = @InternalPersonType)");
                 item.LocalizedUndefined = _localization.GetLocalizedString("Undefined");
                 item.LocalizedDefault = _localization.GetLocalizedString("Default");
                 item.LocalizedForced = _localization.GetLocalizedString("Forced");
+                item.LocalizedExternal = _localization.GetLocalizedString("External");
             }
 
             return item;

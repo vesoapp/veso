@@ -11,7 +11,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Diacritics.Extensions;
 using Jellyfin.Data.Entities;
 using Jellyfin.Data.Enums;
 using Jellyfin.Extensions;
@@ -231,7 +230,7 @@ namespace MediaBrowser.Controller.Entities
         {
             get
             {
-                if (!ChannelId.Equals(Guid.Empty))
+                if (!ChannelId.Equals(default))
                 {
                     return SourceType.Channel;
                 }
@@ -521,7 +520,7 @@ namespace MediaBrowser.Controller.Entities
             get
             {
                 var id = DisplayParentId;
-                if (id.Equals(Guid.Empty))
+                if (id.Equals(default))
                 {
                     return null;
                 }
@@ -737,7 +736,7 @@ namespace MediaBrowser.Controller.Entities
         public virtual bool StopRefreshIfLocalMetadataFound => true;
 
         [JsonIgnore]
-        protected virtual bool SupportsOwnedItems => !ParentId.Equals(Guid.Empty) && IsFileProtocol;
+        protected virtual bool SupportsOwnedItems => !ParentId.Equals(default) && IsFileProtocol;
 
         [JsonIgnore]
         public virtual bool SupportsPeople => false;
@@ -848,7 +847,7 @@ namespace MediaBrowser.Controller.Entities
         public BaseItem GetOwner()
         {
             var ownerId = OwnerId;
-            return ownerId.Equals(Guid.Empty) ? null : LibraryManager.GetItemById(ownerId);
+            return ownerId.Equals(default) ? null : LibraryManager.GetItemById(ownerId);
         }
 
         public bool CanDelete(User user, List<Folder> allCollectionFolders)
@@ -878,10 +877,7 @@ namespace MediaBrowser.Controller.Entities
             return CanDownload() && IsAuthorizedToDownload(user);
         }
 
-        /// <summary>
-        /// Returns a <see cref="string" /> that represents this instance.
-        /// </summary>
-        /// <returns>A <see cref="string" /> that represents this instance.</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
@@ -984,12 +980,12 @@ namespace MediaBrowser.Controller.Entities
         public BaseItem GetParent()
         {
             var parentId = ParentId;
-            if (!parentId.Equals(Guid.Empty))
+            if (parentId.Equals(default))
             {
-                return LibraryManager.GetItemById(parentId);
+                return null;
             }
 
-            return null;
+            return LibraryManager.GetItemById(parentId);
         }
 
         public IEnumerable<BaseItem> GetParents()
@@ -1397,7 +1393,7 @@ namespace MediaBrowser.Controller.Entities
             var tasks = extras.Select(i =>
             {
                 var subOptions = new MetadataRefreshOptions(options);
-                if (i.OwnerId != ownerId || i.ParentId != Guid.Empty)
+                if (!i.OwnerId.Equals(ownerId) || !i.ParentId.Equals(default))
                 {
                     i.OwnerId = ownerId;
                     i.ParentId = Guid.Empty;
@@ -1595,23 +1591,6 @@ namespace MediaBrowser.Controller.Entities
             return value.Value <= maxAllowedRating.Value;
         }
 
-        public int? GetParentalRatingValue()
-        {
-            var rating = CustomRating;
-
-            if (string.IsNullOrEmpty(rating))
-            {
-                rating = OfficialRating;
-            }
-
-            if (string.IsNullOrEmpty(rating))
-            {
-                return null;
-            }
-
-            return LocalizationManager.GetRatingLevel(rating);
-        }
-
         public int? GetInheritedParentalRatingValue()
         {
             var rating = CustomRatingForComparison;
@@ -1649,11 +1628,6 @@ namespace MediaBrowser.Controller.Entities
                 return false;
             }
 
-            return true;
-        }
-
-        protected virtual bool IsAllowTagFilterEnforced()
-        {
             return true;
         }
 
@@ -1736,7 +1710,7 @@ namespace MediaBrowser.Controller.Entities
             // First get using the cached Id
             if (info.ItemId.HasValue)
             {
-                if (info.ItemId.Value.Equals(Guid.Empty))
+                if (info.ItemId.Value.Equals(default))
                 {
                     return null;
                 }
@@ -2657,7 +2631,7 @@ namespace MediaBrowser.Controller.Entities
         }
 
         /// <inheritdoc />
-        public bool Equals(BaseItem other) => Id == other?.Id;
+        public bool Equals(BaseItem other) => other is not null && other.Id.Equals(Id);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Id);

@@ -6,6 +6,7 @@ using System.Linq;
 using Jellyfin.Api.Constants;
 using Jellyfin.Api.ModelBinders;
 using Jellyfin.Data.Enums;
+using Jellyfin.Extensions;
 using MediaBrowser.Controller.Drawing;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
@@ -187,7 +188,7 @@ namespace Jellyfin.Api.Controllers
                     result.AlbumArtist = album.AlbumArtist;
                     break;
                 case Audio song:
-                    result.AlbumArtist = song.AlbumArtists?[0];
+                    result.AlbumArtist = song.AlbumArtists?.FirstOrDefault();
                     result.Artists = song.Artists;
 
                     MusicAlbum musicAlbum = song.AlbumEntity;
@@ -205,7 +206,7 @@ namespace Jellyfin.Api.Controllers
                     break;
             }
 
-            if (!item.ChannelId.Equals(Guid.Empty))
+            if (!item.ChannelId.Equals(default))
             {
                 var channel = _libraryManager.GetItemById(item.ChannelId);
                 result.ChannelName = channel?.Name;
