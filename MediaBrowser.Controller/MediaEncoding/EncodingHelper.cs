@@ -714,6 +714,9 @@ namespace MediaBrowser.Controller.MediaEncoding
                 }
                 else if (_mediaEncoder.IsVaapiDeviceInteli965)
                 {
+                    // Only override i965 since it has lower priority than iHD in libva lookup.
+                    Environment.SetEnvironmentVariable("LIBVA_DRIVER_NAME", "i965");
+                    Environment.SetEnvironmentVariable("LIBVA_DRIVER_NAME_JELLYFIN", "i965");
                     args.Append(GetVaapiDeviceArgs(null, "i965", null, VaapiAlias));
                 }
                 else
@@ -4317,14 +4320,18 @@ namespace MediaBrowser.Controller.MediaEncoding
         protected string GetHardwareVideoDecoder(EncodingJobInfo state, EncodingOptions options)
         {
             var videoStream = state.VideoStream;
-            if (videoStream == null)
+            var mediaSource = state.MediaSource;
+            if (videoStream == null || mediaSource == null)
             {
                 return null;
             }
 
-            // Only use alternative encoders for video files.
-            var videoType = state.MediaSource.VideoType ?? VideoType.VideoFile;
-            if (videoType != VideoType.VideoFile)
+            // HWA decoders can handle both video files and video folders.
+            var videoType = mediaSource.VideoType;
+            if (videoType != VideoType.VideoFile
+                && videoType != VideoType.Iso
+                && videoType != VideoType.Dvd
+                && videoType != VideoType.BluRay)
             {
                 return null;
             }
