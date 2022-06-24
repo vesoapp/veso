@@ -125,7 +125,6 @@ namespace MediaBrowser.Controller.MediaEncoding
                    && _mediaEncoder.SupportsFilter("scale_vaapi")
                    && _mediaEncoder.SupportsFilter("deinterlace_vaapi")
                    && _mediaEncoder.SupportsFilter("tonemap_vaapi")
-                   && _mediaEncoder.SupportsFilter("procamp_vaapi")
                    && _mediaEncoder.SupportsFilterWithOption(FilterOptionType.OverlayVaapiFrameSync)
                    && _mediaEncoder.SupportsFilter("hwupload_vaapi");
         }
@@ -1754,20 +1753,6 @@ namespace MediaBrowser.Controller.MediaEncoding
                 }
             }
 
-            var requestedRangeTypes = state.GetRequestedRangeTypes(videoStream.Codec);
-            if (requestedProfiles.Length > 0)
-            {
-                if (string.IsNullOrEmpty(videoStream.VideoRangeType))
-                {
-                    return false;
-                }
-
-                if (!requestedRangeTypes.Contains(videoStream.VideoRangeType, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
-
             // Video width must fall within requested value
             if (request.MaxWidth.HasValue
                 && (!videoStream.Width.HasValue || videoStream.Width.Value > request.MaxWidth.Value))
@@ -1908,7 +1893,7 @@ namespace MediaBrowser.Controller.MediaEncoding
             return request.EnableAutoStreamCopy;
         }
 
-        public int GetVideoBitrateParamValue(BaseEncodingJobOptions request, MediaStream videoStream, string outputVideoCodec)
+        public int? GetVideoBitrateParamValue(BaseEncodingJobOptions request, MediaStream videoStream, string outputVideoCodec)
         {
             var bitrate = request.VideoBitRate;
 
@@ -1940,8 +1925,7 @@ namespace MediaBrowser.Controller.MediaEncoding
                 }
             }
 
-            // Cap the max target bitrate to intMax/2 to satisify the bufsize=bitrate*2.
-            return Math.Min(bitrate ?? 0, int.MaxValue / 2);
+            return bitrate;
         }
 
         private int GetMinBitrate(int sourceBitrate, int requestedBitrate)
@@ -2288,10 +2272,7 @@ namespace MediaBrowser.Controller.MediaEncoding
                 int audioStreamIndex = FindIndex(state.MediaSource.MediaStreams, state.AudioStream);
                 if (state.AudioStream.IsExternal)
                 {
-                    bool hasExternalGraphicsSubs = state.SubtitleStream != null
-                        && state.SubtitleDeliveryMethod == SubtitleDeliveryMethod.Encode
-                        && state.SubtitleStream.IsExternal
-                        && !state.SubtitleStream.IsTextSubtitleStream;
+                    bool hasExternalGraphicsSubs = state.SubtitleStream != null && state.SubtitleStream.IsExternal && !state.SubtitleStream.IsTextSubtitleStream;
                     int externalAudioMapIndex = hasExternalGraphicsSubs ? 2 : 1;
 
                     args += string.Format(
@@ -2719,18 +2700,7 @@ namespace MediaBrowser.Controller.MediaEncoding
 
             var args = "tonemap_{0}=format={1}:p=bt709:t=bt709:m=bt709";
 
-            if (hwTonemapSuffix.Contains("vaapi", StringComparison.OrdinalIgnoreCase))
-            {
-                args += ",procamp_vaapi=b={2}:c={3}:extra_hw_frames=16";
-                return string.Format(
-                        CultureInfo.InvariantCulture,
-                        args,
-                        hwTonemapSuffix,
-                        videoFormat ?? "nv12",
-                        options.VppTonemappingBrightness,
-                        options.VppTonemappingContrast);
-            }
-            else
+            if (!hwTonemapSuffix.Contains("vaapi", StringComparison.OrdinalIgnoreCase))
             {
                 args += ":tonemap={2}:peak={3}:desat={4}";
 

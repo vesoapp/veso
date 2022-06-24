@@ -104,23 +104,32 @@ namespace MediaBrowser.Model.Entities
         {
             get
             {
-                var (videoRange, _) = GetVideoColorRange();
+                if (Type != MediaStreamType.Video)
+                {
+                    return null;
+                }
 
-                return videoRange;
-            }
-        }
+                var colorTransfer = ColorTransfer;
 
-        /// <summary>
-        /// Gets the video range type.
-        /// </summary>
-        /// <value>The video range type.</value>
-        public string VideoRangeType
-        {
-            get
-            {
-                var (_, videoRangeType) = GetVideoColorRange();
+                if (string.Equals(colorTransfer, "smpte2084", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(colorTransfer, "arib-std-b67", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "HDR";
+                }
 
-                return videoRangeType;
+                // For some Dolby Vision files, no color transfer is provided, so check the codec
+
+                var codecTag = CodecTag;
+
+                if (string.Equals(codecTag, "dovi", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(codecTag, "dvh1", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(codecTag, "dvhe", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(codecTag, "dav1", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "HDR";
+                }
+
+                return "SDR";
             }
         }
 
@@ -561,40 +570,6 @@ namespace MediaBrowser.Model.Entities
             }
 
             return true;
-        }
-
-        public (string VideoRange, string VideoRangeType) GetVideoColorRange()
-        {
-            if (Type != MediaStreamType.Video)
-            {
-                return (null, null);
-            }
-
-            var colorTransfer = ColorTransfer;
-
-            if (string.Equals(colorTransfer, "smpte2084", StringComparison.OrdinalIgnoreCase))
-            {
-                return ("HDR", "HDR10");
-            }
-
-            if (string.Equals(colorTransfer, "arib-std-b67", StringComparison.OrdinalIgnoreCase))
-            {
-                return ("HDR", "HLG");
-            }
-
-            // For some Dolby Vision files, no color transfer is provided, so check the codec
-
-            var codecTag = CodecTag;
-
-            if (string.Equals(codecTag, "dovi", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(codecTag, "dvh1", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(codecTag, "dvhe", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(codecTag, "dav1", StringComparison.OrdinalIgnoreCase))
-            {
-                return ("HDR", "DOVI");
-            }
-
-            return ("SDR", "SDR");
         }
     }
 }
