@@ -184,6 +184,10 @@ namespace MediaBrowser.Controller.Entities.TV
                 list.Insert(0, key);
             }
 
+            if (this.TryGetProviderId(MetadataProvider.User, out key)) {
+                list.Insert(0, key);
+            }
+
             return list;
         }
 
