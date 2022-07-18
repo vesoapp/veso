@@ -8,10 +8,10 @@ namespace MediaBrowser.Model.Entities
     public enum MetadataProvider
     {
         /// <summary>
-        /// This provider is an escape hatch for the user to override the series
-        /// merging.
+        /// This metadata provider is for users and/or plugins to override the
+        /// default merging behaviour.
         /// </summary>
-        User = 0,
+        Custom = 0,
 
         /// <summary>
         /// The imdb.
