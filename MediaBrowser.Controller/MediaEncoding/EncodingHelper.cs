@@ -35,6 +35,7 @@ namespace MediaBrowser.Controller.MediaEncoding
         private readonly IMediaEncoder _mediaEncoder;
         private readonly ISubtitleEncoder _subtitleEncoder;
         private readonly IConfiguration _config;
+        private readonly Version _minKernelVersioni915Hang = new Version(5, 18);
 
         private static readonly string[] _videoProfilesH264 = new[]
         {
@@ -1302,6 +1303,10 @@ namespace MediaBrowser.Controller.MediaEncoding
             // which will reduce overhead in performance intensive tasks such as 4k transcoding and tonemapping.
             var intelLowPowerHwEncoding = false;
 
+            // Workaround for linux 5.18+ i915 hang at cost of performance.
+            // https://github.com/intel/media-driver/issues/1456
+            var enableWaFori915Hang = false;
+
             if (string.Equals(encodingOptions.HardwareAccelerationType, "vaapi", StringComparison.OrdinalIgnoreCase))
             {
                 var isIntelVaapiDriver = _mediaEncoder.IsVaapiDeviceInteliHD || _mediaEncoder.IsVaapiDeviceInteli965;
@@ -1317,6 +1322,20 @@ namespace MediaBrowser.Controller.MediaEncoding
             }
             else if (string.Equals(encodingOptions.HardwareAccelerationType, "qsv", StringComparison.OrdinalIgnoreCase))
             {
+                if (OperatingSystem.IsLinux() && Environment.OSVersion.Version >= _minKernelVersioni915Hang)
+                {
+                    var vidDecoder = GetHardwareVideoDecoder(state, encodingOptions) ?? string.Empty;
+                    var isIntelDecoder = vidDecoder.Contains("qsv", StringComparison.OrdinalIgnoreCase)
+                                         || vidDecoder.Contains("vaapi", StringComparison.OrdinalIgnoreCase);
+                    var doOclTonemap = _mediaEncoder.SupportsHwaccel("qsv")
+                        && IsVaapiSupported(state)
+                        && IsOpenclFullSupported()
+                        && !IsVaapiVppTonemapAvailable(state, encodingOptions)
+                        && IsHwTonemapAvailable(state, encodingOptions);
+
+                    enableWaFori915Hang = isIntelDecoder && doOclTonemap;
+                }
+
                 if (string.Equals(videoEncoder, "h264_qsv", StringComparison.OrdinalIgnoreCase))
                 {
                     intelLowPowerHwEncoding = encodingOptions.EnableIntelLowPowerH264HwEncoder;
@@ -1325,11 +1344,20 @@ namespace MediaBrowser.Controller.MediaEncoding
                 {
                     intelLowPowerHwEncoding = encodingOptions.EnableIntelLowPowerHevcHwEncoder;
                 }
+                else
+                {
+                    enableWaFori915Hang = false;
+                }
             }
 
             if (intelLowPowerHwEncoding)
             {
                 param += " -low_power 1";
+            }
+
+            if (enableWaFori915Hang)
+            {
+                param += " -async_depth 1";
             }
 
             var isVc1 = string.Equals(state.VideoStream?.Codec, "vc1", StringComparison.OrdinalIgnoreCase);
@@ -4506,7 +4534,9 @@ namespace MediaBrowser.Controller.MediaEncoding
 
                     if (isD3d11Supported && isCodecAvailable)
                     {
-                        return " -hwaccel d3d11va" + (outputHwSurface ? " -hwaccel_output_format d3d11" : string.Empty) + (isAv1 ? " -c:v av1" : string.Empty);
+                        // set -threads 3 to intel d3d11va decoder explicitly. Lower threads may result in dead lock.
+                        // on newer devices such as Xe, the larger the init_pool_size, the longer the initialization time for opencl to derive from d3d11.
+                        return " -hwaccel d3d11va" + (outputHwSurface ? " -hwaccel_output_format d3d11" : string.Empty) + " -threads 3" + (isAv1 ? " -c:v av1" : string.Empty);
                     }
                 }
                 else
@@ -4970,7 +5000,7 @@ namespace MediaBrowser.Controller.MediaEncoding
 
             if (state.InputProtocol == MediaProtocol.Rtsp)
             {
-                inputModifier += " -rtsp_transport tcp -rtsp_transport udp -rtsp_flags prefer_tcp";
+                inputModifier += " -rtsp_transport tcp+udp -rtsp_flags prefer_tcp";
             }
 
             if (!string.IsNullOrEmpty(state.InputAudioSync))
