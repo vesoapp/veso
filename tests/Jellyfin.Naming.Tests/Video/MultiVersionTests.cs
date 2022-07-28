@@ -55,8 +55,10 @@ namespace Jellyfin.Naming.Tests.Video
         {
             var files = new[]
             {
-                @"/movies/The Phantom of the Opera (1925)/The Phantom of the Opera (1925) - 1925 version.mkv",
-                @"/movies/The Phantom of the Opera (1925)/The Phantom of the Opera (1925) - 1929 version.mkv"
+                // if using year in version name, must be in brackets.
+                // Otherwise it will be matched as a possible tv episode and not grouped
+                @"/movies/The Phantom of the Opera (1925)/The Phantom of the Opera (1925) - [1925 version].mkv",
+                @"/movies/The Phantom of the Opera (1925)/The Phantom of the Opera (1925) - [1929 version].mkv"
             };
 
             var result = VideoListResolver.Resolve(
@@ -363,6 +365,45 @@ namespace Jellyfin.Naming.Tests.Video
             var result = VideoListResolver.Resolve(new List<VideoFileInfo>(), _namingOptions).ToList();
 
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public void TestMultiVersionEpisodeDontCollapse()
+        {
+            // Test for false positive
+
+            var files = new[]
+            {
+                @"/TV/Dexter/Dexter - S01E01 - One.mkv",
+                @"/TV/Dexter/Dexter - S01E02 - Two.mkv",
+                @"/TV/Dexter/Dexter - S01E03 - Three.mkv",
+                @"/TV/Dexter/Dexter - S01E04 - Four.mkv",
+                @"/TV/Dexter/Dexter - S01E05 - Five.mkv",
+            };
+
+            var result = VideoListResolver.Resolve(
+                files.Select(i => VideoResolver.Resolve(i, false, _namingOptions)).OfType<VideoFileInfo>().ToList(),
+                _namingOptions).ToList();
+
+            Assert.Equal(5, result.Count);
+            Assert.Empty(result[0].AlternateVersions);
+        }
+
+        [Fact]
+        public void TestMultiVersionEpisode()
+        {
+            var files = new[]
+            {
+                @"/TV/Dexter/Dexter - S01E01/Dexter - S01E01 - One.mkv",
+                @"/TV/Dexter/Dexter - S01E01/Dexter - S01E01 - Two.mkv",
+            };
+
+            var result = VideoListResolver.Resolve(
+                files.Select(i => VideoResolver.Resolve(i, false, _namingOptions)).OfType<VideoFileInfo>().ToList(),
+                _namingOptions).ToList();
+
+            Assert.Single(result);
+            Assert.Single(result[0].AlternateVersions);
         }
     }
 }
