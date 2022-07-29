@@ -1,0 +1,57 @@
+name: Sync all branches
+on:
+  workflow_dispatch:
+
+jobs:
+
+  generate-matrix:
+    name: Generate matrix of branches
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix of branches
+        id: set-matrix
+        run: |
+          upstream_repo="https://github.com/jellyfin/jellyfin.git"
+          upstream_dir=jellyfin
+
+          git clone "${upstream_repo}"
+          cd "${upstream_dir}"
+
+          JSON="{\"branch\":["
+
+          for branch in `git branch -a | grep remotes | grep -v HEAD`; do
+              branch_trimmed=$(echo -e $branch | sed -e "s/remotes\/origin\///g")
+              JSON="$JSON\"${branch_trimmed}\","
+          done
+
+          if [[ $JSON == *, ]]; then
+            JSON="${JSON%?}"
+          fi
+          JSON="$JSON]}"
+
+          echo $JSON | jq
+
+          echo "::set-output name=matrix::$( echo "$JSON" )"
+
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.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 }}
+          INPUT_UPSTREAM_REPOSITORY: jellyfin/jellyfin
+
+  update_external_airflow_fork:
+    runs-on: ubuntu-latest
+    needs: generate-matrix
+    strategy:
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+      fail-fast: false
+    steps:
+      - uses: TobKed/github-forks-sync-action@master
+        with:
+          github_token: ${{ secrets.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 }}
+          upstream_repository: jellyfin/jellyfin
+          target_repository: vesoapp/veso
+          upstream_branch: ${{ matrix.branch }}
+          target_branch: ${{ matrix.branch }}
+          force: true
+          tags: true
