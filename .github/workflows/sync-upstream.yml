@@ -13,7 +13,7 @@ jobs:
       - name: Set matrix of branches
         id: set-matrix
         run: |
-          upstream_repo="git@github.com:jellyfin/jellyfin.git"
+          upstream_repo="https://github.com/jellyfin/jellyfin.git"
           upstream_dir=jellyfin
 
           git clone "${upstream_repo}"
