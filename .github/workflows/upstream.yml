@@ -1,0 +1,26 @@
+name: Sync master to Upstream
+
+on:
+  schedule:
+    - cron:  '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync_with_upstream:
+    runs-on: ubuntu-latest
+    name: Sync HEAD with upstream latest
+
+    steps:
+    - name: Checkout HEAD
+      uses: actions/checkout@v2
+      with:
+        ref: main
+
+    - name: Pull upstream changes
+      id: sync
+      uses: dannymichel/Fork-Sync-With-Upstream-action
+      with:
+        upstream_repository: jellyfin/jellyfin
+        upstream_branch: master
+        target_branch: master
+        #github_token: ${{ secrets.GITHUB_TOKEN }}
