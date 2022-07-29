@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Emby.Naming.Common;
+using Emby.Naming.TV;
 using MediaBrowser.Model.IO;
 
 namespace Emby.Naming.Video
@@ -183,9 +184,17 @@ namespace Emby.Naming.Video
             }
 
             // The CleanStringParser should have removed common keywords etc.
-            return string.IsNullOrEmpty(tmpTestFilename)
-                   || testFilename[0] == '-'
-                   || Regex.IsMatch(tmpTestFilename, @"^\[([^]]*)\]", RegexOptions.Compiled);
+
+            // Test if filename is formatted like an episode
+            var resolver = new EpisodeResolver(namingOptions);
+            var episodeInfo = resolver.Resolve(testFilePath, false);
+
+            // if it's an episode and it's in the series folder, it's not eligible for multiversion
+            return !folderName.Equals(episodeInfo?.SeriesName, StringComparison.OrdinalIgnoreCase) && (
+                string.IsNullOrEmpty(tmpTestFilename)
+                    || testFilename[0] == '-'
+                    || Regex.IsMatch(tmpTestFilename, @"^\[([^]]*)\]", RegexOptions.Compiled)
+            );
         }
     }
 }
