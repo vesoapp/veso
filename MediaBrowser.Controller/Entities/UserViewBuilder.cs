@@ -126,7 +126,7 @@ namespace MediaBrowser.Controller.Entities
 
         private int GetSpecialItemsLimit()
         {
-            return 50;
+            return 100;
         }
 
         private QueryResult<BaseItem> GetMovieFolders(Folder parent, User user, InternalItemsQuery query)
