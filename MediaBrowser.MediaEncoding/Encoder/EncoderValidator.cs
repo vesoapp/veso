@@ -107,7 +107,9 @@ namespace MediaBrowser.MediaEncoding.Encoder
             // vulkan
             "libplacebo",
             "scale_vulkan",
-            "overlay_vulkan"
+            "overlay_vulkan",
+            // videotoolbox
+            "yadif_videotoolbox"
         };
 
         private static readonly IReadOnlyDictionary<int, string[]> _filterOptionsDict = new Dictionary<int, string[]>
