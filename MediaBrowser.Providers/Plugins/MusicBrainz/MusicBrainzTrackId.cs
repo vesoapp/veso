@@ -1,27 +1,28 @@
+#pragma warning disable CS1591
+
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
+using MediaBrowser.Providers.Plugins.MusicBrainz;
 
-namespace MediaBrowser.Providers.Plugins.MusicBrainz;
-
-/// <summary>
-/// MusicBrainz track id.
-/// </summary>
-public class MusicBrainzTrackId : IExternalId
+namespace MediaBrowser.Providers.Music
 {
-    /// <inheritdoc />
-    public string ProviderName => "MusicBrainz";
+    public class MusicBrainzTrackId : IExternalId
+    {
+        /// <inheritdoc />
+        public string ProviderName => "MusicBrainz";
 
-    /// <inheritdoc />
-    public string Key => MetadataProvider.MusicBrainzTrack.ToString();
+        /// <inheritdoc />
+        public string Key => MetadataProvider.MusicBrainzTrack.ToString();
 
-    /// <inheritdoc />
-    public ExternalIdMediaType? Type => ExternalIdMediaType.Track;
+        /// <inheritdoc />
+        public ExternalIdMediaType? Type => ExternalIdMediaType.Track;
 
-    /// <inheritdoc />
-    public string? UrlFormatString => Plugin.Instance!.Configuration.Server + "/track/{0}";
+        /// <inheritdoc />
+        public string? UrlFormatString => Plugin.Instance.Configuration.Server + "/track/{0}";
 
-    /// <inheritdoc />
-    public bool Supports(IHasProviderIds item) => item is Audio;
+        /// <inheritdoc />
+        public bool Supports(IHasProviderIds item) => item is Audio;
+    }
 }
