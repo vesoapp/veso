@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
-using MediaBrowser.Common;
+using System.Reflection;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
@@ -21,15 +21,14 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// </summary>
     /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
     /// <param name="xmlSerializer">Instance of the <see cref="IXmlSerializer"/> interface.</param>
-    /// <param name="applicationHost">Instance of the <see cref="IApplicationHost"/> interface.</param>
-    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, IApplicationHost applicationHost)
+    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
 
         // TODO: Change this to "JellyfinMusicBrainzPlugin" once we take it out of the server repo.
-        Query.DefaultUserAgent.Add(new ProductInfoHeaderValue(applicationHost.Name.Replace(' ', '-'), applicationHost.ApplicationVersionString));
-        Query.DefaultUserAgent.Add(new ProductInfoHeaderValue($"({applicationHost.ApplicationUserAgentAddress})"));
+        Query.DefaultUserAgent.Add(new ProductInfoHeaderValue("Jellyfin", Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)));
+        Query.DefaultUserAgent.Add(new ProductInfoHeaderValue("(apps@jellyfin.org)"));
         Query.DelayBetweenRequests = Instance.Configuration.RateLimit;
         Query.DefaultServer = Instance.Configuration.Server;
     }

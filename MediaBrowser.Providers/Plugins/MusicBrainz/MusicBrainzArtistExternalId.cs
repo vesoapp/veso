@@ -6,7 +6,7 @@ using MediaBrowser.Model.Providers;
 namespace MediaBrowser.Providers.Plugins.MusicBrainz;
 
 /// <summary>
-/// MusicBrainz artist external id.
+/// MusicBrains Artist ExternalId.
 /// </summary>
 public class MusicBrainzArtistExternalId : IExternalId
 {
