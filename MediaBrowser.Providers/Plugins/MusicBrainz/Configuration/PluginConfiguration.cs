@@ -1,58 +1,37 @@
+#pragma warning disable CS1591
+
 using MediaBrowser.Model.Plugins;
-using MetaBrainz.MusicBrainz;
 
-namespace MediaBrowser.Providers.Plugins.MusicBrainz.Configuration;
-
-/// <summary>
-/// MusicBrainz plugin configuration.
-/// </summary>
-public class PluginConfiguration : BasePluginConfiguration
+namespace MediaBrowser.Providers.Plugins.MusicBrainz
 {
-    private const string DefaultServer = "musicbrainz.org";
-
-    private const double DefaultRateLimit = 1.0;
-
-    private string _server = DefaultServer;
-
-    private double _rateLimit = DefaultRateLimit;
-
-    /// <summary>
-    /// Gets or sets the server url.
-    /// </summary>
-    public string Server
+    public class PluginConfiguration : BasePluginConfiguration
     {
-        get => _server;
+        private string _server = Plugin.DefaultServer;
 
-        set
+        private long _rateLimit = Plugin.DefaultRateLimit;
+
+        public string Server
         {
-            _server = value.TrimEnd('/');
-            Query.DefaultServer = _server;
+            get => _server;
+            set => _server = value.TrimEnd('/');
         }
-    }
 
-    /// <summary>
-    /// Gets or sets the rate limit.
-    /// </summary>
-    public double RateLimit
-    {
-        get => _rateLimit;
-        set
+        public long RateLimit
         {
-            if (value < DefaultRateLimit && _server == DefaultServer)
+            get => _rateLimit;
+            set
             {
-                _rateLimit = DefaultRateLimit;
+                if (value < Plugin.DefaultRateLimit && _server == Plugin.DefaultServer)
+                {
+                    _rateLimit = Plugin.DefaultRateLimit;
+                }
+                else
+                {
+                    _rateLimit = value;
+                }
             }
-            else
-            {
-                _rateLimit = value;
-            }
-
-            Query.DelayBetweenRequests = _rateLimit;
         }
-    }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether to replace the artist name.
-    /// </summary>
-    public bool ReplaceArtistName { get; set; }
+        public bool ReplaceArtistName { get; set; }
+    }
 }
