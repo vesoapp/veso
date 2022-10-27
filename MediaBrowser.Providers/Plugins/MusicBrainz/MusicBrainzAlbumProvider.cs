@@ -28,12 +28,6 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
     /// </summary>
     public MusicBrainzAlbumProvider()
     {
-        MusicBrainz.Plugin.Instance!.ConfigurationChanged += (_, _) =>
-            {
-                Query.DefaultServer = MusicBrainz.Plugin.Instance.Configuration.Server;
-                Query.DelayBetweenRequests = MusicBrainz.Plugin.Instance.Configuration.RateLimit;
-            };
-
         _musicBrainzQuery = new Query();
     }
 
@@ -51,14 +45,14 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
 
         if (!string.IsNullOrEmpty(releaseId))
         {
-            var releaseResult = await _musicBrainzQuery.LookupReleaseAsync(new Guid(releaseId), Include.ReleaseGroups, cancellationToken).ConfigureAwait(false);
-            return GetReleaseResult(releaseResult).SingleItemAsEnumerable();
+            var releaseResult = await _musicBrainzQuery.LookupReleaseAsync(new Guid(releaseId), Include.Releases, cancellationToken).ConfigureAwait(false);
+            return GetResultFromResponse(releaseResult).SingleItemAsEnumerable();
         }
 
         if (!string.IsNullOrEmpty(releaseGroupId))
         {
-            var releaseGroupResult = await _musicBrainzQuery.LookupReleaseGroupAsync(new Guid(releaseGroupId), Include.None, null, cancellationToken).ConfigureAwait(false);
-            return GetReleaseGroupResult(releaseGroupResult.Releases);
+            var releaseGroupResult = await _musicBrainzQuery.LookupReleaseGroupAsync(new Guid(releaseGroupId), Include.ReleaseGroups, null, cancellationToken).ConfigureAwait(false);
+            return GetResultsFromResponse(releaseGroupResult.Releases);
         }
 
         var artistMusicBrainzId = searchInfo.GetMusicBrainzArtistId();
@@ -70,7 +64,7 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
 
             if (releaseSearchResults.Results.Count > 0)
             {
-                return GetReleaseSearchResult(releaseSearchResults.Results);
+                return GetResultsFromResponse(releaseSearchResults.Results);
             }
         }
         else
@@ -83,14 +77,14 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
 
             if (releaseSearchResults.Results.Count > 0)
             {
-                return GetReleaseSearchResult(releaseSearchResults.Results);
+                return GetResultsFromResponse(releaseSearchResults.Results);
             }
         }
 
         return Enumerable.Empty<RemoteSearchResult>();
     }
 
-    private IEnumerable<RemoteSearchResult> GetReleaseSearchResult(IEnumerable<ISearchResult<IRelease>>? releaseSearchResults)
+    private IEnumerable<RemoteSearchResult> GetResultsFromResponse(IEnumerable<ISearchResult<IRelease>>? releaseSearchResults)
     {
         if (releaseSearchResults is null)
         {
@@ -99,11 +93,11 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
 
         foreach (var result in releaseSearchResults)
         {
-            yield return GetReleaseResult(result.Item);
+            yield return GetResultFromResponse(result.Item);
         }
     }
 
-    private IEnumerable<RemoteSearchResult> GetReleaseGroupResult(IEnumerable<IRelease>? releaseSearchResults)
+    private IEnumerable<RemoteSearchResult> GetResultsFromResponse(IEnumerable<IRelease>? releaseSearchResults)
     {
         if (releaseSearchResults is null)
         {
@@ -112,11 +106,11 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
 
         foreach (var result in releaseSearchResults)
         {
-            yield return GetReleaseResult(result);
+            yield return GetResultFromResponse(result);
         }
     }
 
-    private RemoteSearchResult GetReleaseResult(IRelease releaseSearchResult)
+    private RemoteSearchResult GetResultFromResponse(IRelease releaseSearchResult)
     {
         var searchResult = new RemoteSearchResult
         {
@@ -165,13 +159,10 @@ public class MusicBrainzAlbumProvider : IRemoteMetadataProvider<MusicAlbum, Albu
         if (string.IsNullOrWhiteSpace(releaseId) && !string.IsNullOrWhiteSpace(releaseGroupId))
         {
             // TODO: Actually try to match the release. Simply taking the first result is stupid.
-            var releaseGroup = await _musicBrainzQuery.LookupReleaseGroupAsync(new Guid(releaseGroupId), Include.None, null, cancellationToken).ConfigureAwait(false);
+            var releaseGroup = await _musicBrainzQuery.LookupReleaseGroupAsync(new Guid(releaseGroupId), Include.ReleaseGroups, null, cancellationToken).ConfigureAwait(false);
             var release = releaseGroup.Releases?.Count > 0 ? releaseGroup.Releases[0] : null;
-            if (release != null)
-            {
-                releaseId = release.Id.ToString();
-                result.HasMetadata = true;
-            }
+            releaseId = release?.Id.ToString();
+            result.HasMetadata = true;
         }
 
         // If there is no release ID, lookup a release with the info we have

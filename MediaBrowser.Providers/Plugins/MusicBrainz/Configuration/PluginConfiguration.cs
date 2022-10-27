@@ -23,7 +23,11 @@ public class PluginConfiguration : BasePluginConfiguration
     {
         get => _server;
 
-        set => _server = value.TrimEnd('/');
+        set
+        {
+            _server = value.TrimEnd('/');
+            Query.DefaultServer = _server;
+        }
     }
 
     /// <summary>
@@ -42,6 +46,8 @@ public class PluginConfiguration : BasePluginConfiguration
             {
                 _rateLimit = value;
             }
+
+            Query.DelayBetweenRequests = _rateLimit;
         }
     }
 
