@@ -30,6 +30,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nikse.SubtitleEdit.Core.CDG;
 
 namespace Jellyfin.Api.Controllers;
 
@@ -303,9 +304,7 @@ public class DynamicHlsController : BaseJellyfinApiController
 
         if (!System.IO.File.Exists(playlistPath))
         {
-            var transcodingLock = _transcodingJobHelper.GetTranscodingLock(playlistPath);
-            await transcodingLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-            try
+            using (await MediaBrowser.Common.Concurrency.AsyncKeyedLock.Locker.LockAsync(playlistPath, cancellationToken).ConfigureAwait(false))
             {
                 if (!System.IO.File.Exists(playlistPath))
                 {
@@ -334,10 +333,6 @@ public class DynamicHlsController : BaseJellyfinApiController
                         await HlsHelpers.WaitForMinimumSegmentCount(playlistPath, minSegments, _logger, cancellationToken).ConfigureAwait(false);
                     }
                 }
-            }
-            finally
-            {
-                transcodingLock.Release();
             }
         }
 
@@ -1458,18 +1453,13 @@ public class DynamicHlsController : BaseJellyfinApiController
             return await GetSegmentResult(state, playlistPath, segmentPath, segmentExtension, segmentId, job, cancellationToken).ConfigureAwait(false);
         }
 
-        var transcodingLock = _transcodingJobHelper.GetTranscodingLock(playlistPath);
-        await transcodingLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-        var released = false;
-        var startTranscoding = false;
-
-        try
+        using (await MediaBrowser.Common.Concurrency.AsyncKeyedLock.Locker.LockAsync(playlistPath, cancellationToken).ConfigureAwait(false))
         {
+            var startTranscoding = false;
+
             if (System.IO.File.Exists(segmentPath))
             {
                 job = _transcodingJobHelper.OnTranscodeBeginRequest(playlistPath, TranscodingJobType);
-                transcodingLock.Release();
-                released = true;
                 _logger.LogDebug("returning {0} [it exists, try 2]", segmentPath);
                 return await GetSegmentResult(state, playlistPath, segmentPath, segmentExtension, segmentId, job, cancellationToken).ConfigureAwait(false);
             }
@@ -1540,13 +1530,6 @@ public class DynamicHlsController : BaseJellyfinApiController
                         await job.TranscodingThrottler.UnpauseTranscoding().ConfigureAwait(false);
                     }
                 }
-            }
-        }
-        finally
-        {
-            if (!released)
-            {
-                transcodingLock.Release();
             }
         }
 

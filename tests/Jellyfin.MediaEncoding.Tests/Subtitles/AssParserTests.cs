@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using MediaBrowser.MediaEncoding.Subtitles;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;

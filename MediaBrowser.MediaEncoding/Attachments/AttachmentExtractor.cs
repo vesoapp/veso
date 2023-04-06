@@ -31,9 +31,6 @@ namespace MediaBrowser.MediaEncoding.Attachments
         private readonly IMediaEncoder _mediaEncoder;
         private readonly IMediaSourceManager _mediaSourceManager;
 
-        private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphoreLocks =
-            new ConcurrentDictionary<string, SemaphoreSlim>();
-
         private bool _disposed = false;
 
         public AttachmentExtractor(
@@ -87,11 +84,7 @@ namespace MediaBrowser.MediaEncoding.Attachments
             string outputPath,
             CancellationToken cancellationToken)
         {
-            var semaphore = _semaphoreLocks.GetOrAdd(outputPath, key => new SemaphoreSlim(1, 1));
-
-            await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
-            try
+            using (await Common.Concurrency.AsyncKeyedLock.Locker.LockAsync(outputPath, cancellationToken).ConfigureAwait(false))
             {
                 if (!Directory.Exists(outputPath))
                 {
@@ -102,10 +95,6 @@ namespace MediaBrowser.MediaEncoding.Attachments
                         cancellationToken).ConfigureAwait(false);
                 }
             }
-            finally
-            {
-                semaphore.Release();
-            }
         }
 
         public async Task ExtractAllAttachmentsExternal(
@@ -114,11 +103,7 @@ namespace MediaBrowser.MediaEncoding.Attachments
             string outputPath,
             CancellationToken cancellationToken)
         {
-            var semaphore = _semaphoreLocks.GetOrAdd(outputPath, key => new SemaphoreSlim(1, 1));
-
-            await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
-            try
+            using (await Common.Concurrency.AsyncKeyedLock.Locker.LockAsync(outputPath, cancellationToken).ConfigureAwait(false))
             {
                 if (!File.Exists(Path.Join(outputPath, id)))
                 {
@@ -133,10 +118,6 @@ namespace MediaBrowser.MediaEncoding.Attachments
                         File.Create(Path.Join(outputPath, id));
                     }
                 }
-            }
-            finally
-            {
-                semaphore.Release();
             }
         }
 
@@ -267,11 +248,7 @@ namespace MediaBrowser.MediaEncoding.Attachments
             string outputPath,
             CancellationToken cancellationToken)
         {
-            var semaphore = _semaphoreLocks.GetOrAdd(outputPath, key => new SemaphoreSlim(1, 1));
-
-            await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
-            try
+            using (await Common.Concurrency.AsyncKeyedLock.Locker.LockAsync(outputPath, cancellationToken).ConfigureAwait(false))
             {
                 if (!File.Exists(outputPath))
                 {
@@ -281,10 +258,6 @@ namespace MediaBrowser.MediaEncoding.Attachments
                         outputPath,
                         cancellationToken).ConfigureAwait(false);
                 }
-            }
-            finally
-            {
-                semaphore.Release();
             }
         }
 
