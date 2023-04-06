@@ -39,11 +39,6 @@ public class TranscodingJobHelper : IDisposable
     /// </summary>
     private static readonly List<TranscodingJobDto> _activeTranscodingJobs = new List<TranscodingJobDto>();
 
-    /// <summary>
-    /// The transcoding locks.
-    /// </summary>
-    private static readonly Dictionary<string, SemaphoreSlim> _transcodingLocks = new Dictionary<string, SemaphoreSlim>();
-
     private readonly IAttachmentExtractor _attachmentExtractor;
     private readonly IApplicationPaths _appPaths;
     private readonly EncodingHelper _encodingHelper;
@@ -282,11 +277,6 @@ public class TranscodingJobHelper : IDisposable
             {
                 job.CancellationTokenSource.Cancel();
             }
-        }
-
-        lock (_transcodingLocks)
-        {
-            _transcodingLocks.Remove(job.Path!);
         }
 
         lock (job.ProcessLock!)
@@ -759,11 +749,6 @@ public class TranscodingJobHelper : IDisposable
             }
         }
 
-        lock (_transcodingLocks)
-        {
-            _transcodingLocks.Remove(path);
-        }
-
         if (!string.IsNullOrWhiteSpace(state.Request.DeviceId))
         {
             _sessionManager.ClearTranscodingInfo(state.Request.DeviceId);
@@ -852,25 +837,6 @@ public class TranscodingJobHelper : IDisposable
         if (string.IsNullOrWhiteSpace(job.PlaySessionId) || job.Type == TranscodingJobType.Progressive)
         {
             job.StopKillTimer();
-        }
-    }
-
-    /// <summary>
-    /// Gets the transcoding lock.
-    /// </summary>
-    /// <param name="outputPath">The output path of the transcoded file.</param>
-    /// <returns>A <see cref="SemaphoreSlim"/>.</returns>
-    public SemaphoreSlim GetTranscodingLock(string outputPath)
-    {
-        lock (_transcodingLocks)
-        {
-            if (!_transcodingLocks.TryGetValue(outputPath, out SemaphoreSlim? result))
-            {
-                result = new SemaphoreSlim(1, 1);
-                _transcodingLocks[outputPath] = result;
-            }
-
-            return result;
         }
     }
 
